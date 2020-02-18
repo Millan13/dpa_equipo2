@@ -30,6 +30,6 @@ Para el caso de los vuelos cuya salida sí se retrase, determinar rangos de retr
 + Servicios de AWS para almacenamiento y procesamiento
 
 ## Pipeline
-❮img src="Imagenes/Pipeline_Entrega.png" width="50"❯
+![](Imagenes/Pipeline_Entrega.png)
 
 
