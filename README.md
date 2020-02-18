@@ -12,7 +12,7 @@ Repositorio del equipo 2 del proyecto de la materia Data Product Architecture.
 
 Desarrollar un producto de datos que con base en información relacionada con el vuelo (fecha, origen, destino,etc) sea capaz de predecir si la salida de éste se retrasará o no.
 
-## Problemátiva a resilver:
+## Problemátiva a resolver:
 
 Los aeropuertos del mundo, sobre todo los más grandes y que mayor tráfico aéreo registran, van 
 incorporando poco a poco servicios exclusivos para amenizar al cliente. Convertirse en el mejor 
@@ -30,6 +30,6 @@ Para el caso de los vuelos cuya salida sí se retrase, determinar rangos de retr
 + Servicios de AWS para almacenamiento y procesamiento
 
 ## Pipeline
+❮img src="Imagenes/Pipeline_Entrega.png" width="50"❯
 
-![](Imagenes/Pipeline_Entrega.png)
 
