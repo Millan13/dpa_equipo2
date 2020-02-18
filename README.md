@@ -28,3 +28,8 @@ Para el caso de los vuelos cuya salida sí se retrase, determinar rangos de retr
 + Información del Departamento de Transporte de los EUA
 + API de Google Maps
 + Servicios de AWS para almacenamiento y procesamiento
+
+## Pipeline
+
+![](Imagenes/Pipeline_Entrega.png)
+
