@@ -10,7 +10,7 @@ Repositorio del equipo 2 del proyecto de la materia Data Product Architecture.
 
 ## Objetivo del proyecto:
 
-Desarrollar un producto de datos que con base en información relacionada con el vuelo (fecha, origen, destino,etc) sea capaz de predecir si la salida de éste se retrasará o no.
+Desarrollar un producto de datos que con base en información relacionada con el vuelo (fecha, origen, destino,etc) sea capaz de predecir si la salida de éste tendrá un retraso crítico (mayor a 20 minutos).
 
 ## Problemátiva a resolver:
 
