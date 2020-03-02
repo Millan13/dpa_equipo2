@@ -10,14 +10,17 @@ Repositorio del equipo 2 del proyecto de la materia Data Product Architecture.
 
 ## Objetivo del proyecto:
 
-Desarrollar un producto de datos que con base en información relacionada con el vuelo (fecha, origen, destino, etc) sea capaz de predecir si la salida de éste tendrá un retraso crítico (mayor a 20 minutos).
+Garantizar la eficiencia general de las operaciones aeroportuarias mediante un producto de datos basado en información relacionada con el vuelo (fecha, origen, destino, etc), capaz de predecir si habrá un retraso crítico (mayor a 20 minutos) para el despegue, disminuyendo los costos operativos relacionados al efecto dominó de los retrasos en las salidas de vuelos.
 
 ## Problemática a resolver:
 
-Los aeropuertos del mundo, sobre todo los más grandes y que mayor tráfico aéreo registran, van 
-incorporando poco a poco servicios exclusivos para amenizar al cliente. Convertirse en el mejor 
-operador de servicios aeroportuarios requiere de ofrecer servicios con seguridad, eficiencia 
-tecnológica y confort de manera sostenible y rentable. Derivado de esto, resulta importante contar con servicios que permitan empoderar y darle libertad a compañías áreas en la experiencia de viaje, brindándole información importante en el momento adecuado para tomar decisiones hacia sus clientes.
+El negocio de los aeropuertos incluye muchos procesos, regulaciones y partes interesadas definidas. Que un vuelo despegue a tiempo depende de múltiples factores: como la distancia al suelo, la autorización del control de tráfico aéreo, la reposición de alimentos, el reabastecimiento de combustible así como retrasos de vuelos procedentes de otros lugares. Una demora en cualquiera de estos factores puede llevar a un efecto dominó en las operaciones del aeropuerto. 
+
+Imaginemos cuál sería el impacto en un aeropuerto con alto tráfico como los de Atlanta, Chicago o Beijing. Las cosas se vuelven aún más difíciles en el caso de condiciones climáticas extremas o eventos perturbadores. Con un número cada vez mayor de pasajeros y vuelos, la eficiencia operativa se ha convertido en un gran desafío para los aeropuertos.
+
+Mejorar la eficiencia y el rendimiento general de un aeropuerto se pueden lograr mediante el intercambio de información en tiempo real con todas las partes interesadas. Por tanto, éste producto de datos, representa un diferenciador importante que empodera y da libertad a operadores de servicios aeroportuarios, brindándoles información importante de posibles retrasos, permitiendo tomar decisiones a las partes interesadas del aeropuerto (operadores de aeropuertos, líneas aéreas, operadores de tierra y controladores de tráfico aéreo, etc.) intercambiando información de retrasos, y alentando a la colaboración para una gestión eficiente de las operaciones, buscando disminuir los costos involucrados en dichos retrasos.
+
+Nota: Poner aquí el mockup.
 
 ## Recursos
 
@@ -73,9 +76,18 @@ A través de RDS se utilizará el motor PostgreSQL para crear los esquemas *raw*
 ![](Imagenes/ETL_Final.png)
 
 
-## IMPLICACIONES ÉTICAS
+## IMPLICACIONES ÉTICAS (Detallar todo)
 
+* Implicaciones de un modelo de predicción sensible:
++ Avisar de un posible retraso propiciando el movimiento de personal, cuando en realidad no existe retraso.
++ Aumento de costos de operación al aeropuerto derivado de posibles alertas de retrasos, cuando estos no ocurrirán.
 
+* Implicaciones de un modelo de predicción preciso:
++ Causar una aglomeración de personas en ciertos horarios por tener vuelos retrasados cuando el modelo predijo que no habrá retraso.
++ No tener disponibles espacios suficientes habilitados para las personas shalalá ..
++ Realizar obras de mantenimiento en zonas con demanda cuando se esperaba que la operación de vuelos no se retrasé afectando a los usuarios de aerolíneas.
+
+Por tanto, se buscará equilibrar el modelo a través de la medida F (media armónica) que da una ponderación ... bla bla bla
 
 
 
