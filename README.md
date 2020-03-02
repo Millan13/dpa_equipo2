@@ -22,7 +22,6 @@ tecnológica y confort de manera sostenible y rentable. Derivado de esto, result
 ## Recursos
 
 + Información del Departamento de Transporte de los EUA
-+ API de Google Maps
 + Servicios de AWS para almacenamiento y procesamiento
 
 ## Pipeline
