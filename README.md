@@ -96,14 +96,15 @@ Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia
 
 
 
-## IMPLICACIONES ÉTICAS.
+## IMPLICACIONES ÉTICAS
+### Falsos positivos
++ Aumento de costos de operación al aeropuerto derivado de alertas de retrasos, cuando éstos no ocurrirán. Por ejemplo: aumento de horas de trabajo de personal, solicitar equipos de tránsito y/o seguridad, etc.
++ Propiciar movilización y sentido de alerta del personal involucrado a raíz de la alerta de retraso, cuando en realidad no existirá retraso alguno.
 
-+ Avisar al personal involucrado de un posible retraso a cierta hora propiciando una movilización y sentido de alerta, cuando en realidad no existirá retraso alguno.
-+ Aumento de costos de operación al aeropuerto derivado de posibles alertas de retrasos, cuando estos no ocurrirán como aumento de horas de trabajo de personal.
-+ Causar una aglomeración de personas en ciertos horarios por tener vuelos retrasados cuando el modelo predijo que no habrá retraso.
-+ No tener espacios suficientes habilitados disponibles para las personas mientras esperan por un retraso, causado por predecir que no existirán retrasos en ese día. 
-+ Realizar obras de mantenimiento en zonas con demanda cuando se esperaba que la operación de vuelos no se retrasé afectando a los usuarios de aerolíneas.
-+ Solicitar equipos de tránsito y/o seguridad cuando se espera una alta aglomeración de personas derivado de retrasos considerando que no habrá retrasos en dicho día.
+### Falsos negativos
++ Causar una aglomeración de personas en ciertos horarios por tener vuelos retrasados.
++ No tener suficientes espacios habilitados disponibles para las personas mientras esperan por un retraso,
++ Planificar obras de mantenimiento en zonas que requieren los usuarios de las aerolíneas.
 
 Derivado de estas implicaciones, se debe buscar un equilibrio entre un modelo preciso pero sensible a través de la optimización de la medida F (media armónica) que da una ponderación y penaliza un desempeño malo en dichas medidas que el promedio armónico.
 
