@@ -88,6 +88,10 @@ Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo
 
 + LOAD
 
+Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia y el servicio de almacenamiento S3. En este último permancerán tanto los datos históricos, como los que se irán descargando mensualmente.
+
++ Script de bash que permite mover los datos del directorio *Descargas* al bucket configurado. Los datos relacionados con la carga incial se almacenarán en la carpeta *carga_inicial* y los datos mensuales en la carpeta *cargas_periodicas*.  
+
 ![](Imagenes/EL_equipo2.png)
 
 
