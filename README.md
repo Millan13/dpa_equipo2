@@ -88,6 +88,8 @@ Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo
 
 + LOAD
 
+![](Imagenes/EL_equipo2.png)
+
 
 
 ## IMPLICACIONES ÉTICAS.
