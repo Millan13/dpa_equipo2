@@ -18,24 +18,26 @@ El negocio de los aeropuertos incluye muchos procesos, regulaciones y partes int
 
 Imaginemos cuál sería el impacto en un aeropuerto con alto tráfico como los de Atlanta, Chicago o Beijing. Las cosas se vuelven aún más difíciles en el caso de condiciones climáticas extremas o eventos perturbadores. Con un número cada vez mayor de pasajeros y vuelos, la eficiencia operativa se ha convertido en un gran desafío para los aeropuertos.
 
-Mejorar la eficiencia y el rendimiento general de un aeropuerto se pueden lograr mediante el intercambio de información en tiempo real con todas las partes interesadas. Por tanto, éste producto de datos, representa un diferenciador importante que empodera y da libertad a operadores de servicios aeroportuarios, brindándoles información importante de posibles retrasos, permitiendo tomar decisiones a las partes interesadas del aeropuerto (operadores de aeropuertos, líneas aéreas, operadores de tierra y controladores de tráfico aéreo, etc.) intercambiando información de retrasos, y alentando a la colaboración para una gestión eficiente de las operaciones, buscando disminuir los costos involucrados en dichos retrasos.
+Mejorar la eficiencia y el rendimiento general de un aeropuerto se pueden lograr mediante el intercambio de información en tiempo real con todas las partes interesadas. Por tanto, este producto de datos representa un diferenciador importante que empodera y da libertad a operadores de servicios aeroportuarios, brindándoles información importante de posibles retrasos; permitiendo tomar decisiones a las partes interesadas del aeropuerto (operadores de aeropuertos, líneas aéreas, operadores de tierra y controladores de tráfico aéreo, etc.) intercambiando información de retrasos, y alentando a la colaboración para una gestión eficiente de las operaciones, buscando disminuir los costos involucrados en dichos retrasos.
 
-Nota: Poner aquí el mockup.
 
 ## Recursos
 
-+ Información del Departamento de Transporte de los EUA
++ Información del Departamento de Transporte de los EUA (https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)
 + Servicios de AWS para almacenamiento y procesamiento
 
 ## Pipeline
 ![](Imagenes/Pipeline_Entrega.png)
 
 ## Descripción de las variables
-La información que será utilizada para el desarrollo de este proyecto en principio es actualizada de forma mensual; sin embargo se desconoce la fecha exacta de actualización. Los datos que están disponibles se encuentran en formato .csv, y contienen las siguientes variables:
+La información que será utilizada para el desarrollo de este proyecto contiene detalles sobre el despegue y arribo de los vuelos comerciales dentro de Estados Unidos, de octubre de 1987 a diciembre de 2019. El dataset contiene alrededor de 100 variables ubicado en la siguiente ruta: https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236. La información está disponible en archivos con formato .csv.
+En principio la información es actualizada de forma mensual; sin embargo se desconoce la fecha exacta de actualización. 
+
+Debido a la cantidad de variables con que se cuenta, y tomando como base la información utilizada en **data expo Airline on-time performance**  (http://stat-computing.org/dataexpo/2009/the-data.html), nos limitaremos a trabajar únicamente con las siguientes 29 variables:
 
 ||Nombre variable	|Descripción|
 |---|---|---|
-|1	|report	|Year|
+|1	|report	|Year (from 1987 to the present)|
 |2	|MONTH	|1-12|
 |3	|DAY\_OF\_MONTH	|1-31|
 |4	|DAY\_OF_WEEK	|1 (Monday) - 7 (Sunday)|
@@ -66,14 +68,25 @@ La información que será utilizada para el desarrollo de este proyecto en princ
 |29	|LATE\_AIRCRAFT_DELAY	|Late Aircraft Delay, in minutes|
 
 
-## ETL
+## Proceso ELT
 
-Como parte del proceso ETL, se tiene considerado utilizar el framework Node.js para descargar la información de la siguiente ubicación https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236. 
+El proyecto requerirá la aplicación de un proceso ELT, el cual se efecturará conforme a lo siguiente:
 
-Es importante mencionar que en un primer momento deberá obtenerse lo correspondiente al periodo que será utilizado para llevar a cabo el entrenamiento; y posteriormente se realizará una revisión semanal para comprobar si existe información actualizada sobre los vuelos. En caso afirmativo, se descargará la nueva información. El almacenamiento de ambas será realizado en un servicio RDS de AWS.
++ EXTRACT
 
-A través de RDS se utilizará el motor PostgreSQL para crear los esquemas *raw*, *clean* y *semantic*. En el primer esquema se importarán los datos originales y se almacenarán en formato tipo texto. Lo correspondiente a *clean* implicará establecer los tipos de datos adecuados, realizar estandarización de campos que contengan texto, eliminar espacios, entre otras acciones. Así mismo, puede aprovecharse esta parte del proceso para la creación de índices, los cuáles ayudarán a acelerar la consulta entre las tablas del siguiente esquema: *semantic*. Este último está relacionado con la creación de las tablas de entidades y eventos.
-![](Imagenes/ETL_Final.png)
+Este parte del proceso requerirá de una carga inicial que permita obtener los datos históricos con los que se desarrollará el producto de datos. Adicionalmente será necesario realizar una carga periódica (mensual) con los datos sobre los que se realizarán las predicciones. 
+Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo siguiente:
+
++ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium.
++ Script de bash que permita crear los directorios *Descargas* y *Datos*.
++ Archivo .py para realizar web-scrapping utilizando Selenium y Chrome-Driver. La descarga de archivos se guardará en la carpeta *Descargas* en formato .zip.
++ Scrip de bash, para realizar unzip de los archivos anteriores.
++ Script de bash que permita eliminar archivos .zip.
++ Script de bash para mover los archivos de la carpeta *Descargas* a la carpeta *Datos*.
++ Script de bash que crea un archivo único con toda la información descargad. Esto corresponde a la carga inicial y formará los datos históricos.
+
++ LOAD
+
 
 
 ## IMPLICACIONES ÉTICAS (Detallar todo)
