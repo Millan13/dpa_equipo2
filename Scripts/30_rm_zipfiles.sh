@@ -1,0 +1,2 @@
+cd Descargas/
+rm *.zip
