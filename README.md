@@ -73,12 +73,12 @@ Debido a la cantidad de variables con que se cuenta, y tomando como base la info
 
 El proyecto requerirá la aplicación de un proceso ELT, el cual se efecturará conforme a lo siguiente:
 
-+ EXTRACT
++ **EXTRACT**
 
 Este parte del proceso requerirá de una carga inicial que permita obtener los datos históricos con los que se desarrollará el producto de datos. Adicionalmente será necesario realizar una carga periódica (mensual) con los datos sobre los que se realizarán las predicciones. 
 Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo siguiente:
 
-+ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium. Este será ejecutado una sola vez.
++ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium. Este será ejecutado una sola vez, antes de la carga inicial.
 + Script de bash que permita crear los directorios *Descargas* y *Datos*.
 + Archivo .py para realizar web-scrapping utilizando Selenium y Chrome-Driver. La descarga de archivos se guardará en la carpeta *Descargas* en formato .zip.
 + Scrip de bash, para realizar unzip de los archivos anteriores.
@@ -86,7 +86,7 @@ Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo
 + Script de bash para mover los archivos de la carpeta *Descargas* a la carpeta *Datos*.
 
 
-+ LOAD
++ **LOAD**
 
 Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia EC2 y el servicio de almacenamiento S3. En este último permancerán tanto los datos históricos, como los que se irán descargando mensualmente.
 
