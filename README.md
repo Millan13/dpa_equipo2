@@ -78,19 +78,21 @@ El proyecto requerirá la aplicación de un proceso ELT, el cual se efecturará 
 Este parte del proceso requerirá de una carga inicial que permita obtener los datos históricos con los que se desarrollará el producto de datos. Adicionalmente será necesario realizar una carga periódica (mensual) con los datos sobre los que se realizarán las predicciones. 
 Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo siguiente:
 
-+ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium.
++ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium. Este será ejecutado una sola vez.
 + Script de bash que permita crear los directorios *Descargas* y *Datos*.
 + Archivo .py para realizar web-scrapping utilizando Selenium y Chrome-Driver. La descarga de archivos se guardará en la carpeta *Descargas* en formato .zip.
 + Scrip de bash, para realizar unzip de los archivos anteriores.
 + Script de bash que permita eliminar archivos .zip.
 + Script de bash para mover los archivos de la carpeta *Descargas* a la carpeta *Datos*.
-+ Script de bash que crea un archivo único con toda la información descargad. Esto corresponde a la carga inicial y formará los datos históricos.
+
 
 + LOAD
 
-Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia y el servicio de almacenamiento S3. En este último permancerán tanto los datos históricos, como los que se irán descargando mensualmente.
+Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia EC2 y el servicio de almacenamiento S3. En este último permancerán tanto los datos históricos, como los que se irán descargando mensualmente.
 
-+ Script de bash que permite mover los datos del directorio *Descargas* al bucket configurado. Los datos relacionados con la carga incial se almacenarán en la carpeta *carga_inicial* y los datos mensuales en la carpeta *cargas_periodicas*.  
++ Script de bash que permite mover los datos del directorio *Descargas* al bucket configurado. Los datos relacionados con la carga incial se almacenarán en la carpeta *carga_inicial* y los datos mensuales en la carpeta *cargas_periodicas*. En ambas carpetas tenemos subcarpetas por año y mes.
+
+Cabe observar que la descarga no puede hacerse directamente al S3, dado que no se tiene una API, sino que el archivo se construye al momento de solicitar la descarga
 
 ![](Imagenes/EL_equipo2.png)
 
