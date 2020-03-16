@@ -1,5 +1,8 @@
 # Proyecto Arquitectura de Producto de Datos
-Repositorio del equipo 2 del proyecto de la materia Data Product Architecture.
+
+**Maestría en Ciencia de Datos ITAM**
+
+Integrantes del equipo:
 
 + Laura Gómez Bustamante 191294 
 + Miguel Ángel Millán Dorado 191401 
@@ -8,9 +11,13 @@ Repositorio del equipo 2 del proyecto de la materia Data Product Architecture.
 + Rodrigo Suárez Segovia 191351
 
 
+La organización de los vuelos operados por cada aerolínea involucra la definición de rutas específicas, es decir, el avión X tiene como origen la ciudad A y como destino la ciudad B; y opera únicamente en esta ruta. Otro caso podría implicar que dicho avión se mueva a la ciudad C, teniendo como destino final la ciudad inicial A, de forma que la ruta de este avión sea A-B-C. De acuerdo con esta operación resulta natural pensar que un retraso en el despegue del avión hacia la ruta A-B afectará la salida a tiempo hacia la ruta B-C; y por consiguiente a la ruta C-A, dando lugar a un efecto dominó.
+Contar con información sobre posibles efectos dominó podría ser de gran utilidad para las compañías aéreas para conocer anticipadamente pérdidas monetearias asociadas a dichos retrasos, activar planes de contigencia, y tomar acciones encaminadas a la disminución de costos operativos.  
+
+
 ## Objetivo del proyecto:
 
-Garantizar la eficiencia de las operaciones aeroportuarias mediante un producto de datos basado en información relacionada con el vuelo (fecha, origen, destino, etc), capaz de predecir si habrá un retraso crítico (mayor a 20 minutos) para el despegue, disminuyendo los costos operativos relacionados al efecto dominó de los retrasos en las salidas de vuelos.
+Garantizar la eficiencia de las operaciones aeroportuarias mediante un producto de datos basado en información relacionada con el vuelo (fecha, origen, destino, etc), capaz de predecir si habrá un retraso de ciertos minutos para el despegue, así como el número de vuelos que serán afectados. Entendiéndose como afectación, vuelos cuya salida también se retrasará. 
 
 ## Problemática a resolver:
 
