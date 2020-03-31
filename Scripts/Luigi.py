@@ -67,12 +67,28 @@ class Tarea_10(luigi.Task):
 
     def run(self):
         os.system("python3 10_web_Scraping_Rita.py")
-        time.sleep(5)
+        #time.sleep(5)
         os.system('echo OK > Tarea_10')
 
     def output(self):
         str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
-        return luigi.LocalTarget(str_DirTrabajo+'Tarea_10')
+        return luigi.LocalTarget('Tarea_10')
+
+class Tarea_11(luigi.Task):
+    param = luigi.Parameter(default='11')
+
+    def requires(self):
+        return Tarea_10(self.param)
+
+    def run(self):
+        os.system('export LC_ALL=en_US.UTF-8')
+        os.system('python3 rita.py load-rita')
+        os.system('echo OK > Tarea_11')
+
+    def output(self):
+        str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
+        return luigi.LocalTarget('Tarea_11')
+
 
 if __name__ == '__main__':
     luigi.run()
