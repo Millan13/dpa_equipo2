@@ -4,6 +4,7 @@ import os
 import time
 from RitaWebScrap import RitaWebScraping
 from RitaWebScrap import Auxiliar
+from RitaWebScrap import voEjecucion
 
 print('\n---Inicio web scraping Inicial---')
 
@@ -14,6 +15,7 @@ arr_Meses=objAuxiliar.ObtenerMeses()
 
 # Instanciamos la clase que realizará el WebScraping
 objWebScraping = RitaWebScraping()
+objEjecucion = voEjecucion()
 
 # Asignamos la propiedades del ambiente donde se trabajará
 for anio in arr_Anios:
@@ -42,5 +44,11 @@ for anio in arr_Anios:
 
             # Una vez mandado el archivo a S3, lo borramos de la carpeta de Descargas
             os.system("rm Descargas/*.csv")
+            objEjecucion.str_id_archivo=os.path.basename(objWebScraping.str_ArchivoDescargado+'.csv')
+            objEjecucion.str_bucket_s3=bucket_name
+            objEjecucion.str_ruta_almac_s3=str_RutaS3
+            objEjecucion.str_tipo_ejec='I'
+            objEjecucion.str_NombreDataFrame='Linaje/Ejecuciones/'+str(anio)+str(mes)+'.csv'
+            objEjecucion.crearCSV()
 
 print('---Fin web scraping Inicial---\n')
