@@ -21,10 +21,10 @@ def rita(ctx):
     ctx.ensure_object(dict)
     #conn = psycopg2.connect(settings.get('PGCONNSTRING'))
     conn = psycopg2.connect(database="bd_rita"
-                            user="postgres",
-                            password="12345678",
-                            host="database-2.cnevbxmlm0lp.us-west-2.rds.amazonaws.com",
-                            port='5432'
+                            ,user="postgres"
+                            ,password="12345678"
+                            ,host="database-2.cnevbxmlm0lp.us-west-2.rds.amazonaws.com"
+                            ,port='5432'
     )
 
     conn.autocommit = True
