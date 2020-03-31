@@ -34,3 +34,5 @@ pip3 install psycopg2-binary
 pip3 install click
 pip3 install dynaconf
 pip3 install pandas
+
+export LC_ALL=en_US.UTF-8
