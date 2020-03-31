@@ -1,2 +1,0 @@
-cd Descargas/
-unzip '*.zip'
