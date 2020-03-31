@@ -14,7 +14,7 @@ ls
 
 sudo yum install python36
 
-alternatives --set python /usr/bin/python3.6
+sudo alternatives --set python /usr/bin/python3.6
 python --version
 
 cd /tmp
