@@ -36,6 +36,7 @@ class Tarea_08(luigi.Task):
         return Tarea_07(self.param)
 
     def run(self):
+        os.system('export LC_ALL=en_US.UTF-8')
         os.system('python3 rita.py create-schemas')
         os.system('echo OK > Tarea_08')
 
@@ -50,6 +51,7 @@ class Tarea_09(luigi.Task):
         return Tarea_08(self.param)
 
     def run(self):
+        os.system('export LC_ALL=en_US.UTF-8')
         os.system('python3 rita.py create-linaje-tables')
         os.system('echo OK > Tarea_09')
 
