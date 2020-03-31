@@ -1,6 +1,7 @@
 #!pip install selenium
 from selenium import webdriver
 import time
+import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -22,12 +23,13 @@ class RitaWebScraping:
     
     
     # Campos deseados
-    dict_campos_activar = {'Year':3
+    dict_campos_activar = {
+                          'Year':3
                           ,'Month':5
-                          #,'DayofMonth':6
-                          #,'DayofWeek':7
-                          #,'DepTime':37
-                          #,'CRSDepTime':36
+                          ,'DayofMonth':6
+                          ,'DayofWeek':7
+                          ,'DepTime':37
+                          ,'CRSDepTime':36
                           #,'CRSArrTime':48
                           #,'Reporting_Airline':10
                           #,'Flight_Number_Reporting_Airline':14
@@ -39,8 +41,12 @@ class RitaWebScraping:
                           #,'Distance':64
                           }
     # Campos pre-seleccionados
-    dict_campos_desactivar = {'OriginAirportID':16,'OriginAirportSeqID':17,'OriginCityMarketID':18,
-                              'DestAirportID':26,'DestAirportSeqID':27,'DestCityMarketID':28}
+    dict_campos_desactivar = {'OriginAirportID':16
+                             ,'OriginAirportSeqID':17
+                             ,'OriginCityMarketID':18
+                             ,'DestAirportID':26
+                             ,'DestAirportSeqID':27
+                             ,'DestCityMarketID':28}
 
 
     #Directorios
@@ -78,15 +84,16 @@ class RitaWebScraping:
         # Seleccionamos los campos deseados
         
         # Seleccionamos los campos que están pre-seleccionados al abrir la página de donde se hará la descarga de la información
-        #for campo in self.dict_campos_desactivar.values():
-        #    xpath_preselec = '"/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"'% campo
-        #    driver.find_element_by_xpath(xpath_preselec).click()
+        for campo in self.dict_campos_desactivar.values():
+            xpath_preselec = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
+            driver.find_element_by_xpath(xpath_preselec).click()
         
          
         # Seleccionamos los campos deseados para crear la base de datos
         for campo in self.dict_campos_activar.values():
             xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
             driver.find_element_by_xpath(xpath_finales).click()
+
 
 
         
@@ -97,7 +104,8 @@ class RitaWebScraping:
 
         # Este while es para esperar a que termine la descarga completa del archivo en turno
         while str_ext != '.zip':
-            list_file = glob.glob('/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/Descargas/*.zip') # * means all if need specific format then *.csv
+            print(datetime.datetime.now())
+            list_file = glob.glob(self.str_DirDescargas+'/*.zip') # * means all if need specific format then *.csv
             if len(list_file) != 0:
                 str_file=list_file[0]
                 arr_aux = os.path.splitext(str_file)
