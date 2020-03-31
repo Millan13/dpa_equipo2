@@ -7,7 +7,7 @@
 drop table if exists linaje.ejecuciones;
 create table linaje.ejecuciones (
   "id_ejec" VARCHAR(20),
-  "id_archivo" VARCHAR(20),
+  "id_archivo" VARCHAR(60),
   "usuario_ejec" VARCHAR(20),
   "instancia_ejec" VARCHAR(20),
   "fecha_hora_ejec" TIMESTAMP,
@@ -24,7 +24,7 @@ comment on table linaje.ejecuciones is 'describe los datos principales de las ej
 /**************************** Título archivos ****************************/
 drop table if exists linaje.archivos;
 create table linaje.archivos (
-  "id_archivo" VARCHAR(20),
+  "id_archivo" VARCHAR(60),
   "num_registros" VARCHAR(20),
   "num_columnas" VARCHAR(10),
   "tamanio_archivo" FLOAT,
@@ -37,7 +37,7 @@ comment on table linaje.archivos is 'describe caracteristicas especificas de arc
 /**************************** Título archivos_det ****************************/
 drop table if exists linaje.archivos_det;
 create table linaje.archivos_det (
-  "id_archivo" VARCHAR(20),
+  "id_archivo" VARCHAR(60),
   "id_col" VARCHAR(20)
 );
 comment on table linaje.archivos_det is 'describe detalles del archivo';
