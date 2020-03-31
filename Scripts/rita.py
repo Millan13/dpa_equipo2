@@ -49,8 +49,8 @@ def create_schemas(ctx):
 
 @rita.command()
 @click.pass_context
-def create_linaje_tablas(ctx):
-    query = ctx.obj['queries'].get('create_linaje_tablas')
+def create_linaje_tables(ctx):
+    query = ctx.obj['queries'].get('create_linaje_tables')
     conn = ctx.obj['conn']
     with conn.cursor() as cur:
         cur.execute(query)
