@@ -168,6 +168,41 @@ class Auxiliar:
     arr_Anios=[]
     arr_Meses=[]
 
+    def ObtenerMaxId(self):
+        import psycopg2
+
+        str_Query='select max(id_ejec) from linaje.ejecuciones;'
+
+        conn = psycopg2.connect(database="bd_rita"
+                            ,user="postgres"
+                            ,password="12345678"
+                            ,host="database-rita.cnevbxmlm0lp.us-west-2.rds.amazonaws.com"
+                            ,port='5432'
+                            )
+
+        cur = conn.cursor()
+        cur.execute(str_Query)
+
+        if  cur.rowcount==0:
+            return 0
+        else:
+            row=cur.fetchone()
+            print(row[0])
+            return row[0]
+
+
+    def ObtenerUsuario(self):
+        import getpass
+
+        return getpass.getuser()
+
+    def ObtenerIp(self):
+        import socket
+
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        return ip_address
+
     def ObtenerAnios(self):
 
         if self.str_TipoEjecucion == 'Prueba':
@@ -227,7 +262,7 @@ class Auxiliar:
 
 class voEjecucion:
 
-    str_id_ejec = '1'
+    str_id_ejec = '2'
     str_id_archivo = '2'
     str_usuario_ejec = '3'
     str_instancia_ejec = '4'
@@ -249,28 +284,29 @@ class voEjecucion:
                         ,'id_archivo' :[self.str_id_archivo]
                         ,'usuario_ejec' :[self.str_usuario_ejec]
                         ,'instancia_ejec' :[self.str_instancia_ejec]
-                        ,'fecha_hora_ejec' :[self.dttm_fecha_hora_ejec]
+                        #,'fecha_hora_ejec' :[self.dttm_fecha_hora_ejec]
                         ,'bucket_s3' :[self.str_bucket_s3]
                         ,'ruta_almac_s3' :[self.str_ruta_almac_s3]
                         ,'tag_script' :[self.str_tag_script]
-                        ,'tipo_ejec' :[self.str_tipo_ejec]
-                        ,'url_webscrapping' :[self.str_url_webscrapping]
-                        ,'status_ejec' :[self.str_status_ejec]
+                        #,'tipo_ejec' :[self.str_tipo_ejec]
+                        #,'url_webscrapping' :[self.str_url_webscrapping]
+                        #,'status_ejec' :[self.str_status_ejec]
                         }
 
         df = pd.DataFrame(dict_Ejecucion, columns= ['id_ejec'
                                                     , 'id_archivo'
                                                     , 'usuario_ejec'
                                                     , 'instancia_ejec'
-                                                    , 'fecha_hora_ejec'
+                                                    #, 'fecha_hora_ejec'
                                                     , 'bucket_s3'
                                                     , 'ruta_almac_s3'
                                                     , 'tag_script'
-                                                    , 'tipo_ejec'
-                                                    , 'url_webscrapping'
-                                                    , 'status_ejec']
-                                                    )
+                                                    #, 'tipo_ejec'
+                                                    #, 'url_webscrapping'
+                                                    #, 'status_ejec'
+                                                    ]
+                         )
 
-        df.to_csv(self.str_NombreDataFrame, index = False, header=True)
+        df.to_csv(self.str_NombreDataFrame, index = False, header=False)
 
         return
