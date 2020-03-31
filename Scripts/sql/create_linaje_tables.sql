@@ -6,17 +6,17 @@
 /**************************** Título ejecuciones ****************************/
 drop table if exists linaje.ejecuciones;
 create table linaje.ejecuciones (
-  "id_ejec" VARCHAR(40),
-  "id_archivo" VARCHAR(20),
+  "id_ejec" VARCHAR(20),
+  "id_archivo" VARCHAR(40),
   "usuario_ejec" VARCHAR(20),
   "instancia_ejec" VARCHAR(20),
-  "fecha_hora_ejec" TIMESTAMP,
+  --"fecha_hora_ejec" TIMESTAMP,
   "bucket_s3" VARCHAR(40),
   "ruta_almac_s3" VARCHAR(100),
-  "tag_script" VARCHAR(20),
-  "tipo_ejec" VARCHAR(1),
-  "url_webscrapping" VARCHAR(100),
-  "status_ejec" VARCHAR(1)
+  "tag_script" VARCHAR(20)--,
+  --"tipo_ejec" VARCHAR(5),
+  --"url_webscrapping" VARCHAR(100),
+  --"status_ejec" VARCHAR(5)
 );
 comment on table linaje.ejecuciones is 'describe los datos principales de las ejecuciones';
 
