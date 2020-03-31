@@ -38,9 +38,9 @@ for anio in arr_Anios:
             bucket_name = "bucket-rita"
             str_ArchivoLocal='Descargas/'+os.path.basename(objWebScraping.str_ArchivoDescargado+'.csv')
             str_RutaS3='carga_inicial/'+str(anio)+'/'+mes+'/'
-            # objWebScraping.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
+            objWebScraping.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
 
             # Una vez mandado el archivo a S3, lo borramos de la carpeta de Descargas
-            # os.system("rm Descargas/*.csv")
+            os.system("rm Descargas/*.csv")
 
 print('---Fin web scraping Inicial---\n')
