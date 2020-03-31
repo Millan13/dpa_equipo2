@@ -22,11 +22,22 @@ class RitaWebScraping:
     
     
     # Campos deseados
-    dict_campos_activar = {'Year':3,'Month':5,'DayofMonth':6,
-                           'DayofWeek':7,'DepTime':37,'CRSDepTime':36,
-                           'CRSArrTime':48,'Reporting_Airline':10,'Flight_Number_Reporting_Airline':14,
-                           'Tail_Number':13,'CRSElapsedTime':60,'DepDelayMinutes':38,
-                           'Origin':19,'Dest':29,'Distance':64}
+    dict_campos_activar = {'Year':3
+                          ,'Month':5
+                          #,'DayofMonth':6
+                          #,'DayofWeek':7
+                          #,'DepTime':37
+                          #,'CRSDepTime':36
+                          #,'CRSArrTime':48
+                          #,'Reporting_Airline':10
+                          #,'Flight_Number_Reporting_Airline':14
+                          #,'Tail_Number':13
+                          #,'CRSElapsedTime':60
+                          #,'DepDelayMinutes':38
+                          #,'Origin':19
+                          #,'Dest':29
+                          #,'Distance':64
+                          }
     # Campos pre-seleccionados
     dict_campos_desactivar = {'OriginAirportID':16,'OriginAirportSeqID':17,'OriginCityMarketID':18,
                               'DestAirportID':26,'DestAirportSeqID':27,'DestCityMarketID':28}
@@ -67,15 +78,16 @@ class RitaWebScraping:
         # Seleccionamos los campos deseados
         
         # Seleccionamos los campos que están pre-seleccionados al abrir la página de donde se hará la descarga de la información
-        for campo in self.dict_campos_desactivar.values():
-            xpath_preselec = '"/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[campo]/td[%d]/input[@type=\'checkbox\']"'% campo
-            driver.find_element_by_xpath(xpath_preselec).click()
+        #for campo in self.dict_campos_desactivar.values():
+        #    xpath_preselec = '"/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"'% campo
+        #    driver.find_element_by_xpath(xpath_preselec).click()
         
          
         # Seleccionamos los campos deseados para crear la base de datos
         for campo in self.dict_campos_activar.values():
-            xpath_finales = '"/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[campo]/td[%d]/input[@type=\'checkbox\']"'% campo
+            xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
             driver.find_element_by_xpath(xpath_finales).click()
+
 
         
         
@@ -139,8 +151,8 @@ class RitaWebScraping:
 
 class Auxiliar:
 
-    str_Ambiente='Local'
-    #str_Ambiente='EC2'
+    #str_Ambiente='Local'
+    str_Ambiente='EC2'
 
     str_TipoEjecucion='Prueba'
     #str_TipoEjecucion='Real'
@@ -173,8 +185,8 @@ class Auxiliar:
             self.str_DirDriver='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/chromedriver.exe'
             self.str_DirDescargas='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/Descargas'
         elif self.str_Ambiente=='EC2':
-            self.str_DirDriver='/home/ec2-user/chromedriver.exe'
-            self.str_DirDescargas='/home/ec2-user/Descargas'
+            self.str_DirDriver='/home/ec2-user/dpa_equipo2/Scripts/chromedriver.exe'
+            self.str_DirDescargas='/home/ec2-user/dpa_equipo2/Scripts/Descargas'
 
         return self.str_DirDriver, self.str_DirDescargas
 
@@ -183,7 +195,7 @@ class Auxiliar:
         if self.str_Ambiente=='Local':
             self.str_DirTrabajo='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/'
         elif self.str_Ambiente=='EC2':
-            self.str_DirTrabajo='/home/ec2-user/'
+            self.str_DirTrabajo='/home/ec2-user/dpa_equipo2/Scripts'
 
         return self.str_DirTrabajo
 

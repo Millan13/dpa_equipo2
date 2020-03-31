@@ -3,7 +3,7 @@ wget https://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
 sudo mv chromedriver /usr/bin/chromedriver
 chromedriver --version
-cp /usr/bin/chromedriver .
+cp /usr/bin/chromedriver /home/ec2-user/dpa_equipo2/Scripts
 
 curl https://intoli.com/install-google-chrome.sh | bash
 sudo mv /usr/bin/google-chrome-stable /usr/bin/google-chrome
