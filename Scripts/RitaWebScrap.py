@@ -84,10 +84,10 @@ class RitaWebScraping:
         # Seleccionamos los campos deseados
         
         # Seleccionamos los campos que están pre-seleccionados al abrir la página de donde se hará la descarga de la información
-        for campo in self.dict_campos_desactivar.values():
-            xpath_preselec = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
-            driver.find_element_by_xpath(xpath_preselec).click()
-        
+        #for campo in self.dict_campos_desactivar.values():
+        #    xpath_preselec = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
+        #    driver.find_element_by_xpath(xpath_preselec).click()
+        #time.sleep(5)
          
         # Seleccionamos los campos deseados para crear la base de datos
         for campo in self.dict_campos_activar.values():
