@@ -1,7 +1,7 @@
 import boto3
 from RitaWebScrap import Auxiliar
 
-print('---Inicio creación directorios---')
+print('\n---Inicio creación directorios---')
 
 # Instanciamos la clase Auxiliar
 objAuxiliar = Auxiliar()
@@ -27,4 +27,4 @@ directory_name = 'carga_recurrente'
 print('directory_name: ', directory_name)
 cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name+'/'))
 
-print('---Fin creación directorios---')
+print('---Fin creación directorios---\n')
