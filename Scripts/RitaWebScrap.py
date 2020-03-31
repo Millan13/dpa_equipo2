@@ -180,7 +180,7 @@ class Auxiliar:
     def ObtenerMeses(self):
 
         if self.str_TipoEjecucion == 'Prueba':
-            self.arr_Meses=['January']
+            self.arr_Meses=['January','February']
         else:
             self.arr_Meses=['January','February','March','April','May','June'
             ,'July','August','September','October','November','December']
@@ -224,3 +224,53 @@ class Auxiliar:
             )
 
         return s3
+
+class voEjecucion:
+
+    str_id_ejec = '1'
+    str_id_archivo = '2'
+    str_usuario_ejec = '3'
+    str_instancia_ejec = '4'
+    dttm_fecha_hora_ejec = datetime.datetime.now()
+    str_bucket_s3 = '5'
+    str_ruta_almac_s3 = '6'
+    str_tag_script = '7'
+    str_tipo_ejec = '8'
+    str_url_webscrapping = '9'
+    str_status_ejec = '0'
+
+    str_NombreDataFrame = ' '
+
+    def crearCSV(self):
+        import pandas as pd
+        import time
+
+        dict_Ejecucion={'id_ejec' :[self.str_id_ejec]
+                        ,'id_archivo' :[self.str_id_archivo]
+                        ,'usuario_ejec' :[self.str_usuario_ejec]
+                        ,'instancia_ejec' :[self.str_instancia_ejec]
+                        ,'fecha_hora_ejec' :[self.dttm_fecha_hora_ejec]
+                        ,'bucket_s3' :[self.str_bucket_s3]
+                        ,'ruta_almac_s3' :[self.str_ruta_almac_s3]
+                        ,'tag_script' :[self.str_tag_script]
+                        ,'tipo_ejec' :[self.str_tipo_ejec]
+                        ,'url_webscrapping' :[self.str_url_webscrapping]
+                        ,'status_ejec' :[self.str_status_ejec]
+                        }
+
+        df = pd.DataFrame(dict_Ejecucion, columns= ['id_ejec'
+                                                    , 'id_archivo'
+                                                    , 'usuario_ejec'
+                                                    , 'instancia_ejec'
+                                                    , 'fecha_hora_ejec'
+                                                    , 'bucket_s3'
+                                                    , 'ruta_almac_s3'
+                                                    , 'tag_script'
+                                                    , 'tipo_ejec'
+                                                    , 'url_webscrapping'
+                                                    , 'status_ejec']
+                                                    )
+
+        df.to_csv(self.str_NombreDataFrame, index = False, header=True)
+
+        return
