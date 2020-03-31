@@ -29,3 +29,8 @@ pip3 install numpy
 
 sudo yum update
 sudo yum install postgresql postgresql-contrib
+
+pip3 install psycopg2-binary
+pip3 install click
+pip3 install dynaconf
+export LC_ALL=en_US.UTF-8
