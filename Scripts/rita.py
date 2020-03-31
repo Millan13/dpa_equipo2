@@ -17,7 +17,7 @@ from pathlib import Path
 
 @click.group()
 @click.pass_context
-def (ctx):
+def rita(ctx):
     ctx.ensure_object(dict)
     #conn = psycopg2.connect(settings.get('PGCONNSTRING'))
     conn = psycopg2.connect(database="bd_rita"
