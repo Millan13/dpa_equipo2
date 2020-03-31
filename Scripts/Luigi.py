@@ -29,11 +29,39 @@ class Tarea_07(luigi.Task):
         str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
         return luigi.LocalTarget('Tarea_07')
 
+class Tarea_08(luigi.Task):
+    param = luigi.Parameter(default='8')
+
+    def requires(self):
+        return Tarea_07(self.param)
+
+    def run(self):
+        os.system('python3 rita.py create-schemas')
+        os.system('echo OK > Tarea_08')
+
+    def output(self):
+        str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
+        return luigi.LocalTarget('Tarea_08')
+
+class Tarea_09(luigi.Task):
+    param = luigi.Parameter(default='9')
+
+    def requires(self):
+        return Tarea_08(self.param)
+
+    def run(self):
+        os.system('python3 rita.py create-linaje-tables')
+        os.system('echo OK > Tarea_09')
+
+    def output(self):
+        str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
+        return luigi.LocalTarget('Tarea_09')
+
 class Tarea_10(luigi.Task):
     param = luigi.Parameter(default='10')
 
     def requires(self):
-        return Tarea_07(self.param)
+        return Tarea_09(self.param)
 
     def run(self):
         os.system("python3 10_web_Scraping_Rita.py")
