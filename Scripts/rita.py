@@ -41,48 +41,42 @@ def rita(ctx):
 @rita.command()
 @click.pass_context
 def create_schemas(ctx):
+    print('\n---Inicio creación schemas---')
+
     query = ctx.obj['queries'].get('create_schemas')
     conn = ctx.obj['conn']
     with conn.cursor() as cur:
         cur.execute(query)
 
+    print('---Fin creación schemas---\n')
+
 
 @rita.command()
 @click.pass_context
 def create_linaje_tables(ctx):
+    print('\n---Inicio creación tablas---')
+
     query = ctx.obj['queries'].get('create_linaje_tables')
     conn = ctx.obj['conn']
     with conn.cursor() as cur:
         cur.execute(query)
 
+    print('---Fin creación tablas---\n')
 
 @rita.command()
 @click.pass_context
 def load_rita(ctx):
-    for data_file in Path('.').glob('*.csv'):
+
+    print('\n---Inicio carga de linaje---')
+
+    # Barremos los archivos del Ejecuciones
+    for data_file in Path('Linaje/Ejecuciones').glob('*.csv'):
         print(data_file)
         table = data_file.stem
 
-        #Puesto que existen archivos que por su tamaño fueron separados, ejecutaremos un split para identificar si estamos
-        #leyendo un archivo segmentado o no
-        x = table.split('-')
+        cargar_tabla(ctx, data_file, 'ejecuciones')
 
-        #Si sólo hay un elemento, significa que se trata de un archivo no segmentado
-        if len(x) == 1:
-
-            #Mandamos a llamar a la función genérica que carga los datos en la tabla deseada
-            #cargar_tabla(ctx, data_file, table)
-            x=1
-
-        #Si hay más de un elemento, significa que se trata de un archivo resultado de una segmentación.
-        else:
-
-            #En este caso, el nombre de la tabla se encuentra en el índice 1
-            table = x[1]
-
-            #Mandamos a llamar a la función genérica que carga los datos en la tabla deseada
-            #cargar_tabla(ctx, data_file, table)
-
+    print('---Fin carga de linaje---\n')
 
 ############# Cargar Tabla #############
 #
@@ -99,10 +93,10 @@ def load_rita(ctx):
 def cargar_tabla(ctx, data_file, nombre_tabla):
     conn = ctx.obj['conn']
     with conn.cursor() as cursor:
-        print(nombre_tabla)
+        print('nombre_tabla: ' + nombre_tabla)
 
         #Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
-        sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as '\t'"
+        sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as ','"
         print(sql_statement)
         buffer = io.StringIO()
         with open(data_file,'r') as data:
