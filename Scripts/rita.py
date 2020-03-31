@@ -59,7 +59,7 @@ def create_linaje_tables(ctx):
 @rita.command()
 @click.pass_context
 def load_rita(ctx):
-    for data_file in Path('data_rita').glob('*.tsv'):
+    for data_file in Path('.').glob('*.csv'):
         print(data_file)
         table = data_file.stem
 
@@ -71,7 +71,8 @@ def load_rita(ctx):
         if len(x) == 1:
 
             #Mandamos a llamar a la función genérica que carga los datos en la tabla deseada
-            cargar_tabla(ctx, data_file, table)
+            #cargar_tabla(ctx, data_file, table)
+            x=1
 
         #Si hay más de un elemento, significa que se trata de un archivo resultado de una segmentación.
         else:
@@ -80,7 +81,7 @@ def load_rita(ctx):
             table = x[1]
 
             #Mandamos a llamar a la función genérica que carga los datos en la tabla deseada
-            cargar_tabla(ctx, data_file, table)
+            #cargar_tabla(ctx, data_file, table)
 
 
 ############# Cargar Tabla #############
