@@ -5,6 +5,7 @@ import time
 from RitaWebScrap import RitaWebScraping
 from RitaWebScrap import Auxiliar
 from RitaWebScrap import voEjecucion
+from RitaWebScrap import voArchivo
 
 print('\n---Inicio web scraping Inicial---')
 
@@ -16,6 +17,7 @@ arr_Meses=objAuxiliar.ObtenerMeses()
 # Instanciamos la clase que realizará el WebScraping
 objWebScraping = RitaWebScraping()
 objEjecucion = voEjecucion()
+objArchivo = voArchivo()
 
 # Asignamos la propiedades del ambiente donde se trabajará
 for anio in arr_Anios:
@@ -42,9 +44,10 @@ for anio in arr_Anios:
             str_RutaS3='carga_inicial/'+str(anio)+'/'+mes+'/'
             objWebScraping.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
 
+            objArchivo.nbr_tamanio_archivo=objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado+'.csv')
             # Una vez mandado el archivo a S3, lo borramos de la carpeta de Descargas
             os.system("rm Descargas/*.csv")
-            objEjecucion.str_id_ejec=objAuxiliar.ObtenerMaxId()+1
+            objEjecucion.str_id_ejec=int(objAuxiliar.ObtenerMaxId()+1)
             objEjecucion.str_id_archivo=os.path.basename(objWebScraping.str_ArchivoDescargado+'.csv')
             objEjecucion.str_bucket_s3=bucket_name
             objEjecucion.str_ruta_almac_s3=str_RutaS3
@@ -53,5 +56,14 @@ for anio in arr_Anios:
             objEjecucion.str_instancia_ejec=objAuxiliar.ObtenerIp()
             objEjecucion.str_NombreDataFrame='Linaje/Ejecuciones/'+str(anio)+str(mes)+'.csv'
             objEjecucion.crearCSV()
+
+            objArchivo.str_id_archivo=objEjecucion.str_id_archivo
+            objArchivo.nbr_num_registros=2
+            objArchivo.nbr_num_columnas=3
+            #objArchivo.nbr_tamanio_archivo=objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado+'.csv')
+            objArchivo.str_anio=str(anio)
+            objArchivo.str_mes=str(mes)
+            objArchivo.str_NombreDataFrame='Linaje/Archivos/'+str(anio)+str(mes)+'.csv'
+            objArchivo.crearCSV()
 
 print('---Fin web scraping Inicial---\n')
