@@ -328,7 +328,7 @@ class voArchivo:
 
     str_id_archivo = '1'
     nbr_num_registros = 2
-    nbr_num_columnas = 3
+    nbr_num_columnas = 0
     nbr_tamanio_archivo = 4
     str_anio = '5'
     str_mes = '6'
