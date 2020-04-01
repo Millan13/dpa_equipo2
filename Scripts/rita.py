@@ -76,6 +76,13 @@ def load_rita(ctx):
 
         cargar_tabla(ctx, data_file, 'ejecuciones')
 
+    # Barremos los archivos de la carpeta Archivos
+    for data_file in Path('Linaje/Archivos').glob('*.csv'):
+        print(data_file)
+        table = data_file.stem
+
+        cargar_tabla(ctx, data_file, 'archivos')
+
     print('---Fin carga de linaje---\n')
 
 ############# Cargar Tabla #############
