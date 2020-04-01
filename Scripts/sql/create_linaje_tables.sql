@@ -24,7 +24,7 @@ comment on table linaje.ejecuciones is 'describe los datos principales de las ej
 /**************************** Título archivos ****************************/
 drop table if exists linaje.archivos;
 create table linaje.archivos (
-  "id_archivo" VARCHAR(20),
+  "id_archivo" VARCHAR(40),
   "num_registros" VARCHAR(20),
   "num_columnas" VARCHAR(10),
   "tamanio_archivo" FLOAT,
