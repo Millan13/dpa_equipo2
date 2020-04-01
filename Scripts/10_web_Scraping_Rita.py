@@ -45,6 +45,8 @@ for anio in arr_Anios:
             objWebScraping.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
 
             objArchivo.nbr_tamanio_archivo=objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado+'.csv')
+            objArchivo.nbr_num_registros = len(open(objWebScraping.str_ArchivoDescargado+'.csv').readlines(  ))
+
             # Una vez mandado el archivo a S3, lo borramos de la carpeta de Descargas
             os.system("rm Descargas/*.csv")
             objEjecucion.str_id_ejec=int(objAuxiliar.ObtenerMaxId()+1)
@@ -58,8 +60,7 @@ for anio in arr_Anios:
             objEjecucion.crearCSV()
 
             objArchivo.str_id_archivo=objEjecucion.str_id_archivo
-            objArchivo.nbr_num_registros=2
-            objArchivo.nbr_num_columnas=3
+            #objArchivo.nbr_num_columnas= Pendiente
             #objArchivo.nbr_tamanio_archivo=objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado+'.csv')
             objArchivo.str_anio=str(anio)
             objArchivo.str_mes=str(mes)
