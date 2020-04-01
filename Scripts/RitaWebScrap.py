@@ -168,9 +168,17 @@ class Auxiliar:
     arr_Anios=[]
     arr_Meses=[]
 
+    def ObtenerTamanioArchivo(self, str_NombreArchivo):
+        import os
+
+        nbr_file_size = os.stat(str_NombreArchivo).st_size
+        return nbr_file_size
+
+
     def ObtenerMaxId(self):
         import psycopg2
 
+        nbr_MaxId=0
         str_Query='select max(id_ejec) from linaje.ejecuciones;'
 
         conn = psycopg2.connect(database="bd_rita"
@@ -184,11 +192,16 @@ class Auxiliar:
         cur.execute(str_Query)
 
         if  cur.rowcount==0:
-            return 0
+            nbr_MaxId=0
         else:
             row=cur.fetchone()
-            print(row[0])
-            return row[0]
+            if row[0] is None:
+                nbr_MaxId=0
+            else:
+                nbr_MaxId=row[0]
+
+        print(nbr_MaxId)
+        return nbr_MaxId
 
 
     def ObtenerUsuario(self):
@@ -304,6 +317,41 @@ class voEjecucion:
                                                     #, 'tipo_ejec'
                                                     #, 'url_webscrapping'
                                                     #, 'status_ejec'
+                                                    ]
+                         )
+
+        df.to_csv(self.str_NombreDataFrame, index = False, header=False)
+
+        return
+
+class voArchivo:
+
+    str_id_archivo = '1'
+    nbr_num_registros = 2
+    nbr_num_columnas = 3
+    nbr_tamanio_archivo = 4
+    str_anio = '5'
+    str_mes = '6'
+
+    str_NombreDataFrame = ' '
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion={'id_archivo' :[self.str_id_archivo]
+                        ,'num_registros' :[self.nbr_num_registros]
+                        ,'num_columnas' :[self.nbr_num_columnas]
+                        ,'tamanio_archivo' :[self.nbr_tamanio_archivo]
+                        ,'anio' :[self.str_anio]
+                        ,'mes' :[self.str_mes]
+                        }
+
+        df = pd.DataFrame(dict_Ejecucion, columns= ['id_archivo'
+                                                    , 'num_registros'
+                                                    , 'num_columnas'
+                                                    , 'tamanio_archivo'
+                                                    , 'anio'
+                                                    , 'mes'
                                                     ]
                          )
 
