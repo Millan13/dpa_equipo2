@@ -4,7 +4,7 @@ import os
 import time
 
 # Librerias de nosotros
-from Rita import Auxiliar
+from Auxiliar import Auxiliar
 import Luigi_Tasks as lt
 
 class Tarea_10(luigi.Task):
