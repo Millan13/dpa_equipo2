@@ -11,6 +11,7 @@ import numpy as np
 import boto3
 import glob
 from pathlib import Path
+from Auxiliar import Auxiliar
 
 class RitaWebScraping:
 
@@ -59,7 +60,7 @@ class RitaWebScraping:
     def __init__(self):
 
         # Cargamos los directorios de trabajo
-        self.str_DirDriver, self.str_DirDescargas = Auxiliar().ObtenerDirectorios()
+        self.str_DirDriver, self.str_DirDescargas = self.ObtenerDirectorios()
         self.str_Url='https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236'
 
         return
