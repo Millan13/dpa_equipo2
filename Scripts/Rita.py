@@ -15,7 +15,7 @@ from pathlib import Path
 class RitaWebScraping:
 
     #Declaración de propiedade
-    str_Url='prueba'
+    str_Url=''
 
     # Campos deseados
     dict_campos_activar = {
@@ -161,11 +161,11 @@ class Auxiliar:
         import psycopg2
         import psycopg2.extras
 
-        conn = psycopg2.connect(database="bd_rita"
-                               ,user="postgres"
-                               ,password="12345678"
-                               ,host="database-rita.cnevbxmlm0lp.us-west-2.rds.amazonaws.com"
-                               ,port='5432'
+        conn = psycopg2.connect(database="nombre_base"
+                               ,user="nombre_usuario"
+                               ,password="password"
+                               ,host="end_point"
+                               ,port='puerto'
                                )
         return conn
 
