@@ -1,3 +1,7 @@
+import os
+import boto3
+from pathlib import Path
+
 class Auxiliar:
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
@@ -12,11 +16,11 @@ class Auxiliar:
         import psycopg2
         import psycopg2.extras
 
-        conn = psycopg2.connect(database="nombre_base"
-                               ,user="nombre_usuario"
-                               ,password="password"
-                               ,host="end_point"
-                               ,port='puerto'
+        conn = psycopg2.connect(database="bd_rita"
+                               ,user="postgres"
+                               ,password="pass"
+                               ,host="end-point"
+                               ,port='5432'
                                )
         return conn
 
