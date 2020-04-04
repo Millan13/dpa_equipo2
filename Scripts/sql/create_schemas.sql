@@ -1,4 +1,4 @@
---------------------- Preparación de esquemas
+--------------------- Preparacion de esquemas
 
 ----- Esquema linaje
 drop schema if exists linaje cascade;
