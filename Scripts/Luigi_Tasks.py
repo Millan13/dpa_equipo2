@@ -30,9 +30,14 @@ def CrearDirectoriosS3():
     print('\n---Inicio creacion directorio S3--- \n')
     import boto3
     from Rita import Auxiliar
+    from Rita import RitaWebScraping
+
     objAuxiliar = Auxiliar()
-    arr_Anios = objAuxiliar.ObtenerAnios()
-    arr_Meses = objAuxiliar.ObtenerMeses()
+    objWebScraping = RitaWebScraping()
+
+    arr_Anios = objWebScraping.ObtenerAnios()
+    arr_Meses = objWebScraping.ObtenerMeses()
+
     cnx_S3 = objAuxiliar.CrearConexionS3()
     bucket_name = 'bucket-rita'
     for anio in arr_Anios:
@@ -101,10 +106,10 @@ def WebScrapingInicial():
     from Linaje import voArchivos
     print('\n---Inicio web scraping Inicial---')
     objAuxiliar = Auxiliar()
-    arr_Anios = objAuxiliar.ObtenerAnios()
-    arr_Meses = objAuxiliar.ObtenerMeses()
     objWebScraping = RitaWebScraping()
-    print('1 objWebScraping.str_Url: ', objWebScraping.str_Url)
+    arr_Anios = objWebScraping.ObtenerAnios()
+    arr_Meses = objWebScraping.ObtenerMeses()
+
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
     for anio in arr_Anios:
