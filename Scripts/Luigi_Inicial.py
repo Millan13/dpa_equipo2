@@ -28,7 +28,6 @@ class Tarea_20(luigi.Task):
             os.system('echo OK > Tarea_20')
 
     def output(self):
-        str_DirTrabajo=Auxiliar().ObtenerDirectorioTrabajo()
         return luigi.LocalTarget('Tarea_20')
 
 class Tarea_30(luigi.Task):
