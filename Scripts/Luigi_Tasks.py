@@ -1,5 +1,5 @@
 import os
-from Rita import Auxiliar
+from Auxiliar import Auxiliar
 
 def CrearDirectoriosEC2():
     print('\n---Inicio creacion directorio EC2 ---\n')
@@ -29,7 +29,7 @@ def CrearDirectoriosEC2():
 def CrearDirectoriosS3():
     print('\n---Inicio creacion directorio S3--- \n')
     import boto3
-    from Rita import Auxiliar
+    from Auxiliar import Auxiliar
     from Rita import RitaWebScraping
 
     objAuxiliar = Auxiliar()
@@ -101,7 +101,7 @@ def CrearTablasLinajeRDS():
 def WebScrapingInicial():
     import glob, os, time
     from Rita import RitaWebScraping
-    from Rita import Auxiliar
+    from Auxiliar import Auxiliar
     from Linaje import voEjecucion
     from Linaje import voArchivos
     print('\n---Inicio web scraping Inicial---')
