@@ -116,7 +116,6 @@ def WebScrapingInicial():
 
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
-    objArchivo_Det = voArchivos_Det()
 
     for anio in arr_Anios:
         print('anio: ', anio)
@@ -167,14 +166,15 @@ def WebScrapingInicial():
                 objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
                 objArchivo.crearCSV()
 
-    # Obtenemos todos los nombres de columnas del diccionario y los ponemos en un arreglo
-    np_Campos = np.empty([0, 2])
-    for campo in objWebScraping.dict_campos_activar:
-        np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo,campo]], axis=0)
+                # Obtenemos todos los nombres de columnas del diccionario y los ponemos en un arreglo
+                objArchivo_Det = voArchivos_Det()
+                np_Campos = np.empty([0, 2])
+                for campo in objWebScraping.dict_campos_activar:
+                    np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo,campo]], axis=0)
 
-    objArchivo_Det.np_Campos=np_Campos
-    objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-    objArchivo_Det.crearCSV()
+                objArchivo_Det.np_Campos=np_Campos
+                objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+                objArchivo_Det.crearCSV()
 
     print('---Fin web scraping Inicial---\n')
     return 0
@@ -201,6 +201,15 @@ def EnviarMetadataLinajeRDS():
         except:
             print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
             return 1
+
+    for data_file in Path('Linaje/ArchivosDet').glob('*.csv'):
+        table = data_file.stem
+        #try:
+        objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos_det')
+        #except:
+        #print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
+        #return 1
+
 
     print('\n---Fin carga de linaje---\n')
     return 0
