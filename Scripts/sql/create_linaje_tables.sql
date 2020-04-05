@@ -38,7 +38,7 @@ comment on table linaje.archivos is 'describe caracteristicas especificas de arc
 drop table if exists linaje.archivos_det;
 create table linaje.archivos_det (
   "id_archivo" VARCHAR(20),
-  "id_col" VARCHAR(20)
+  "nombre_col" VARCHAR(20)
 );
 comment on table linaje.archivos_det is 'describe detalles del archivo';
 
