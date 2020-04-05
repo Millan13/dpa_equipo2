@@ -103,7 +103,7 @@ class RitaWebScraping:
         # Bajamos el archivo
         driver.execute_script('tryDownload()')
         str_ext=''
-
+        print('Bajando el archivo...')
         # Este while es para esperar a que termine la descarga completa del archivo en turno
         while str_ext != '.zip':
             print(datetime.datetime.now())
@@ -167,8 +167,8 @@ class RitaWebScraping:
     def ObtenerDirectorios(self):
 
         if self.str_Ambiente=='Local':
-            self.str_DirDriver='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/chromedriver.exe'
-            self.str_DirDescargas='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/Descargas'
+            self.str_DirDriver='/Users/Marco/github/dpa_equipo2/Scripts/chromedriver.exe'
+            self.str_DirDescargas='/Users/Marco/github/dpa_equipo2/Scripts/Descargas'
         elif self.str_Ambiente=='EC2':
             self.str_DirDriver='/home/ec2-user/dpa_equipo2/Scripts/chromedriver.exe'
             self.str_DirDescargas='/home/ec2-user/dpa_equipo2/Scripts/Descargas'
@@ -178,7 +178,7 @@ class RitaWebScraping:
     def ObtenerDirectorioTrabajo(self):
 
         if self.str_Ambiente=='Local':
-            self.str_DirTrabajo='/Users/Marco/Ciencia_de_Datos/Maestria/2do_Semestre/Liliana/Pruebas/'
+            self.str_DirTrabajo='/Users/Marco/github/dpa_equipo2/Scripts'
         elif self.str_Ambiente=='EC2':
             self.str_DirTrabajo='/home/ec2-user/dpa_equipo2/Scripts'
 
