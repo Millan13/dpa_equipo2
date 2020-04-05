@@ -1,4 +1,4 @@
-
+import numpy as np
 
 class voEjecucion:
 
@@ -88,24 +88,20 @@ class voArchivos:
 
 class voArchivos_Det:
 
-    str_id_archivo = '1'
-    str_id_col = 2
+    str_id_archivo = ''
+    str_id_col = ''
+    np_Campos = np.empty([0, 2])
 
     str_NombreDataFrame = ' '
 
     def crearCSV(self):
         import pandas as pd
 
-        dict_Ejecucion={'id_archivo' :[self.str_id_archivo]
-                        ,'num_registros' :[self.str_id_col]
-                        }
+        # Se construye el dataframe con base en el arreglo de campos
+        columns = ['id_archivo', 'col_names']
+        df = pd.DataFrame(data=self.np_Campos, columns=columns)
 
-        df = pd.DataFrame(dict_Ejecucion, columns= ['id_archivo'
-                                                    , 'num_registros'
-                                                    ]
-                         )
-
+        # Se pasa a un csv
         df.to_csv(self.str_NombreDataFrame, index = False, header=False)
 
         return
-
