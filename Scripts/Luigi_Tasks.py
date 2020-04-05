@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from Auxiliar import Auxiliar
 
 def CrearDirectoriosEC2():
@@ -99,12 +100,15 @@ def CrearTablasLinajeRDS():
 
 
 def WebScrapingInicial():
+
+    print('\n---Inicio web scraping Inicial---')
     import glob, os, time
     from Rita import RitaWebScraping
     from Auxiliar import Auxiliar
     from Linaje import voEjecucion
     from Linaje import voArchivos
-    print('\n---Inicio web scraping Inicial---')
+    from Linaje import voArchivos_Det
+
     objAuxiliar = Auxiliar()
     objWebScraping = RitaWebScraping()
     arr_Anios = objWebScraping.ObtenerAnios()
@@ -112,6 +116,8 @@ def WebScrapingInicial():
 
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
+    objArchivo_Det = voArchivos_Det()
+
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -119,6 +125,7 @@ def WebScrapingInicial():
             try:
                 objWebScraping.DescargarAnioMes(anio, mes)
             except:
+                print('Ocurrio una excepcion en DescargarAnioMes')
                 return 1
 
             str_name = objWebScraping.str_ArchivoDescargado
@@ -135,31 +142,39 @@ def WebScrapingInicial():
                 try:
                     objAuxiliar.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
                 except:
-                    print('Ocurrio una excepcion al mandar el archiv a S3')
+                    print('Ocurrio una excepcion en MandarArchivoS3')
                     return 1
-                else:
-                    objArchivo.nbr_tamanio_archivo = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
-                    objArchivo.nbr_num_registros = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
-                    os.system('rm Descargas/*.csv')
+                objArchivo.nbr_tamanio_archivo = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
+                objArchivo.nbr_num_registros = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
+                os.system('rm Descargas/*.csv')
 
-                    objEjecucion.str_id_ejec = int(objAuxiliar.ObtenerMaxId() + 1)
-                    objEjecucion.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
-                    objEjecucion.str_bucket_s3 = bucket_name
-                    objEjecucion.str_ruta_almac_s3 = str_RutaS3
-                    objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
-                    objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
-                    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' + str(anio) + str(mes) + '.csv'
-                    objEjecucion.str_tipo_ejec = 'CI'
-                    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
-                    objEjecucion.str_status_ejec = 'Ok'
-                    objEjecucion.crearCSV()
+                objEjecucion.str_id_ejec = int(objAuxiliar.ObtenerMaxId() + 1)
+                objEjecucion.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+                objEjecucion.str_bucket_s3 = bucket_name
+                objEjecucion.str_ruta_almac_s3 = str_RutaS3
+                objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
+                objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
+                objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' + str(anio) + str(mes) + '.csv'
+                objEjecucion.str_tipo_ejec = 'CI'
+                objEjecucion.str_url_webscrapping = objWebScraping.str_Url
+                objEjecucion.str_status_ejec = 'Ok'
+                objEjecucion.crearCSV()
 
-                    objArchivo.str_id_archivo = objEjecucion.str_id_archivo
-                    objArchivo.nbr_num_columnas = len(objWebScraping.dict_campos_activar)
-                    objArchivo.str_anio = str(anio)
-                    objArchivo.str_mes = str(mes)
-                    objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-                    objArchivo.crearCSV()
+                objArchivo.str_id_archivo = objEjecucion.str_id_archivo
+                objArchivo.nbr_num_columnas = len(objWebScraping.dict_campos_activar)
+                objArchivo.str_anio = str(anio)
+                objArchivo.str_mes = str(mes)
+                objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+                objArchivo.crearCSV()
+
+    # Obtenemos todos los nombres de columnas del diccionario y los ponemos en un arreglo
+    np_Campos = np.empty([0, 2])
+    for campo in objWebScraping.dict_campos_activar:
+        np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo,campo]], axis=0)
+
+    objArchivo_Det.np_Campos=np_Campos
+    objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+    objArchivo_Det.crearCSV()
 
     print('---Fin web scraping Inicial---\n')
     return 0
@@ -173,11 +188,11 @@ def EnviarMetadataLinajeRDS():
     cnn.autocommit = True
     for data_file in Path('Linaje/Ejecuciones').glob('*.csv'):
         table = data_file.stem
-        #try:
-        objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'ejecuciones')
-        #except:
-            #print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
-            #return 1
+        try:
+            objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'ejecuciones')
+        except:
+            print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
+            return 1
 
     for data_file in Path('Linaje/Archivos').glob('*.csv'):
         table = data_file.stem
