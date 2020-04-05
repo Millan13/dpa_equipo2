@@ -88,17 +88,14 @@ class voArchivos:
 
 class voArchivos_Det:
 
-    str_id_archivo = ''
-    str_id_col = ''
     np_Campos = np.empty([0, 2])
-
     str_NombreDataFrame = ' '
 
     def crearCSV(self):
         import pandas as pd
 
         # Se construye el dataframe con base en el arreglo de campos
-        columns = ['id_archivo', 'col_names']
+        columns = ['id_archivo', 'nombre_col']
         df = pd.DataFrame(data=self.np_Campos, columns=columns)
 
         # Se pasa a un csv
