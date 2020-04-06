@@ -40,7 +40,7 @@ def CrearDirectoriosS3():
     arr_Meses = objWebScraping.ObtenerMeses()
 
     cnx_S3 = objAuxiliar.CrearConexionS3()
-    bucket_name = 'bucket-rita'
+    bucket_name = 'bucket-dpa-rita-2020'
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -134,7 +134,7 @@ def WebScrapingInicial():
                 os.system("unzip 'Descargas/*.zip' -d Descargas/")
                 os.system('rm Descargas/*.zip')
                 cnx_S3 = objAuxiliar.CrearConexionS3()
-                bucket_name = 'bucket-rita'
+                bucket_name = 'bucket-dpa-rita-2020'
                 str_ArchivoLocal = 'Descargas/' + os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
                 str_RutaS3 = 'carga_inicial/' + str(anio) + '/' + mes + '/'
 

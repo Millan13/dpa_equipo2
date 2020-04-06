@@ -18,8 +18,8 @@ class Auxiliar:
 
         conn = psycopg2.connect(database="bd_rita"
                                ,user="postgres"
-                               ,password="pass"
-                               ,host="end-point"
+                               ,password="db#3lita3litam"
+                               ,host="test-db.c6eom7f2vied.us-east-1.rds.amazonaws.com"
                                ,port='5432'
                                )
         return conn
