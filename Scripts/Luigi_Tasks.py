@@ -24,11 +24,13 @@ def CrearDirectoriosEC2():
             os.mkdir(strDirectorio)
             print('Directorio:', strDirectorio, ' creado ')
 
-        return 0
     except FileExistsError:
         print('Excepcion en CrearDirectoriosS3-put_object():')
         raise
         return 1
+
+    print('\n---Fin creacion directorio EC2 ---\n')
+    return 0
 
 
 def CrearDirectoriosS3():
