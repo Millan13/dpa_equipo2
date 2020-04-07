@@ -1,11 +1,10 @@
 # Librerias de python
 import luigi
 import os
-import time
 
 # Librerias de nosotros
-from Auxiliar import Auxiliar
 import Luigi_Tasks as lt
+
 
 class Tarea_10(luigi.Task):
 
@@ -16,6 +15,7 @@ class Tarea_10(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('Tarea_10')
+
 
 class Tarea_20(luigi.Task):
 
@@ -30,6 +30,7 @@ class Tarea_20(luigi.Task):
     def output(self):
         return luigi.LocalTarget('Tarea_20')
 
+
 class Tarea_30(luigi.Task):
 
     def requires(self):
@@ -41,6 +42,7 @@ class Tarea_30(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('Tarea_30')
+
 
 class Tarea_40(luigi.Task):
 
@@ -54,6 +56,7 @@ class Tarea_40(luigi.Task):
     def output(self):
         return luigi.LocalTarget('Tarea_40')
 
+
 class Tarea_50(luigi.Task):
 
     def requires(self):
@@ -65,6 +68,7 @@ class Tarea_50(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('Tarea_50')
+
 
 class Tarea_60(luigi.Task):
 
