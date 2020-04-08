@@ -15,6 +15,7 @@ def CrearDB():
         print('Ya existe una BD creada')
     else:
         conn = psycopg2.connect(user=objAuxiliar.str_UsuarioDB,
+                                host=objAuxiliar.str_EndPointDB,
                                 password=objAuxiliar.str_PassDB)
 
         conn.autocommit = True
