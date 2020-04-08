@@ -43,7 +43,7 @@ class Auxiliar:
         str_Query = "SELECT datname FROM pg_database WHERE datname = '" + self.str_NombreDB + "' ;"
 
         conn = psycopg2.connect(user=self.str_UsuarioDB,
-                                host=self.str_EndPointDb,
+                                host=self.str_EndPointDB,
                                 password=self.str_PassDB)
 
         cur = conn.cursor()
