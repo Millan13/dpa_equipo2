@@ -5,6 +5,17 @@ from pathlib import Path
 
 class Auxiliar:
 
+    str_NombreDB = ''
+    str_UsuarioDB = ''
+    str_PassDB = ''
+    str_EndPointDb = ''
+
+    def __init__(self):
+        self.str_NombreDB = 'bd_rita'
+        self.str_UsuarioDB = 'postgres'
+        self.str_PassDB = 'pass'
+        self.str_EndPointDb = 'end-point'
+
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
 
@@ -16,10 +27,10 @@ class Auxiliar:
         import psycopg2
         import psycopg2.extras
 
-        conn = psycopg2.connect(database="bd_rita",
-                                user="postgres",
-                                password="pass",
-                                host="end-point",
+        conn = psycopg2.connect(database=self.str_NombreDB,
+                                user=self.str_UsuarioDB,
+                                password=self.str_PassDB,
+                                host=self.str_EndPointDb,
                                 port='5432'
                                 )
         return conn
