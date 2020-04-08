@@ -35,6 +35,27 @@ class Auxiliar:
                                 )
         return conn
 
+    def ExisteBaseCreada(self):
+
+        import psycopg2
+
+        bool_YaExiste = False
+        str_Query = "SELECT datname FROM pg_database WHERE datname = '" + self.str_NombreDB + "' ;"
+
+        conn = psycopg2.connect(user=self.str_UsuarioDB,
+                                host=self.str_EndPointDb,
+                                password=self.str_PassDB)
+
+        cur = conn.cursor()
+        cur.execute(str_Query)
+
+        if cur.rowcount == 0:
+            bool_YaExiste = False
+        else:
+            bool_YaExiste = True
+
+        return bool_YaExiste
+
     def ObtenerMaxId(self):
 
         nbr_MaxId = 0
