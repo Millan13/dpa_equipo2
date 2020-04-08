@@ -10,20 +10,24 @@ def CrearDB():
     import psycopg2
 
     objAuxiliar = Auxiliar()
-    conn = psycopg2.connect(user=objAuxiliar.str_UsuarioDB,
-                            password=objAuxiliar.str_PassDB)
 
-    conn.autocommit = True
-    queries = objAuxiliar.ObtenerQueries()
-    query = queries.get('preparar_base')
+    if objAuxiliar.ExisteBaseCreada():
+        print('Ya existe una BD creada')
+    else:
+        conn = psycopg2.connect(user=objAuxiliar.str_UsuarioDB,
+                                password=objAuxiliar.str_PassDB)
 
-    try:
-        with conn.cursor() as (cur):
-            cur.execute(query)
-    except Exception:
-        print('Excepcion en CrearDB-cur.execute')
-        raise
-        return 1
+        conn.autocommit = True
+        queries = objAuxiliar.ObtenerQueries()
+        query = queries.get('create_db')
+
+        try:
+            with conn.cursor() as (cur):
+                cur.execute(query)
+        except Exception:
+            print('Excepcion en CrearDB-cur.execute')
+            raise
+            return 1
 
     print('\n---Fin creacion DB ---\n')
     return 0
