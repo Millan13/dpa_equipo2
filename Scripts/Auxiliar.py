@@ -14,7 +14,7 @@ class Auxiliar:
         self.str_NombreDB = 'bd_rita'
         self.str_UsuarioDB = 'postgres'
         self.str_PassDB = 'pass'
-        self.str_EndPointDb = 'end-point'
+        self.str_EndPointDB = 'end-point'
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
@@ -30,7 +30,7 @@ class Auxiliar:
         conn = psycopg2.connect(database=self.str_NombreDB,
                                 user=self.str_UsuarioDB,
                                 password=self.str_PassDB,
-                                host=self.str_EndPointDb,
+                                host=self.str_EndPointDB,
                                 port='5432'
                                 )
         return conn
