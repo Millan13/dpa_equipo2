@@ -7,7 +7,7 @@ class voEjecucion:
     str_id_archivo = ''
     str_usuario_ejec = ''
     str_instancia_ejec = ''
-    # dttm_fecha_hora_ejec
+    dttm_fecha_hora_ejec =''
     str_bucket_s3 = ''
     str_ruta_almac_s3 = ''
     str_tag_script = ''
@@ -24,7 +24,7 @@ class voEjecucion:
                           'id_archivo': [self.str_id_archivo],
                           'usuario_ejec': [self.str_usuario_ejec],
                           'instancia_ejec': [self.str_instancia_ejec],
-                          # 'fecha_hora_ejec' :[self.dttm_fecha_hora_ejec]
+                          'fecha_hora_ejec' :[self.dttm_fecha_hora_ejec],
                           'bucket_s3': [self.str_bucket_s3],
                           'ruta_almac_s3': [self.str_ruta_almac_s3],
                           'tag_script': [self.str_tag_script],
@@ -37,7 +37,7 @@ class voEjecucion:
                                                    'id_archivo',
                                                    'usuario_ejec',
                                                    'instancia_ejec',
-                                                   # 'fecha_hora_ejec',
+                                                   'fecha_hora_ejec',
                                                    'bucket_s3',
                                                    'ruta_almac_s3',
                                                    'tag_script',
