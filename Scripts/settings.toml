@@ -1,0 +1,5 @@
+[default]
+user = 'postgres'
+dbname = 'bd_rita'
+host = 'end-point'
+password = 'pass'

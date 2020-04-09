@@ -1,7 +1,7 @@
 import os
 import boto3
 from pathlib import Path
-
+from dynaconf import settings
 
 class Auxiliar:
 
@@ -11,10 +11,10 @@ class Auxiliar:
     str_EndPointDb = ''
 
     def __init__(self):
-        self.str_NombreDB = 'bd_rita'
-        self.str_UsuarioDB = 'postgres'
-        self.str_PassDB = 'pass'
-        self.str_EndPointDB = 'end-point'
+        self.str_NombreDB = settings.get('dbname')
+        self.str_UsuarioDB = settings.get('user')
+        self.str_PassDB = settings.get('password')
+        self.str_EndPointDB = settings.get('host')
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
