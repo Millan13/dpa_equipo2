@@ -18,21 +18,21 @@ class RitaWebScraping:
     # str_TipoEjecucion='Real'
 
     # Campos deseados
-    dict_campos_activar = {'Year': 3
-                          ,'Month':5
-                          ,'DayofMonth':6
-                          ,'DayofWeek':7
-                          ,'Reporting_Airline':10
-                          ,'Tail_Number':13
-                          ,'Flight_Number_Reporting_Airline':14
-                          ,'Origin':19
-                          ,'Dest':29
-                          ,'CRSDepTime':36
-                          ,'DepTime':37
-                          ,'DepDelayMinutes':38
-                          ,'CRSArrTime':48
-                          ,'CRSElapsedTime':60
-                          ,'Distance':64
+    dict_campos_activar = {'Year': 3,
+                           'Month': 5,
+                           'DayofMonth': 6,
+                           'DayofWeek': 7,
+                           'Reporting_Airline': 10,
+                           'Tail_Number': 13,
+                           'Flight_Number_Reporting_Airline': 14,
+                           'Origin': 19,
+                           'Dest': 29,
+                           'CRSDepTime': 36,
+                           'DepTime': 37,
+                           'DepDelayMinutes': 38,
+                           'CRSArrTime': 48,
+                           'CRSElapsedTime': 60,
+                           'Distance': 64
                            }
     # Campos pre-seleccionados
     dict_campos_desactivar = {'OriginAirportID': 16,
