@@ -6,7 +6,21 @@ import os
 import Luigi_Tasks as lt
 
 
+class Tarea_05(luigi.Task):
+
+    def run(self):
+        # Si puede crear la base bien, generamos el archivo output
+        if lt.CrearDB() == 0:
+            os.system('echo OK > Tarea_05')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_05')
+
+
 class Tarea_10(luigi.Task):
+
+    def requires(self):
+        return Tarea_05()
 
     def run(self):
         # Si puede crear los directorios bien, generamos el archivo output
