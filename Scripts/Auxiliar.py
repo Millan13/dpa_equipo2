@@ -5,16 +5,25 @@ from dynaconf import settings
 
 class Auxiliar:
 
+    # Atributos S3
+    str_NombreBucket = ''
+
+    # Atributos RDS
     str_NombreDB = ''
     str_UsuarioDB = ''
     str_PassDB = ''
     str_EndPointDb = ''
 
     def __init__(self):
+
+        # RDS
         self.str_NombreDB = settings.get('dbname')
         self.str_UsuarioDB = settings.get('user')
         self.str_PassDB = settings.get('password')
         self.str_EndPointDB = settings.get('host')
+
+        # S3
+        self.str_NombreBucket = settings.get('bucket_name')
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
