@@ -18,21 +18,21 @@ class RitaWebScraping:
     # str_TipoEjecucion='Real'
 
     # Campos deseados
-    dict_campos_activar = {'Year': 3,
-                           'Month': 5,
-                           'DayofMonth': 6,
-                           'DayofWeek': 7,
-                           'DepTime': 37,
-                           'CRSDepTime': 36,
-                           # ,'CRSArrTime':48,
-                           # ,'Reporting_Airline':10,
-                           # ,'Flight_Number_Reporting_Airline':14,
-                           # ,'Tail_Number':13,
-                           # ,'CRSElapsedTime':60,
-                           # ,'DepDelayMinutes':38,
-                           # ,'Origin':19,
-                           # ,'Dest':29,
-                           # ,'Distance':64,
+    dict_campos_activar = {'Year': 3
+                          ,'Month':5
+                          ,'DayofMonth':6
+                          ,'DayofWeek':7
+                          ,'Reporting_Airline':10
+                          ,'Tail_Number':13
+                          ,'Flight_Number_Reporting_Airline':14
+                          ,'Origin':19
+                          ,'Dest':29
+                          ,'CRSDepTime':36
+                          ,'DepTime':37
+                          ,'DepDelayMinutes':38
+                          ,'CRSArrTime':48
+                          ,'CRSElapsedTime':60
+                          ,'Distance':64
                            }
     # Campos pre-seleccionados
     dict_campos_desactivar = {'OriginAirportID': 16,
@@ -100,6 +100,8 @@ class RitaWebScraping:
         for campo in self.dict_campos_activar.values():
             xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
             driver.find_element_by_xpath(xpath_finales).click()
+            nbr_Aleat = np.random.uniform(0,2,1)
+            time.sleep(nbr_Aleat)
 
         # Bajamos el archivo
         driver.execute_script('tryDownload()')
