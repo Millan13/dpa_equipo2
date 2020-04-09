@@ -78,7 +78,6 @@ def CrearDirectoriosS3():
     arr_Meses = objWebScraping.ObtenerMeses()
 
     cnx_S3 = objAuxiliar.CrearConexionS3()
-    bucket_name = 'bucket-rita'
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -87,7 +86,7 @@ def CrearDirectoriosS3():
             print('directory_name: ', directory_name)
 
             try:
-                cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name+'/'))
+                cnx_S3.put_object(Bucket=objAuxiliar.str_NombreBucket, Key=(directory_name+'/'))
             except Exception:
                 print('Excepcion en CrearDirectoriosS3-put_object():')
                 raise
@@ -96,7 +95,7 @@ def CrearDirectoriosS3():
     directory_name = 'carga_recurrente'
     print('directory_name: ', directory_name)
     try:
-        cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name + '/'))
+        cnx_S3.put_object(Bucket=objAuxiliar.str_NombreBucket, Key=(directory_name + '/'))
     except Exception:
         print('Excepcion en CrearDirectoriosS3-put_object():')
         raise
@@ -182,12 +181,11 @@ def WebScrapingInicial():
                 os.system("unzip 'Descargas/*.zip' -d Descargas/")
                 os.system('rm Descargas/*.zip')
                 cnx_S3 = objAuxiliar.CrearConexionS3()
-                bucket_name = 'bucket-rita'
                 str_ArchivoLocal = 'Descargas/' + os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
                 str_RutaS3 = 'carga_inicial/' + str(anio) + '/' + mes + '/'
 
                 try:
-                    objAuxiliar.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
+                    objAuxiliar.MandarArchivoS3(cnx_S3, objAuxiliar.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
@@ -199,7 +197,7 @@ def WebScrapingInicial():
 
                 objEjecucion.str_id_ejec = int(objAuxiliar.ObtenerMaxId() + 1)
                 objEjecucion.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
-                objEjecucion.str_bucket_s3 = bucket_name
+                objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
                 objEjecucion.str_ruta_almac_s3 = str_RutaS3
                 objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
                 objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
