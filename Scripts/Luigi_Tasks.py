@@ -2,34 +2,42 @@ import os
 import numpy as np
 from Auxiliar import Auxiliar
 
+
 def CrearDirectoriosEC2():
+
     print('\n---Inicio creacion directorio EC2 ---\n')
-    str_Dir1 = 'Descargas'
-    str_Dir2 = 'Linaje'
-    str_Dir3 = 'Linaje/Ejecuciones'
-    str_Dir4 = 'Linaje/Archivos'
-    str_Dir5 = 'Linaje/ArchivosDet'
+
+    arr_Directorios = ['Descargas',
+                       'Linaje',
+                       'Linaje/Ejecuciones',
+                       'Linaje/Archivos',
+                       'Linaje/ArchivosDet']
+
     try:
-        os.mkdir(str_Dir1)
-        print('Directorio ', str_Dir1, ' creado ')
-        os.mkdir(str_Dir2)
-        print('Directorio ', str_Dir2, ' creado ')
-        os.mkdir(str_Dir3)
-        print('Directorio ', str_Dir3, ' creado ')
-        os.mkdir(str_Dir4)
-        print('Directorio ', str_Dir4, ' creado ')
-        os.mkdir(str_Dir5)
-        print('Directorio ', str_Dir5, ' creado ')
-        print('\n---Fin creacion directorios EC2 ---\n')
-        return 0
+        # Barremos para eliminar los directorios
+        for strDirectorio in arr_Directorios:
+            str_Comando = 'rm -r '+strDirectorio
+            os.system(str_Comando)
+
+        # Barremos para crear los directorios
+        for strDirectorio in arr_Directorios:
+            os.mkdir(strDirectorio)
+            print('Directorio:', strDirectorio, ' creado ')
+
     except FileExistsError:
-        print('Alguno de los directorios especificados ya existe')
+        print('Excepcion en CrearDirectoriosS3-put_object():')
+        raise
         return 1
+
+    print('\n---Fin creacion directorio EC2 ---\n')
+    return 0
 
 
 def CrearDirectoriosS3():
+
     print('\n---Inicio creacion directorio S3--- \n')
-    import boto3
+
+    # import boto3
     from Auxiliar import Auxiliar
     from Rita import RitaWebScraping
 
@@ -47,20 +55,24 @@ def CrearDirectoriosS3():
             print('mes: ', mes)
             directory_name = 'carga_inicial/' + str(anio) + '/' + str(mes)
             print('directory_name: ', directory_name)
+
             try:
-                cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name + '/'))
-            except:
+                cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name+'/'))
+            except Exception:
+                print('Excepcion en CrearDirectoriosS3-put_object():')
+                raise
                 return 1
 
     directory_name = 'carga_recurrente'
     print('directory_name: ', directory_name)
     try:
         cnx_S3.put_object(Bucket=bucket_name, Key=(directory_name + '/'))
-    except:
+    except Exception:
+        print('Excepcion en CrearDirectoriosS3-put_object():')
+        raise
         return 1
-    else:
-        print('---Fin creacion directorio S3---\n')
-        return 0
+    print('---Fin creacion directorio S3---\n')
+    return 0
 
 
 def CrearSchemasRDS():
@@ -70,15 +82,17 @@ def CrearSchemasRDS():
     conn.autocommit = True
     queries = objAuxiliar.ObtenerQueries()
     query = queries.get('create_schemas')
+
     try:
         with conn.cursor() as (cur):
             cur.execute(query)
-    except:
-        print('Ocurrio una excepcion en CrearSchemasRDS')
+    except Exception:
+        print('Excepcion en CrearSchemasRDS-cur.execute')
+        raise
         return 1
-    else:
-        print('---Fin creacion schemas---\n')
-        return 0
+
+    print('---Fin creacion schemas---\n')
+    return 0
 
 
 def CrearTablasLinajeRDS():
@@ -88,21 +102,23 @@ def CrearTablasLinajeRDS():
     conn.autocommit = True
     queries = objAuxiliar.ObtenerQueries()
     query = queries.get('create_linaje_tables')
+
     try:
         with conn.cursor() as (cur):
             cur.execute(query)
-    except:
-        print('Ocurrio una excepcion en CrearTablasLinajeRDS')
+    except Exception:
+        print('Excepcion en CrearTablasLinajeRDS-cur.execute')
+        raise
         return 1
-    else:
-        print('---Fin creacion tablas---\n')
-        return 0
+
+    print('---Fin creacion tablas---\n')
+    return 0
 
 
 def WebScrapingInicial():
 
     print('\n---Inicio web scraping Inicial---')
-    import glob, os, time
+    # import glob, os, time
     from Rita import RitaWebScraping
     from Auxiliar import Auxiliar
     from Linaje import voEjecucion
@@ -121,16 +137,18 @@ def WebScrapingInicial():
         print('anio: ', anio)
         for mes in arr_Meses:
             print('mes: ', mes)
+
             try:
                 objWebScraping.DescargarAnioMes(anio, mes)
-            except:
-                print('Ocurrio una excepcion en DescargarAnioMes')
+            except Exception:
+                print('Excepcion en WebScrapingInicial-DescargarAnioMes')
+                raise
                 return 1
 
-            str_name = objWebScraping.str_ArchivoDescargado
             if objWebScraping.str_ArchivoDescargado != '':
                 print('Descarga completa')
-                print('objWebScraping.str_ArchivoDescargado: ', objWebScraping.str_ArchivoDescargado)
+                print('objWebScraping.str_ArchivoDescargado: ',
+                      objWebScraping.str_ArchivoDescargado)
                 os.system("unzip 'Descargas/*.zip' -d Descargas/")
                 os.system('rm Descargas/*.zip')
                 cnx_S3 = objAuxiliar.CrearConexionS3()
@@ -140,9 +158,11 @@ def WebScrapingInicial():
 
                 try:
                     objAuxiliar.MandarArchivoS3(cnx_S3, bucket_name, str_RutaS3, str_ArchivoLocal)
-                except:
-                    print('Ocurrio una excepcion en MandarArchivoS3')
+                except Exception:
+                    print('Excepcion en MandarArchivoS3')
+                    raise
                     return 1
+
                 objArchivo.nbr_tamanio_archivo = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
                 objArchivo.nbr_num_registros = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
                 os.system('rm Descargas/*.csv')
@@ -170,9 +190,9 @@ def WebScrapingInicial():
                 objArchivo_Det = voArchivos_Det()
                 np_Campos = np.empty([0, 2])
                 for campo in objWebScraping.dict_campos_activar:
-                    np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo,campo]], axis=0)
+                    np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo, campo]], axis=0)
 
-                objArchivo_Det.np_Campos=np_Campos
+                objArchivo_Det.np_Campos = np_Campos
                 objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
                 objArchivo_Det.crearCSV()
 
@@ -186,30 +206,36 @@ def EnviarMetadataLinajeRDS():
     objAuxiliar = Auxiliar()
     cnn = objAuxiliar.CrearConexionRDS()
     cnn.autocommit = True
+
+    # Barremos los csv de Ejecuciones
     for data_file in Path('Linaje/Ejecuciones').glob('*.csv'):
-        table = data_file.stem
+
         try:
             objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'ejecuciones')
-        except:
-            print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeRDS')
+            raise
             return 1
 
+    # Barremos los csv de Archivos
     for data_file in Path('Linaje/Archivos').glob('*.csv'):
-        table = data_file.stem
+
         try:
             objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos')
-        except:
-            print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeRDS')
+            raise
             return 1
 
+    # Barremos los csv de ArchivosDet
     for data_file in Path('Linaje/ArchivosDet').glob('*.csv'):
-        table = data_file.stem
-        #try:
-        objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos_det')
-        #except:
-        #print('Ocurrio una excepcion en EnviarMetadataLinajeRDS')
-        #return 1
 
+        try:
+            objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos_det')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeRDS')
+            raise
+            return 1
 
     print('\n---Fin carga de linaje---\n')
     return 0
