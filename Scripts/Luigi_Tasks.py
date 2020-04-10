@@ -163,6 +163,9 @@ def WebScrapingInicial():
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
 
+    # Se obtiene el id de ejecución
+    nbr_Id_Ejec_Actual = objAuxiliar.ObtenerMaxId() + 1
+
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -192,39 +195,50 @@ def WebScrapingInicial():
                     raise
                     return 1
 
-                objArchivo.nbr_tamanio_archivo = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
-                objArchivo.nbr_num_registros = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
+                # Antes de eliminar los archivos que ya fueron enviados a S3,
+                # obtenemos información de ellos
+                nbr_Tamanio = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
+                nbr_Filas = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
+
+                # Se elimina la información descargada
                 os.system('rm Descargas/*.csv')
 
-                objEjecucion.str_id_ejec = int(objAuxiliar.ObtenerMaxId() + 1)
-                objEjecucion.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
-                objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
-                objEjecucion.str_ruta_almac_s3 = str_RutaS3
-                objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
-                objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
-                objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' + str(anio) + str(mes) + '.csv'
-                objEjecucion.str_tipo_ejec = 'CI'
-                objEjecucion.str_url_webscrapping = objWebScraping.str_Url
-                objEjecucion.str_status_ejec = 'Ok'
-                objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-                objEjecucion.crearCSV()
-
-                objArchivo.str_id_archivo = objEjecucion.str_id_archivo
+                # CSV Linaje.Archivos
+                objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+                objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+                objArchivo.nbr_tamanio_archivo = nbr_Tamanio
+                objArchivo.nbr_num_registros = nbr_Filas
                 objArchivo.nbr_num_columnas = len(objWebScraping.dict_campos_activar)
                 objArchivo.str_anio = str(anio)
                 objArchivo.str_mes = str(mes)
                 objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+                objArchivo.str_ruta_almac_s3 = str_RutaS3
                 objArchivo.crearCSV()
 
+                # CSV Linaje.Archivos_Det
                 # Obtenemos todos los nombres de columnas del diccionario y los ponemos en un arreglo
                 objArchivo_Det = voArchivos_Det()
                 np_Campos = np.empty([0, 2])
                 for campo in objWebScraping.dict_campos_activar:
-                    np_Campos = np.append(np_Campos, [[objEjecucion.str_id_archivo, campo]], axis=0)
+                    np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, campo]], axis=0)
 
                 objArchivo_Det.np_Campos = np_Campos
                 objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
                 objArchivo_Det.crearCSV()
+
+    # CSV Linaje.Ejecuciones
+    objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+    objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
+    objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
+    objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
+    objEjecucion.str_tipo_ejec = 'CI'
+    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
+    objEjecucion.str_status_ejec = 'Ok'
+    objEjecucion.dttm_fecha_hora_ejec = datetime.now()
+    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                       + objEjecucion.str_tipo_ejec + '_' \
+                                       + str(objEjecucion.nbr_id_ejec) + '.csv'
+    objEjecucion.crearCSV()
 
     print('---Fin web scraping Inicial---\n')
     return 0
@@ -247,6 +261,9 @@ def EnviarMetadataLinajeRDS():
             raise
             return 1
 
+    # Eliminamos el arhivo de linaje-ejecuciones
+    os.system('rm Linaje/Ejecuciones/*.csv')
+
     # Barremos los csv de Archivos
     for data_file in Path('Linaje/Archivos').glob('*.csv'):
 
@@ -257,6 +274,9 @@ def EnviarMetadataLinajeRDS():
             raise
             return 1
 
+    # Eliminamos el arhivo de linaje-archivos
+    os.system('rm Linaje/Archivos/*.csv')
+
     # Barremos los csv de ArchivosDet
     for data_file in Path('Linaje/ArchivosDet').glob('*.csv'):
 
@@ -266,6 +286,9 @@ def EnviarMetadataLinajeRDS():
             print('Excepcion en EnviarMetadataLinajeRDS')
             raise
             return 1
+
+    # Eliminamos el arhivo de linaje-archivosdet
+    os.system('rm Linaje/ArchivosDet/*.csv')
 
     print('\n---Fin carga de linaje---\n')
     return 0
