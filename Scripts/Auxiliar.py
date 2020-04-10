@@ -109,8 +109,9 @@ class Auxiliar:
 
         s3 = boto3.client(
                 's3',
-                aws_access_key_id=current_credentials.access_key[1:-1],
-                aws_secret_access_key=current_credentials.secret_key[1:-1],
+                aws_access_key_id=current_credentials.access_key,
+                aws_secret_access_key=current_credentials.secret_key,
+                aws_session_token=current_credentials.token,
                 region_name='us-west-2',  # Oregon
                 use_ssl=False
             )
