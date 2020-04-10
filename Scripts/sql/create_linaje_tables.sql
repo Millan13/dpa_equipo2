@@ -10,7 +10,7 @@ create table linaje.ejecuciones (
   "id_archivo" VARCHAR(40),
   "usuario_ejec" VARCHAR(20),
   "instancia_ejec" VARCHAR(20),
-  --"fecha_hora_ejec" TIMESTAMP,
+  "fecha_hora_ejec" TIMESTAMP,
   "bucket_s3" VARCHAR(40),
   "ruta_almac_s3" VARCHAR(100),
   "tag_script" VARCHAR(20),

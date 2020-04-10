@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from datetime import datetime
 from Auxiliar import Auxiliar
 
 
@@ -205,6 +206,7 @@ def WebScrapingInicial():
                 objEjecucion.str_tipo_ejec = 'CI'
                 objEjecucion.str_url_webscrapping = objWebScraping.str_Url
                 objEjecucion.str_status_ejec = 'Ok'
+                objEjecucion.dttm_fecha_hora_ejec = datetime.now()
                 objEjecucion.crearCSV()
 
                 objArchivo.str_id_archivo = objEjecucion.str_id_archivo
