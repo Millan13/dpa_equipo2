@@ -84,7 +84,6 @@ class Auxiliar:
             else:
                 nbr_MaxId = row[0]
 
-        print(nbr_MaxId)
         return nbr_MaxId
 
     def ObtenerUsuario(self):
