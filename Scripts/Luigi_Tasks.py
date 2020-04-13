@@ -208,7 +208,11 @@ def WebScrapingInicial():
                 objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
                 objArchivo.nbr_tamanio_archivo = nbr_Tamanio
                 objArchivo.nbr_num_registros = nbr_Filas
-                objArchivo.nbr_num_columnas = len(objWebScraping.dict_campos_activar)
+
+                # Se filtra el diccionario para traer solo campos de activacion
+                dict_Filtrado = {k: v for k, v in objWebScraping.dict_Campos.items() if v['Flag'] == 'A'}
+                objArchivo.nbr_num_columnas = len(dict_Filtrado)
+
                 objArchivo.str_anio = str(anio)
                 objArchivo.str_mes = str(mes)
                 objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
@@ -216,11 +220,15 @@ def WebScrapingInicial():
                 objArchivo.crearCSV()
 
                 # CSV Linaje.Archivos_Det
-                # Obtenemos todos los nombres de columnas del diccionario y los ponemos en un arreglo
+                # Obtenemos los nombres de columnas del diccionario
+                # y los ponemos en un arreglo
                 objArchivo_Det = voArchivos_Det()
                 np_Campos = np.empty([0, 2])
-                for campo in objWebScraping.dict_campos_activar:
-                    np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, campo]], axis=0)
+                for key, value in objWebScraping.dict_Campos.items():
+
+                    # Se pregunta si el campo esta marcado para activarse
+                    if value['Flag'] == 'A':
+                        np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
 
                 objArchivo_Det.np_Campos = np_Campos
                 objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
