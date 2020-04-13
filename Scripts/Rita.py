@@ -17,31 +17,29 @@ class RitaWebScraping:
     str_TipoEjecucion = 'Prueba'
     # str_TipoEjecucion='Real'
 
-    # Campos deseados
-    dict_campos_activar = {'Year': 3,
-                           'Month': 5,
-                           'DayofMonth': 6,
-                           'DayofWeek': 7,
-                           'Reporting_Airline': 10,
-                           'Tail_Number': 13,
-                           'Flight_Number_Reporting_Airline': 14,
-                           'Origin': 19,
-                           'Dest': 29,
-                           'CRSDepTime': 36,
-                           'DepTime': 37,
-                           'DepDelayMinutes': 38,
-                           'CRSArrTime': 48,
-                           'CRSElapsedTime': 60,
-                           'Distance': 64
-                           }
-    # Campos pre-seleccionados
-    dict_campos_desactivar = {'OriginAirportID': 16,
-                              'OriginAirportSeqID': 17,
-                              'OriginCityMarketID': 18,
-                              'DestAirportID': 26,
-                              'DestAirportSeqID': 27,
-                              'DestCityMarketID': 28,
-                              }
+    # Campos para activar y desactivar
+    dict_Campos = {'Year': {'Id': 3, 'Flag': 'A'},
+                   'Month': {'Id': 5, 'Flag': 'A'},
+                   'DayofMonth': {'Id': 6, 'Flag': 'A'},
+                   'DayofWeek': {'Id': 7, 'Flag': 'A'},
+                   'Reporting_Airline': {'Id': 10, 'Flag': 'A'},
+                   'Tail_Number': {'Id': 13, 'Flag': 'A'},
+                   'Flight_Number_Reporting_Airline': {'Id': 14, 'Flag': 'A'},
+                   'OriginAirportID': {'Id': 16, 'Flag': 'I'},
+                   'OriginAirportSeqID': {'Id': 17, 'Flag': 'I'},
+                   'OriginCityMarketID': {'Id': 18, 'Flag': 'I'},
+                   'Origin': {'Id': 19, 'Flag': 'A'},
+                   'DestAirportID': {'Id': 26, 'Flag': 'I'},
+                   'DestAirportSeqID': {'Id': 27, 'Flag': 'I'},
+                   'DestCityMarketID': {'Id': 28, 'Flag': 'I'},
+                   'Dest': {'Id': 29, 'Flag': 'A'},
+                   'CRSDepTime': {'Id': 36, 'Flag': 'A'},
+                   'DepTime': {'Id': 37, 'Flag': 'A'},
+                   'DepDelayMinutes': {'Id': 38, 'Flag': 'A'},
+                   'CRSArrTime': {'Id': 48, 'Flag': 'A'},
+                   'CRSElapsedTime': {'Id': 60, 'Flag': 'A'},
+                   'Distance': {'Id': 64, 'Flag': 'A'}
+                   }
 
     # Directorios
     str_DirDriver = ''
@@ -88,17 +86,9 @@ class RitaWebScraping:
         driver.find_element_by_xpath("//select[@name='XYEAR']/option[text()="+str(nbr_Anio)+"]").click()
         driver.find_element_by_xpath("//select[@name='FREQUENCY']/option[text()='"+str(str_Mes)+"']").click()
 
-        # Seleccionamos los campos deseados
-
-        # Seleccionamos los campos que están pre-seleccionados al abrir la página de donde se hará la descarga de la información
-        # for campo in self.dict_campos_desactivar.values():
-        #    xpath_preselec = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
-        #    driver.find_element_by_xpath(xpath_preselec).click()
-        # time.sleep(5)
-
         # Seleccionamos los campos deseados para crear la base de datos
-        for campo in self.dict_campos_activar.values():
-            xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo
+        for campo in self.dict_Campos.items():
+            xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo[1]['Id']
             driver.find_element_by_xpath(xpath_finales).click()
             nbr_Aleat = np.random.uniform(0,2,1)
             time.sleep(nbr_Aleat)
