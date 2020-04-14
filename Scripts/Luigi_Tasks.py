@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import subprocess
 from datetime import datetime
 from Auxiliar import Auxiliar
 
@@ -243,6 +244,7 @@ def WebScrapingInicial():
     objEjecucion.str_url_webscrapping = objWebScraping.str_Url
     objEjecucion.str_status_ejec = 'Ok'
     objEjecucion.dttm_fecha_hora_ejec = datetime.now()
+    objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
     objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
                                        + objEjecucion.str_tipo_ejec + '_' \
                                        + str(objEjecucion.nbr_id_ejec) + '.csv'
