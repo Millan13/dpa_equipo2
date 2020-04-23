@@ -45,6 +45,7 @@ class RitaWebScraping:
     str_DirDriver = ''
     str_DirDescargas = ''
     str_ArchivoDescargado = ''
+    str_MasReciente = ''
 
     # Declaración de métodos
     def __init__(self):
@@ -187,3 +188,25 @@ class RitaWebScraping:
             self.str_DirTrabajo = '/home/ec2-user/dpa_equipo2/Scripts'
 
         return self.str_DirTrabajo
+    def ObtenerMesDescargaRecurrente(self):
+        # Creacion del driver y conexion a la Url
+        driver = self.CrearDriverChrome(self.str_DirDriver, self.str_DirDescargas)
+
+        driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd': 'Page.setDownloadBehavior',
+                  'params': {'behavior': 'allow',
+                             'downloadPath': self.str_DirDescargas
+                             }
+                  }
+        command_result = driver.execute("send_command", params)
+
+        driver.get(self.str_Url)
+        
+        #Buscamos el mes y anio más reciente disponible en la página
+        latest_field = driver.find_element_by_xpath("//table[1]/tbody/tr/td[2]/table[2]/tbody/tr[3]/td[1]")
+        self.str_MasReciente =  latest_field.text.replace("Latest Available Data: ","") #Removemos el texto  fijo
+        
+        #Cerramos el driver junto con el browser
+        driver.quit()
+        
+        return self.str_MasReciente
