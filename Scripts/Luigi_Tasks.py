@@ -302,3 +302,114 @@ def EnviarMetadataLinajeRDS():
 
     print('\n---Fin carga de linaje---\n')
     return 0
+
+
+def WebScrapingRecurrente():
+
+    print('\n---Inicio web scraping recurrente---')
+    # import glob, os, time
+    from Rita import RitaWebScraping
+    from Auxiliar import Auxiliar
+    from Linaje import voEjecucion
+    from Linaje import voArchivos
+    from Linaje import voArchivos_Det
+
+    objAuxiliar = Auxiliar()
+    objWebScraping = RitaWebScraping()
+    arr_Anios = objWebScraping.ObtenerAnios()
+    arr_Meses = objWebScraping.ObtenerMeses()
+
+    objEjecucion = voEjecucion()
+    objArchivo = voArchivos()
+
+    # Se obtiene el id de ejecución
+    nbr_Id_Ejec_Actual = objAuxiliar.ObtenerMaxId() + 1
+
+    #Extraemos el último mes y año disponibles para descarga
+    latest = objWebScraping.ObtenerMesDescargaRecurrente()
+    latest_date = latest.split(" ") #Separamos el mes y el año por espacio
+    anio =  latest_date[1]
+    mes  =  latest_date[0]
+    print('anio: ', anio)
+    print('mes: ', mes)
+
+    try:
+        objWebScraping.DescargarAnioMes(anio, mes)
+    except Exception:
+        print('Excepcion en WebScrapingInicial-DescargarAnioMes')
+        raise
+        return 1
+
+    if objWebScraping.str_ArchivoDescargado != '':
+        print('Descarga completa')
+        print('objWebScraping.str_ArchivoDescargado: ',
+              objWebScraping.str_ArchivoDescargado)
+        os.system("unzip 'Descargas/*.zip' -d Descargas/")
+        os.system('rm Descargas/*.zip')
+        cnx_S3 = objAuxiliar.CrearConexionS3()
+        str_ArchivoLocal = 'Descargas/' + os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+        str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
+
+        try:
+            objAuxiliar.MandarArchivoS3(cnx_S3, objAuxiliar.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+        except Exception:
+            print('Excepcion en MandarArchivoS3')
+            raise
+            return 1
+
+        # Antes de eliminar los archivos que ya fueron enviados a S3,
+        # obtenemos información de ellos
+        nbr_Tamanio = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
+        nbr_Filas = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
+
+        # Se elimina la información descargada
+        os.system('rm Descargas/*.csv')
+
+        # CSV Linaje.Archivos
+        objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+        objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+        objArchivo.nbr_tamanio_archivo = nbr_Tamanio
+        objArchivo.nbr_num_registros = nbr_Filas
+
+        # Se filtra el diccionario para traer solo campos de activacion
+        dict_Filtrado = {k: v for k, v in objWebScraping.dict_Campos.items() if v['Flag'] == 'A'}
+        objArchivo.nbr_num_columnas = len(dict_Filtrado)
+
+        objArchivo.str_anio = str(anio)
+        objArchivo.str_mes = str(mes)
+        objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+        objArchivo.str_ruta_almac_s3 = str_RutaS3
+        objArchivo.crearCSV()
+
+        # CSV Linaje.Archivos_Det
+        # Obtenemos los nombres de columnas del diccionario
+        # y los ponemos en un arreglo
+        objArchivo_Det = voArchivos_Det()
+        np_Campos = np.empty([0, 2])
+        for key, value in objWebScraping.dict_Campos.items():
+
+            # Se pregunta si el campo esta marcado para activarse
+              if value['Flag'] == 'A':
+                np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+
+        objArchivo_Det.np_Campos = np_Campos
+        objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+        objArchivo_Det.crearCSV()
+
+    # CSV Linaje.Ejecuciones
+    objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+    objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
+    objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
+    objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
+    objEjecucion.str_tipo_ejec = 'R'
+    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
+    objEjecucion.str_status_ejec = 'Ok'
+    objEjecucion.dttm_fecha_hora_ejec = datetime.now()
+    objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                       + objEjecucion.str_tipo_ejec + '_' \
+                                       + str(objEjecucion.nbr_id_ejec) + '.csv'
+    objEjecucion.crearCSV()
+
+    print('---Fin web scraping recurrente---\n')
+    return 0
