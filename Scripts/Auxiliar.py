@@ -2,6 +2,7 @@ import os
 import boto3
 from pathlib import Path
 from dynaconf import settings
+import pandas
 
 class Auxiliar:
 
