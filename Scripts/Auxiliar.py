@@ -1,29 +1,8 @@
 import os
 import boto3
 from pathlib import Path
-from dynaconf import settings
-
+import pandas as pd
 class Auxiliar:
-
-    # Atributos S3
-    str_NombreBucket = ''
-
-    # Atributos RDS
-    str_NombreDB = ''
-    str_UsuarioDB = ''
-    str_PassDB = ''
-    str_EndPointDb = ''
-
-    def __init__(self):
-
-        # RDS
-        self.str_NombreDB = settings.get('dbname')
-        self.str_UsuarioDB = settings.get('user')
-        self.str_PassDB = settings.get('password')
-        self.str_EndPointDB = settings.get('host')
-
-        # S3
-        self.str_NombreBucket = settings.get('bucket_name')
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
@@ -31,60 +10,43 @@ class Auxiliar:
         nbr_file_size = os.stat(str_NombreArchivo).st_size
         return nbr_file_size
 
+
     def CrearConexionRDS(self):
 
         import psycopg2
         import psycopg2.extras
 
-        conn = psycopg2.connect(database=self.str_NombreDB,
-                                user=self.str_UsuarioDB,
-                                password=self.str_PassDB,
-                                host=self.str_EndPointDB,
-                                port='5432'
-                                )
+        conn = psycopg2.connect(database="bd_rita"
+                               ,user="postgres"
+                               ,password="pass"
+                               ,host="end-point"
+                               ,port='5432'
+                               )
         return conn
 
-    def ExisteBaseCreada(self):
-
+    def ObtenerMaxId(self):
         import psycopg2
 
-        bool_YaExiste = False
-        str_Query = "SELECT datname FROM pg_database WHERE datname = '" + self.str_NombreDB + "' ;"
-
-        conn = psycopg2.connect(user=self.str_UsuarioDB,
-                                host=self.str_EndPointDB,
-                                password=self.str_PassDB)
-
-        cur = conn.cursor()
-        cur.execute(str_Query)
-
-        if cur.rowcount == 0:
-            bool_YaExiste = False
-        else:
-            bool_YaExiste = True
-
-        return bool_YaExiste
-
-    def ObtenerMaxId(self):
-
-        nbr_MaxId = 0
-        str_Query = 'select max(id_ejec) from linaje.ejecuciones;'
+        nbr_MaxId=0
+        str_Query='select max(id_ejec) from linaje.ejecuciones;'
 
         conn = self.CrearConexionRDS()
 
         cur = conn.cursor()
         cur.execute(str_Query)
 
-        if cur.rowcount == 0:
-            nbr_MaxId = 0
+        if  cur.rowcount==0:
+            nbr_MaxId=0
         else:
-            row = cur.fetchone()
+            row=cur.fetchone()
             if row[0] is None:
-                nbr_MaxId = 0
+                nbr_MaxId=0
             else:
-                nbr_MaxId = row[0]
+                nbr_MaxId=row[0]
 
+        print(nbr_MaxId)
         return nbr_MaxId
+
 
     def ObtenerUsuario(self):
         import getpass
@@ -106,12 +68,11 @@ class Auxiliar:
         credentials = session.get_credentials()
         current_credentials = credentials.get_frozen_credentials()
 
-        s3 = boto3.client(
+        s3=boto3.client(
                 's3',
-                aws_access_key_id=current_credentials.access_key,
-                aws_secret_access_key=current_credentials.secret_key,
-                aws_session_token=current_credentials.token,
-                region_name='us-west-2',  # Oregon
+                aws_access_key_id=current_credentials.access_key[1:-1],
+                aws_secret_access_key=current_credentials.secret_key[1:-1],
+                region_name='us-west-2', #Oregon
                 use_ssl=False
             )
 
@@ -119,7 +80,7 @@ class Auxiliar:
 
     def MandarArchivoS3(self, cnx_S3, bucket_name, str_RutaS3, str_Archivo):
 
-        str_ArchivoEnvio = str_Archivo
+        str_ArchivoEnvio=str_Archivo
         str_NombreArchivoEnS3 = str_RutaS3+os.path.basename(str_Archivo)
 
         # Mandamos el archivo a S3
@@ -135,7 +96,7 @@ class Auxiliar:
 
         queries = {}
         for sql_file in Path('sql').glob('*.sql'):
-            with open(sql_file, 'r') as sql:
+            with open(sql_file,'r') as sql:
                 sql_key = sql_file.stem
                 query = str(sql.read())
                 queries[sql_key] = query
@@ -148,12 +109,13 @@ class Auxiliar:
         with conn.cursor() as cursor:
             print('nombre_tabla: ' + nombre_tabla)
 
-            # Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
+            #Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
             sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as ','"
             print(sql_statement)
             buffer = io.StringIO()
 
-            with open(data_file, 'r') as data:
+
+            with open(data_file,'r') as data:
                 buffer.write(data.read())
             buffer.seek(0)
             cursor.copy_expert(sql_statement, file=buffer)
