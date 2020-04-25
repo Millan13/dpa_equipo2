@@ -129,19 +129,19 @@ def CrearSchemasRDS():
     return 0
 
 
-def CrearTablasLinajeRDS():
+def CrearTablasRDS():
     print('---Inicio creacion tablas---\n')
     objUtileria = Utileria()
     conn = objUtileria.CrearConexionRDS()
     conn.autocommit = True
     queries = objUtileria.ObtenerQueries()
-    query = queries.get('create_linaje_tables')
+    query = queries.get('create_tables')
 
     try:
         with conn.cursor() as (cur):
             cur.execute(query)
     except Exception:
-        print('Excepcion en CrearTablasLinajeRDS-cur.execute')
+        print('Excepcion en CrearTablasRDS-cur.execute')
         raise
         return 1
 
@@ -158,6 +158,7 @@ def WebScrapingInicial():
     from Linaje import voArchivos
     from Linaje import voArchivos_Det
     from pathlib import Path
+    import platform
 
     objUtileria = Utileria()
     objWebScraping = Rita()
@@ -195,14 +196,18 @@ def WebScrapingInicial():
                 # Mandamos el archivo descargado a S3
                 try:
                     # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                    print('Se omite el envío')
+                    print('Se omite el envio')
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
                     return 1
 
+                if platform.system()=='Darwin':
+                    os.system("sed -i '' 's/.$//' Descargas/*.csv")
+                else
+                    os.system("sed -i 's/.$//' Descargas/*.csv")
+
                 # ####### método 1
-                os.system("sed -i '' 's/.$//' Descargas/*.csv")
                 cnn = objUtileria.CrearConexionRDS()
                 archivo = open(str_ArchivoLocal)
                 # Mandamos la información raw del archivo al RDS 123
