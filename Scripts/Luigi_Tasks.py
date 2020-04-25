@@ -204,7 +204,7 @@ def WebScrapingInicial():
 
                 if platform.system()=='Darwin':
                     os.system("sed -i '' 's/.$//' Descargas/*.csv")
-                else
+                else:
                     os.system("sed -i 's/.$//' Descargas/*.csv")
 
                 # ####### método 1
