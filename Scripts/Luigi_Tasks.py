@@ -4,10 +4,11 @@ import subprocess
 from datetime import datetime
 
 # Librerias de nosotros
-import Luigi_Tasks as lt
-
 from Utileria import Utileria
 
+# ###############################################################
+# ################### Funciones principales #####################
+# ###############################################################
 
 def CrearDB():
 
@@ -25,7 +26,7 @@ def CrearDB():
                                 password=objUtileria.str_PassDB)
 
         conn.autocommit = True
-        queries = objUtileria.ObtenerQueries()
+        queries = objUtileria.ObtenerQueries('sql')
         query = queries.get('create_db')
 
         try:
@@ -47,7 +48,9 @@ def CrearDirectoriosEC2():
                        'Linaje',
                        'Linaje/Ejecuciones',
                        'Linaje/Archivos',
-                       'Linaje/ArchivosDet']
+                       'Linaje/ArchivosDet',
+                       'Linaje/Transform',
+                       'Linaje/Modeling']
 
     try:
         # Barremos para eliminar los directorios
@@ -114,7 +117,7 @@ def CrearSchemasRDS():
     objUtileria = Utileria()
     conn = objUtileria.CrearConexionRDS()
     conn.autocommit = True
-    queries = objUtileria.ObtenerQueries()
+    queries = objUtileria.ObtenerQueries('sql')
     query = queries.get('create_schemas')
 
     try:
@@ -134,7 +137,7 @@ def CrearTablasRDS():
     objUtileria = Utileria()
     conn = objUtileria.CrearConexionRDS()
     conn.autocommit = True
-    queries = objUtileria.ObtenerQueries()
+    queries = objUtileria.ObtenerQueries('sql')
     query = queries.get('create_tables')
 
     try:
@@ -169,8 +172,10 @@ def WebScrapingInicial():
     objArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
-    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId() + 1
-
+    conn = objUtileria.CrearConexionRDS()
+    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId(conn,
+                                                  'linaje.ejecuciones',
+                                                  'id_ejec') + 1
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -196,7 +201,7 @@ def WebScrapingInicial():
                 # Mandamos el archivo descargado a S3
                 try:
                     # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                    print('Se omite el envio')
+                    print('Se omite el envio a S3')
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
@@ -210,30 +215,11 @@ def WebScrapingInicial():
                 # ####### método 1
                 cnn = objUtileria.CrearConexionRDS()
                 archivo = open(str_ArchivoLocal)
-                # Mandamos la información raw del archivo al RDS 123
 
-                cur = cnn.cursor()
-                table_name = 'raw.vuelos'
-                f = open(str_ArchivoLocal, "r")
-
-                # Load table from the file with header
-                print("copy {} from STDIN CSV HEADER QUOTE '\"'".format(table_name))
-                cur.copy_expert("copy {} from STDIN CSV HEADER QUOTE '\"'".format(table_name), f)
-                cur.execute("commit;")
-
-                print("Loaded data into {}".format(table_name))
-                cur.close()
-
-                # ####### método 2
-                # os.system("sed -i '' 's/.$//' *.csv")
-                #for data_file in Path('Descargas').glob('*.csv'):
-
-                #    try:
-                #        objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'raw.vuelos')
-                #    except Exception:
-                #        print('Excepcion en InsertarEnRDSDesdeArchivo')
-                #        raise
-                #        return 1
+                # Mandamos la información raw del archivo al RDS
+                # print('Se omite el envio a RDS')
+                data_file = open(str_ArchivoLocal, "r")
+                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
 
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
@@ -293,8 +279,8 @@ def WebScrapingInicial():
     return 0
 
 
-def EnviarMetadataLinajeRDS():
-    print('\n---Inicio carga de linaje---\n')
+def EnviarMetadataLinajeCargaRDS():
+    print('\n---Inicio carga de linaje carga---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -306,7 +292,7 @@ def EnviarMetadataLinajeRDS():
         try:
             objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.ejecuciones')
         except Exception:
-            print('Excepcion en EnviarMetadataLinajeRDS')
+            print('Excepcion en EnviarMetadataLinajeCargaRDS')
             raise
             return 1
 
@@ -319,7 +305,7 @@ def EnviarMetadataLinajeRDS():
         try:
             objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.archivos')
         except Exception:
-            print('Excepcion en EnviarMetadataLinajeRDS')
+            print('Excepcion en EnviarMetadataLinajeCargaRDS')
             raise
             return 1
 
@@ -332,14 +318,37 @@ def EnviarMetadataLinajeRDS():
         try:
             objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.archivos_det')
         except Exception:
-            print('Excepcion en EnviarMetadataLinajeRDS')
+            print('Excepcion en EnviarMetadataLinajeCargaRDS')
             raise
             return 1
 
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/ArchivosDet/*.csv')
 
-    print('\n---Fin carga de linaje---\n')
+    print('\n---Fin carga de linaje carga---\n')
+    return 0
+
+def EnviarMetadataLinajeTransformRDS():
+    print('\n---Inicio carga de linaje transform ---\n')
+    from pathlib import Path
+    objUtileria = Utileria()
+    cnn = objUtileria.CrearConexionRDS()
+    cnn.autocommit = True
+
+    # Barremos los csv de Ejecuciones
+    for data_file in Path('Linaje/Transform').glob('*.csv'):
+
+        try:
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.transform')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeTransformRDS')
+            raise
+            return 1
+
+    # Eliminamos el arhivo de linaje-archivosdet
+    os.system('rm Linaje/Transform/*.csv')
+
+    print('\n---Fin carga de linaje transform---\n')
     return 0
 
 
@@ -361,7 +370,10 @@ def WebScrapingRecurrente():
     objArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
-    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId() + 1
+    conn = objUtileria.CrearConexionRDS()
+    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId(conn,
+                                                  'linaje.ejecuciones',
+                                                  'id_ejec') + 1
 
     #Extraemos el último mes y año disponibles para descarga
     latest = objRita.ObtenerMesDescargaRecurrente()
@@ -460,9 +472,58 @@ def HacerFeatureEngineering():
     objUtileria = Utileria()
 
     # Se deben leer los querys que se van a ejecutar y ejecutarlos
+    objUtileria = Utileria()
+    conn = objUtileria.CrearConexionRDS()
+    conn.autocommit = True
+    queries = objUtileria.ObtenerQueries('sql/FeatureEngineering')
 
+    # Variables generales para el linaje
+    nbr_IdSet = objUtileria.ObtenerMaxId(conn,
+                                         'linaje.transform',
+                                         'id_set_transform') + 1
+    str_Ruta = 'Linaje/Transform/'
 
+    # Query 1
+    str_NombreQuery = 'update1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 1
+    str_NombreQuery = 'update2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 2, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Aquí se deben de poner el resto de queries del feature engineering
 
     print('---Fin de feature engineering---\n')
+
+    return 0
+
+# ###############################################################
+# #################### Funciones de apoyo #######################
+# ###############################################################
+
+def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta):
+
+    from Linaje import voTransform
+    objUtileria = Utileria()
+    objTransform = voTransform()
+
+    objTransform.nbr_id_set_transform = nbr_IdSet
+    objTransform.nbr_num_seq = nbr_seq
+    objTransform.str_nombre_query = str_NombreQuery
+    objTransform.nbr_filas_afectadas = nbr_FilasAfectadas
+    objTransform.dttm_fecha_hora_ejec = datetime.now()
+    objTransform.str_usuario_ejec = objUtileria.ObtenerUsuario()
+    objTransform.str_instancia_ejec = objUtileria.ObtenerIp()
+    objTransform.str_NombreDataFrame = str_Ruta \
+                                     + str(objTransform.nbr_id_set_transform) \
+                                     + '_' \
+                                     + str(objTransform.nbr_num_seq) + '.csv'
+
+    print(objTransform.nbr_id_set_transform)
+    objTransform.crearCSV()
 
     return 0

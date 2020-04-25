@@ -104,3 +104,41 @@ class voArchivos_Det:
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return
+
+class voTransform:
+
+    nbr_id_set_transform = 0
+    nbr_num_seq = 0
+    str_nombre_query = ''
+    nbr_filas_afectadas = ''
+    dttm_fecha_hora_ejec = ''
+    str_usuario_ejec = ''
+    str_instancia_ejec = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+        print(self.nbr_id_set_transform)
+        dict_Transform = {'id_set_transform': [self.nbr_id_set_transform],
+                          'num_seq': [self.nbr_num_seq],
+                          'nombre_query': [self.str_nombre_query],
+                          'filas_afectadas': [self.nbr_filas_afectadas],
+                          'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
+                          'usuario_ejec': [self.str_usuario_ejec],
+                          'instancia_ejec': [self.str_instancia_ejec]
+                          }
+
+        df = pd.DataFrame(dict_Transform, columns=['id_set_transform',
+                                                   'num_seq',
+                                                   'nombre_query',
+                                                   'filas_afectadas',
+                                                   'fecha_hora_ejec',
+                                                   'usuario_ejec',
+                                                   'instancia_ejec'
+                                                   ]
+                          )
+        print(df)
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
