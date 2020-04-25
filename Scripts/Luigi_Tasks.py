@@ -219,7 +219,7 @@ def WebScrapingInicial():
                 # Mandamos la información raw del archivo al RDS
                 # print('Se omite el envio a RDS')
                 data_file = open(str_ArchivoLocal, "r")
-                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos'):
+                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
 
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
