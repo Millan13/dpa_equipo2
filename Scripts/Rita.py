@@ -81,7 +81,7 @@ class Rita:
                   }
         command_result = driver.execute("send_command", params)
 
-        print('Esperando a la página...')
+        print('Esperando a la pagina...', self.str_Url)
         driver.get(self.str_Url)
 
         # Bajamos el anio y mes indicados
@@ -89,7 +89,7 @@ class Rita:
         driver.find_element_by_xpath("//select[@name='FREQUENCY']/option[text()='"+str(str_Mes)+"']").click()
 
         # Seleccionamos los campos deseados para crear la base de datos
-        print('Seleccionando campos para descarga')
+        print('Seleccionando campos para descarga...')
         for campo in self.dict_Campos.items():
             xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo[1]['Id']
 
