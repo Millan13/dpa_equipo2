@@ -1,5 +1,8 @@
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import datetime
 import os
@@ -7,7 +10,7 @@ import numpy as np
 import glob
 
 
-class RitaWebScraping:
+class Rita:
 
     # Declaración de propiedades
     str_Url = ''
@@ -50,11 +53,11 @@ class RitaWebScraping:
     # Declaración de métodos
     def __init__(self):
 
-        from Auxiliar import Auxiliar
+        from Utileria import Utileria
 
         # Lo primero es: saber en qué ambiente se está trabajando
-        objAuxiliar = Auxiliar()
-        if objAuxiliar.ObtenerUsuario() == 'ec2-user':
+        objUtileria = Utileria()
+        if objUtileria.ObtenerUsuario() == 'ec2-user':
             self.str_Ambiente = 'EC2'
         else:
             self.str_Ambiente = 'Local'
@@ -78,28 +81,39 @@ class RitaWebScraping:
                   }
         command_result = driver.execute("send_command", params)
 
+        print('Esperando a la pagina...', self.str_Url)
         driver.get(self.str_Url)
-
-        nbr_Aleat = np.random.uniform(0, 1, 1)
-        time.sleep(nbr_Aleat)
 
         # Bajamos el anio y mes indicados
         driver.find_element_by_xpath("//select[@name='XYEAR']/option[text()="+str(nbr_Anio)+"]").click()
         driver.find_element_by_xpath("//select[@name='FREQUENCY']/option[text()='"+str(str_Mes)+"']").click()
 
         # Seleccionamos los campos deseados para crear la base de datos
+        print('Seleccionando campos para descarga...')
         for campo in self.dict_Campos.items():
             xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo[1]['Id']
-            driver.find_element_by_xpath(xpath_finales).click()
-            nbr_Aleat = np.random.uniform(0,2,1)
+
+            element = driver.find_element_by_xpath(xpath_finales)
+            driver.execute_script("arguments[0].click();", element)
+
+            # Método 1
+            # driver.find_element_by_xpath(xpath_finales).click()
+
+            # Método 2
+            # wait = WebDriverWait(driver, 30)
+            # element = wait.until(EC.element_to_be_clickable((By.XPATH, xpath_finales)))
+            # element.click()
+
+            nbr_Aleat = np.random.uniform(1,2,1)
             time.sleep(nbr_Aleat)
 
         # Bajamos el archivo
+        print('Generando archivo...')
         driver.execute_script('tryDownload()')
         str_ext = ''
-        print('Bajando el archivo...')
 
         # Este while es para esperar a que termine la descarga completa del archivo en turno
+        print('Bajando el archivo...')
         while str_ext != '.zip':
             print(datetime.datetime.now())
             list_file = glob.glob(self.str_DirDescargas+'/*.zip')  # * means all if need specific format then *.csv
@@ -201,12 +215,12 @@ class RitaWebScraping:
         command_result = driver.execute("send_command", params)
 
         driver.get(self.str_Url)
-        
+
         #Buscamos el mes y anio más reciente disponible en la página
         latest_field = driver.find_element_by_xpath("//table[1]/tbody/tr/td[2]/table[2]/tbody/tr[3]/td[1]")
         self.str_MasReciente =  latest_field.text.replace("Latest Available Data: ","") #Removemos el texto  fijo
-        
+
         #Cerramos el driver junto con el browser
         driver.quit()
-        
+
         return self.str_MasReciente

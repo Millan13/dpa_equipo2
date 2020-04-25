@@ -3,7 +3,7 @@ import boto3
 from pathlib import Path
 from dynaconf import settings
 
-class Auxiliar:
+class Utileria:
 
     # Atributos S3
     str_NombreBucket = ''
@@ -131,6 +131,10 @@ class Auxiliar:
 
         return
 
+    def ObtenerArchivoS3(self, cnx_S3, bucket_name, str_RutaS3):
+
+        return
+
     def ObtenerQueries(self):
 
         queries = {}
@@ -149,7 +153,7 @@ class Auxiliar:
             print('nombre_tabla: ' + nombre_tabla)
 
             # Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
-            sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as ','"
+            sql_statement = f"copy " + nombre_tabla + " from stdin with csv delimiter as ','"
             print(sql_statement)
             buffer = io.StringIO()
 
