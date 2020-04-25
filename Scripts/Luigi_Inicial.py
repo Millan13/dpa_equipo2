@@ -84,22 +84,22 @@ class Task_50_WebScrapingInicial(luigi.Task):
         return luigi.LocalTarget('Task_50_WebScrapingInicial')
 
 
-class Task_60_EnviarMetadataLinajeRDS(luigi.Task):
+class Task_60_EnviarMetadataLinajeCargaRDS(luigi.Task):
 
     def requires(self):
         return Task_50_WebScrapingInicial()
 
     def run(self):
-        if lt.EnviarMetadataLinajeRDS() == 0:
-            os.system('echo OK > Task_60_EnviarMetadataLinajeRDS')
+        if lt.EnviarMetadataLinajeCargaRDS() == 0:
+            os.system('echo OK > Task_60_EnviarMetadataLinajeCargaRDS')
 
     def output(self):
-        return luigi.LocalTarget('Task_60_EnviarMetadataLinajeRDS')
+        return luigi.LocalTarget('Task_60_EnviarMetadataLinajeCargaRDS')
 
 class Task_65_HacerFeatureEngineering(luigi.Task):
 
     def requires(self):
-        return Task_60_EnviarMetadataLinajeRDS()
+        return Task_60_EnviarMetadataLinajeCargaRDS()
 
     def run(self):
         if lt.HacerFeatureEngineering() == 0:
@@ -107,6 +107,18 @@ class Task_65_HacerFeatureEngineering(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('Task_65_HacerFeatureEngineering')
+
+class Task_67_EnviarMetadataLinajeTransformRDS(luigi.Task):
+
+    def requires(self):
+        return Task_65_HacerFeatureEngineering()
+
+    def run(self):
+        if lt.EnviarMetadataLinajeTransformRDS() == 0:
+            os.system('echo OK > Task_67_EnviarMetadataLinajeTransformRDS')
+
+    def output(self):
+        return luigi.LocalTarget('Task_67_EnviarMetadataLinajeTransformRDS')
 
 class Tarea_70(luigi.Task):
 
