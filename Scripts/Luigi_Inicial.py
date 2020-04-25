@@ -58,23 +58,23 @@ class Task_30_CrearSchemasRDS(luigi.Task):
         return luigi.LocalTarget('Task_30_CrearSchemasRDS')
 
 
-class Task_40_CrearTablasLinajeRDS(luigi.Task):
+class Task_40_CrearTablasRDS(luigi.Task):
 
     def requires(self):
         return Task_30_CrearSchemasRDS()
 
     def run(self):
-        if lt.CrearTablasLinajeRDS() == 0:
-            os.system('echo OK > Task_40_CrearTablasLinajeRDS')
+        if lt.CrearTablasRDS() == 0:
+            os.system('echo OK > Task_40_CrearTablasRDS')
 
     def output(self):
-        return luigi.LocalTarget('Task_40_CrearTablasLinajeRDS')
+        return luigi.LocalTarget('Task_40_CrearTablasRDS')
 
 
 class Task_50_WebScrapingInicial(luigi.Task):
 
     def requires(self):
-        return Task_40_CrearTablasLinajeRDS()
+        return Task_40_CrearTablasRDS()
 
     def run(self):
         if lt.WebScrapingInicial() == 0:
