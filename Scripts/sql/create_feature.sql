@@ -1,6 +1,6 @@
 
 /* EDA */
-/* Unión de los cuatro anios */
+/* Union de los cuatro anios */
 DATA WORK.UNION_ALL (drop=F16);
 	SET Rodrigo.All_2016 Rodrigo.All_2017 Rodrigo.All_2018;
 RUN;
