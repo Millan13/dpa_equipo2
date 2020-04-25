@@ -1,8 +1,14 @@
 import os
 import boto3
 from pathlib import Path
+<<<<<<< HEAD:Scripts/Auxiliar.py
 import pandas as pd
 class Auxiliar:
+=======
+from dynaconf import settings
+
+class Utileria:
+>>>>>>> develop:Scripts/Utileria.py
 
     def ObtenerTamanioArchivo(self, str_NombreArchivo):
         import os
@@ -92,6 +98,10 @@ class Auxiliar:
 
         return
 
+    def ObtenerArchivoS3(self, cnx_S3, bucket_name, str_RutaS3):
+
+        return
+
     def ObtenerQueries(self):
 
         queries = {}
@@ -109,8 +119,13 @@ class Auxiliar:
         with conn.cursor() as cursor:
             print('nombre_tabla: ' + nombre_tabla)
 
+<<<<<<< HEAD:Scripts/Auxiliar.py
             #Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
             sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as ','"
+=======
+            # Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
+            sql_statement = f"copy " + nombre_tabla + " from stdin with csv delimiter as ','"
+>>>>>>> develop:Scripts/Utileria.py
             print(sql_statement)
             buffer = io.StringIO()
 
