@@ -2,7 +2,11 @@ import os
 import numpy as np
 import subprocess
 from datetime import datetime
-from Auxiliar import Auxiliar
+
+# Librerias de nosotros
+import Luigi_Tasks as lt
+
+from Utileria import Utileria
 
 
 def CrearDB():
@@ -11,17 +15,17 @@ def CrearDB():
 
     import psycopg2
 
-    objAuxiliar = Auxiliar()
+    objUtileria = Utileria()
 
-    if objAuxiliar.ExisteBaseCreada():
+    if objUtileria.ExisteBaseCreada():
         print('Ya existe una BD creada')
     else:
-        conn = psycopg2.connect(user=objAuxiliar.str_UsuarioDB,
-                                host=objAuxiliar.str_EndPointDB,
-                                password=objAuxiliar.str_PassDB)
+        conn = psycopg2.connect(user=objUtileria.str_UsuarioDB,
+                                host=objUtileria.str_EndPointDB,
+                                password=objUtileria.str_PassDB)
 
         conn.autocommit = True
-        queries = objAuxiliar.ObtenerQueries()
+        queries = objUtileria.ObtenerQueries()
         query = queries.get('create_db')
 
         try:
@@ -70,16 +74,15 @@ def CrearDirectoriosS3():
     print('\n---Inicio creacion directorio S3--- \n')
 
     # import boto3
-    from Auxiliar import Auxiliar
-    from Rita import RitaWebScraping
+    from Rita import Rita
 
-    objAuxiliar = Auxiliar()
-    objWebScraping = RitaWebScraping()
+    objUtileria = Utileria()
+    objRita = Rita()
 
-    arr_Anios = objWebScraping.ObtenerAnios()
-    arr_Meses = objWebScraping.ObtenerMeses()
+    arr_Anios = objRita.ObtenerAnios()
+    arr_Meses = objRita.ObtenerMeses()
 
-    cnx_S3 = objAuxiliar.CrearConexionS3()
+    cnx_S3 = objUtileria.CrearConexionS3()
     for anio in arr_Anios:
         print('anio: ', anio)
         for mes in arr_Meses:
@@ -88,7 +91,7 @@ def CrearDirectoriosS3():
             print('directory_name: ', directory_name)
 
             try:
-                cnx_S3.put_object(Bucket=objAuxiliar.str_NombreBucket, Key=(directory_name+'/'))
+                cnx_S3.put_object(Bucket=objUtileria.str_NombreBucket, Key=(directory_name+'/'))
             except Exception:
                 print('Excepcion en CrearDirectoriosS3-put_object():')
                 raise
@@ -97,7 +100,7 @@ def CrearDirectoriosS3():
     directory_name = 'carga_recurrente'
     print('directory_name: ', directory_name)
     try:
-        cnx_S3.put_object(Bucket=objAuxiliar.str_NombreBucket, Key=(directory_name + '/'))
+        cnx_S3.put_object(Bucket=objUtileria.str_NombreBucket, Key=(directory_name + '/'))
     except Exception:
         print('Excepcion en CrearDirectoriosS3-put_object():')
         raise
@@ -108,10 +111,10 @@ def CrearDirectoriosS3():
 
 def CrearSchemasRDS():
     print('---Inicio creacion schemas---\n')
-    objAuxiliar = Auxiliar()
-    conn = objAuxiliar.CrearConexionRDS()
+    objUtileria = Utileria()
+    conn = objUtileria.CrearConexionRDS()
     conn.autocommit = True
-    queries = objAuxiliar.ObtenerQueries()
+    queries = objUtileria.ObtenerQueries()
     query = queries.get('create_schemas')
 
     try:
@@ -128,10 +131,10 @@ def CrearSchemasRDS():
 
 def CrearTablasLinajeRDS():
     print('---Inicio creacion tablas---\n')
-    objAuxiliar = Auxiliar()
-    conn = objAuxiliar.CrearConexionRDS()
+    objUtileria = Utileria()
+    conn = objUtileria.CrearConexionRDS()
     conn.autocommit = True
-    queries = objAuxiliar.ObtenerQueries()
+    queries = objUtileria.ObtenerQueries()
     query = queries.get('create_linaje_tables')
 
     try:
@@ -150,14 +153,14 @@ def WebScrapingInicial():
 
     print('\n---Inicio web scraping Inicial---')
     # import glob, os, time
-    from Rita import RitaWebScraping
-    from Auxiliar import Auxiliar
+    from Rita import Rita
     from Linaje import voEjecucion
     from Linaje import voArchivos
     from Linaje import voArchivos_Det
+    from pathlib import Path
 
-    objAuxiliar = Auxiliar()
-    objWebScraping = RitaWebScraping()
+    objUtileria = Utileria()
+    objWebScraping = Rita()
     arr_Anios = objWebScraping.ObtenerAnios()
     arr_Meses = objWebScraping.ObtenerMeses()
 
@@ -165,7 +168,7 @@ def WebScrapingInicial():
     objArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
-    nbr_Id_Ejec_Actual = objAuxiliar.ObtenerMaxId() + 1
+    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId() + 1
 
     for anio in arr_Anios:
         print('anio: ', anio)
@@ -185,20 +188,51 @@ def WebScrapingInicial():
                       objWebScraping.str_ArchivoDescargado)
                 os.system("unzip 'Descargas/*.zip' -d Descargas/")
                 os.system('rm Descargas/*.zip')
-                cnx_S3 = objAuxiliar.CrearConexionS3()
+                cnx_S3 = objUtileria.CrearConexionS3()
                 str_ArchivoLocal = 'Descargas/' + os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
                 str_RutaS3 = 'carga_inicial/' + str(anio) + '/' + mes + '/'
 
+                # Mandamos el archivo descargado a S3
                 try:
-                    objAuxiliar.MandarArchivoS3(cnx_S3, objAuxiliar.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                    # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                    print('Se omite el envío')
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
                     return 1
 
+                # ####### método 1
+                os.system("sed -i '' 's/.$//' Descargas/*.csv")
+                cnn = objUtileria.CrearConexionRDS()
+                archivo = open(str_ArchivoLocal)
+                # Mandamos la información raw del archivo al RDS 123
+
+                cur = cnn.cursor()
+                table_name = 'raw.vuelos'
+                f = open(str_ArchivoLocal, "r")
+
+                # Load table from the file with header
+                print("copy {} from STDIN CSV HEADER QUOTE '\"'".format(table_name))
+                cur.copy_expert("copy {} from STDIN CSV HEADER QUOTE '\"'".format(table_name), f)
+                cur.execute("commit;")
+
+                print("Loaded data into {}".format(table_name))
+                cur.close()
+
+                # ####### método 2
+                # os.system("sed -i '' 's/.$//' *.csv")
+                #for data_file in Path('Descargas').glob('*.csv'):
+
+                #    try:
+                #        objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'raw.vuelos')
+                #    except Exception:
+                #        print('Excepcion en InsertarEnRDSDesdeArchivo')
+                #        raise
+                #        return 1
+
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
-                nbr_Tamanio = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
+                nbr_Tamanio = objUtileria.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
                 nbr_Filas = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
 
                 # Se elimina la información descargada
@@ -237,9 +271,9 @@ def WebScrapingInicial():
 
     # CSV Linaje.Ejecuciones
     objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-    objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
-    objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
-    objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
+    objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+    objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+    objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
     objEjecucion.str_tipo_ejec = 'CI'
     objEjecucion.str_url_webscrapping = objWebScraping.str_Url
     objEjecucion.str_status_ejec = 'Ok'
@@ -257,15 +291,15 @@ def WebScrapingInicial():
 def EnviarMetadataLinajeRDS():
     print('\n---Inicio carga de linaje---\n')
     from pathlib import Path
-    objAuxiliar = Auxiliar()
-    cnn = objAuxiliar.CrearConexionRDS()
+    objUtileria = Utileria()
+    cnn = objUtileria.CrearConexionRDS()
     cnn.autocommit = True
 
     # Barremos los csv de Ejecuciones
     for data_file in Path('Linaje/Ejecuciones').glob('*.csv'):
 
         try:
-            objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'ejecuciones')
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.ejecuciones')
         except Exception:
             print('Excepcion en EnviarMetadataLinajeRDS')
             raise
@@ -278,7 +312,7 @@ def EnviarMetadataLinajeRDS():
     for data_file in Path('Linaje/Archivos').glob('*.csv'):
 
         try:
-            objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos')
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.archivos')
         except Exception:
             print('Excepcion en EnviarMetadataLinajeRDS')
             raise
@@ -291,7 +325,7 @@ def EnviarMetadataLinajeRDS():
     for data_file in Path('Linaje/ArchivosDet').glob('*.csv'):
 
         try:
-            objAuxiliar.InsertarEnRDSDesdeArchivo(cnn, data_file, 'archivos_det')
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.archivos_det')
         except Exception:
             print('Excepcion en EnviarMetadataLinajeRDS')
             raise
@@ -308,25 +342,24 @@ def WebScrapingRecurrente():
 
     print('\n---Inicio web scraping recurrente---')
     # import glob, os, time
-    from Rita import RitaWebScraping
-    from Auxiliar import Auxiliar
+    from Rita import Rita
     from Linaje import voEjecucion
     from Linaje import voArchivos
     from Linaje import voArchivos_Det
 
-    objAuxiliar = Auxiliar()
-    objWebScraping = RitaWebScraping()
-    arr_Anios = objWebScraping.ObtenerAnios()
-    arr_Meses = objWebScraping.ObtenerMeses()
+    objUtileria = Utileria()
+    objRita = Rita()
+    arr_Anios = objRita.ObtenerAnios()
+    arr_Meses = objRita.ObtenerMeses()
 
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
-    nbr_Id_Ejec_Actual = objAuxiliar.ObtenerMaxId() + 1
+    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId() + 1
 
     #Extraemos el último mes y año disponibles para descarga
-    latest = objWebScraping.ObtenerMesDescargaRecurrente()
+    latest = objRita.ObtenerMesDescargaRecurrente()
     latest_date = latest.split(" ") #Separamos el mes y el año por espacio
     anio =  latest_date[1]
     mes  =  latest_date[0]
@@ -334,24 +367,25 @@ def WebScrapingRecurrente():
     print('mes: ', mes)
 
     try:
-        objWebScraping.DescargarAnioMes(anio, mes)
+        objRita.DescargarAnioMes(anio, mes)
     except Exception:
         print('Excepcion en WebScrapingInicial-DescargarAnioMes')
         raise
         return 1
 
-    if objWebScraping.str_ArchivoDescargado != '':
+    if objRita.str_ArchivoDescargado != '':
         print('Descarga completa')
-        print('objWebScraping.str_ArchivoDescargado: ',
-              objWebScraping.str_ArchivoDescargado)
+        print('objRita.str_ArchivoDescargado: ',
+              objRita.str_ArchivoDescargado)
         os.system("unzip 'Descargas/*.zip' -d Descargas/")
         os.system('rm Descargas/*.zip')
-        cnx_S3 = objAuxiliar.CrearConexionS3()
-        str_ArchivoLocal = 'Descargas/' + os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+        cnx_S3 = objUtileria.CrearConexionS3()
+        str_ArchivoLocal = 'Descargas/' + os.path.basename(objRita.str_ArchivoDescargado + '.csv')
         str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
 
         try:
-            objAuxiliar.MandarArchivoS3(cnx_S3, objAuxiliar.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+            # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+            print('Se omite el envío')
         except Exception:
             print('Excepcion en MandarArchivoS3')
             raise
@@ -359,20 +393,20 @@ def WebScrapingRecurrente():
 
         # Antes de eliminar los archivos que ya fueron enviados a S3,
         # obtenemos información de ellos
-        nbr_Tamanio = objAuxiliar.ObtenerTamanioArchivo(objWebScraping.str_ArchivoDescargado + '.csv')
-        nbr_Filas = len(open(objWebScraping.str_ArchivoDescargado + '.csv').readlines())
+        nbr_Tamanio = objUtileria.ObtenerTamanioArchivo(objRita.str_ArchivoDescargado + '.csv')
+        nbr_Filas = len(open(objRita.str_ArchivoDescargado + '.csv').readlines())
 
         # Se elimina la información descargada
         os.system('rm Descargas/*.csv')
 
         # CSV Linaje.Archivos
         objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-        objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+        objArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
         objArchivo.nbr_tamanio_archivo = nbr_Tamanio
         objArchivo.nbr_num_registros = nbr_Filas
 
         # Se filtra el diccionario para traer solo campos de activacion
-        dict_Filtrado = {k: v for k, v in objWebScraping.dict_Campos.items() if v['Flag'] == 'A'}
+        dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
         objArchivo.nbr_num_columnas = len(dict_Filtrado)
 
         objArchivo.str_anio = str(anio)
@@ -386,7 +420,7 @@ def WebScrapingRecurrente():
         # y los ponemos en un arreglo
         objArchivo_Det = voArchivos_Det()
         np_Campos = np.empty([0, 2])
-        for key, value in objWebScraping.dict_Campos.items():
+        for key, value in objRita.dict_Campos.items():
 
             # Se pregunta si el campo esta marcado para activarse
               if value['Flag'] == 'A':
@@ -398,11 +432,11 @@ def WebScrapingRecurrente():
 
     # CSV Linaje.Ejecuciones
     objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-    objEjecucion.str_bucket_s3 = objAuxiliar.str_NombreBucket
-    objEjecucion.str_usuario_ejec = objAuxiliar.ObtenerUsuario()
-    objEjecucion.str_instancia_ejec = objAuxiliar.ObtenerIp()
+    objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+    objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+    objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
     objEjecucion.str_tipo_ejec = 'R'
-    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
+    objEjecucion.str_url_webscrapping = objRita.str_Url
     objEjecucion.str_status_ejec = 'Ok'
     objEjecucion.dttm_fecha_hora_ejec = datetime.now()
     objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
@@ -412,4 +446,18 @@ def WebScrapingRecurrente():
     objEjecucion.crearCSV()
 
     print('---Fin web scraping recurrente---\n')
+    return 0
+
+
+def HacerFeatureEngineering():
+    print('---Inicio de feature engineering---\n')
+
+    objUtileria = Utileria()
+
+    # Se deben leer los querys que se van a ejecutar y ejecutarlos
+
+
+
+    print('---Fin de feature engineering---\n')
+
     return 0
