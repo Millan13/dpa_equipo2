@@ -41,3 +41,25 @@ create table linaje.archivos_det (
   "nombre_col" VARCHAR(35)
 );
 comment on table linaje.archivos_det is 'describe detalles del archivo';
+
+
+/**************************** Raw vuelos ****************************/
+drop table if exists raw.vuelos;
+create table raw.vuelos(
+  "YEAR" VARCHAR(50),
+  "MONTH" VARCHAR(50),
+  "DAY_OF_MONTH" VARCHAR(50),
+  "DAY_OF_WEEK" VARCHAR(50),
+  "OP_UNIQUE_CARRIER" VARCHAR(50),
+  "TAIL_NUM" VARCHAR(50),
+  "OP_CARRIER_FL_NUM" VARCHAR(50),
+  "ORIGIN" VARCHAR(50),
+  "DEST" VARCHAR(50),
+  "CRS_DEP_TIME" VARCHAR(50),
+  "DEP_TIME" VARCHAR(50),
+  "DEP_DELAY" VARCHAR(50),
+  "CRS_ARR_TIME" VARCHAR(50),
+  "CRS_ELAPSED_TIME" VARCHAR(50),
+  "DISTANCE" VARCHAR(50)
+);
+comment on table linaje.archivos_det is 'detalles por vuelo';

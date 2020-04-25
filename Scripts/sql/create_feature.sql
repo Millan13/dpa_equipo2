@@ -1,6 +1,6 @@
 
 /* EDA */
-/* Unión de los cuatro anios */
+/* Union de los cuatro anios */
 DATA WORK.UNION_ALL (drop=F16);
 	SET Rodrigo.All_2016 Rodrigo.All_2017 Rodrigo.All_2018;
 RUN;
@@ -184,7 +184,7 @@ PROC SQL;
    FROM WORK.NW4 t1
    GROUP BY t1.ID_AVION, t1.FECHA;
 QUIT;
-/*Pegar la tabla de M�ximos a la tabla NW4 creando NW5*/
+/*Pegar la tabla de Maximos a la tabla NW4 creando NW5*/
 PROC SQL;
 	CREATE TABLE WORK.NW5 AS
 	SELECT t1.*, t2.MAX
@@ -221,7 +221,7 @@ DATA WORK.NW9;
 	IF FIRST.ID_AVION OR FIRST.FECHA THEN IND_RETRASO3 = . ;
 	ELSE IND_RETRASO3 = IND_RETRASO2;
 RUN;
-/*Borrar el IND_RETRASO2 y crear domin� igualando IND1 vs IND3*/
+/*Borrar el IND_RETRASO2 y crear domino igualando IND1 vs IND3*/
 PROC SQL;
 	CREATE TABLE Rodrigo.NW10 AS
 	SELECT t1.*, CASE WHEN t1.IND_RETRASO1 = t1.IND_RETRASO3 AND t1.IND_RETRASO1 = 1
