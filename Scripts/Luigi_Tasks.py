@@ -402,7 +402,7 @@ def WebScrapingRecurrente():
 
         try:
             # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-            print('Se omite el envío')
+            print('Se omite el envio')
         except Exception:
             print('Excepcion en MandarArchivoS3')
             raise
