@@ -182,3 +182,29 @@ class Utileria:
         except Exception:
             print('Excepcion en EjecutarQuery-cur.execute: ', query)
             raise
+
+    def DibujarLuigi(self):
+
+        strLuigi=''
+
+        strLuigi = strLuigi + "                 _'''''_                 \n"
+        strLuigi = strLuigi + "                .   L   .                \n"
+        strLuigi = strLuigi + "               /  .===.  \               \n"
+        strLuigi = strLuigi + "               \/ 6   6 \/               \n"
+        strLuigi = strLuigi + "               (  \___/  )               \n"
+        strLuigi = strLuigi + "   ________OOO__\_______/_____________   \n"
+        strLuigi = strLuigi + "  /                                    \ \n"
+        strLuigi = strLuigi + " |                                      |\n"
+        strLuigi = strLuigi + " |         ¡Pipeline correcto!          |\n"
+        strLuigi = strLuigi + " |                                      |\n"
+        strLuigi = strLuigi + " |                                      |\n"
+        strLuigi = strLuigi + "  \________________________OOO_________/ \n"
+        strLuigi = strLuigi + "                 |  |  |                 \n"
+        strLuigi = strLuigi + "                 |_ | _|                 \n"
+        strLuigi = strLuigi + "                 |  |  |                 \n"
+        strLuigi = strLuigi + "                 |__|__|                 \n"
+        strLuigi = strLuigi + "                 /-'Y'-\                 \n"
+        strLuigi = strLuigi + "                (__/ \__)                \n"
+        print(strLuigi)
+
+        return
