@@ -55,6 +55,18 @@ create table linaje.transform (
 );
 comment on table linaje.transform is 'describe detalles del transform';
 
+/**************************** Linaje modeling ****************************/
+drop table if exists linaje.modeling;
+create table linaje.modeling (
+  id_set_modelado NUMERIC,
+  nombre_modelo VARCHAR(100),
+  mejor_score_modelo NUMERIC,
+  fecha_hora_ejec TIMESTAMP,
+  usuario_ejec VARCHAR(20),
+  instancia_ejec VARCHAR(20)
+);
+comment on table linaje.modeling is 'describe detalles del modeling';
+
 
 /**************************** Raw vuelos ****************************/
 drop table if exists raw.vuelos;
