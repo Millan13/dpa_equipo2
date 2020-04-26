@@ -1,9 +1,11 @@
 # Librerias de python
 import luigi
 import os
+import time
 
 # Librerias de nosotros
 import Luigi_Tasks as lt
+from Utileria import Utileria
 
 
 class Task_05_CrearBD(luigi.Task):
@@ -119,6 +121,35 @@ class Task_67_EnviarMetadataLinajeTransformRDS(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('Task_67_EnviarMetadataLinajeTransformRDS')
+
+
+class Task_68_Modelar(luigi.Task):
+
+    def requires(self):
+        return Task_67_EnviarMetadataLinajeTransformRDS()
+
+    def run(self):
+        if lt.Modelar() == 0:
+            os.system('echo OK > Task_68_Modelar')
+
+    def output(self):
+        return luigi.LocalTarget('Task_68_Modelar')
+
+class Task_69_EnviarMetadataModelingRDS(luigi.Task):
+
+        def requires(self):
+            return Task_68_Modelar()
+
+        def run(self):
+            objUtileria = Utileria()
+            if lt.EnviarMetadataModelingRDS() == 0:
+                os.system('echo OK > Task_69_EnviarMetadataModelingRDS')
+                objUtileria.DibujarLuigi()
+                time.sleep(5)
+
+        def output(self):
+            return luigi.LocalTarget('Task_69_EnviarMetadataModelingRDS')
+
 
 class Tarea_70(luigi.Task):
 
