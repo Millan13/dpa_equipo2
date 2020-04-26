@@ -3,7 +3,7 @@ import boto3
 from pathlib import Path
 from dynaconf import settings
 
-class Auxiliar:
+class Utileria:
 
     # Atributos S3
     str_NombreBucket = ''
@@ -65,12 +65,10 @@ class Auxiliar:
 
         return bool_YaExiste
 
-    def ObtenerMaxId(self):
+    def ObtenerMaxId(self, conn, str_tabla, str_campo):
 
         nbr_MaxId = 0
-        str_Query = 'select max(id_ejec) from linaje.ejecuciones;'
-
-        conn = self.CrearConexionRDS()
+        str_Query = 'select max('+str_campo+') from '+str_tabla+';'
 
         cur = conn.cursor()
         cur.execute(str_Query)
@@ -126,15 +124,19 @@ class Auxiliar:
         print('str_ArchivoEnvio: ', str_ArchivoEnvio)
         print('str_NombreArchivoEnS3: ', str_NombreArchivoEnS3)
 
-        print('Enviando el archivo a S3')
+        print('Enviando el archivo a S3...')
         cnx_S3.upload_file(str_ArchivoEnvio, bucket_name, str_NombreArchivoEnS3)
 
         return
 
-    def ObtenerQueries(self):
+    def ObtenerArchivoS3(self, cnx_S3, bucket_name, str_RutaS3):
+
+        return
+
+    def ObtenerQueries(self, str_Path):
 
         queries = {}
-        for sql_file in Path('sql').glob('*.sql'):
+        for sql_file in Path(str_Path).glob('*.sql'):
             with open(sql_file, 'r') as sql:
                 sql_key = sql_file.stem
                 query = str(sql.read())
@@ -149,7 +151,7 @@ class Auxiliar:
             print('nombre_tabla: ' + nombre_tabla)
 
             # Armamos la cadena sql concatenando el nombre de la tabla recibido como parámetro
-            sql_statement = f"copy linaje." + nombre_tabla + " from stdin with csv delimiter as ','"
+            sql_statement = f"copy " + nombre_tabla + " from stdin with csv delimiter as ','"
             print(sql_statement)
             buffer = io.StringIO()
 
@@ -157,3 +159,26 @@ class Auxiliar:
                 buffer.write(data.read())
             buffer.seek(0)
             cursor.copy_expert(sql_statement, file=buffer)
+
+    def InsertarEnRDSDesdeArchivo2(self, conn, data_file, nombre_tabla):
+
+        cur = conn.cursor()
+
+        # Load table from the file with header
+        print("copy {} from STDIN CSV HEADER QUOTE '\"'".format(nombre_tabla))
+        cur.copy_expert("copy {} from STDIN CSV HEADER QUOTE '\"'".format(nombre_tabla), data_file)
+        cur.execute("commit;")
+
+        print("Loaded data into {}".format(nombre_tabla))
+        cur.close()
+
+
+    def EjecutarQuery(self, conn, query):
+        try:
+            with conn.cursor() as (cur):
+                cur.execute(query)
+                rowcount = cur.rowcount
+            return rowcount
+        except Exception:
+            print('Excepcion en EjecutarQuery-cur.execute: ', query)
+            raise
