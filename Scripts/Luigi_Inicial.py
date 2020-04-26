@@ -120,31 +120,6 @@ class Task_67_EnviarMetadataLinajeTransformRDS(luigi.Task):
     def output(self):
         return luigi.LocalTarget('Task_67_EnviarMetadataLinajeTransformRDS')
 
-class Tarea_70(luigi.Task):
-
-    def requires(self):
-        return Tarea_40()
-
-    def run(self):
-        if lt.WebScrapingRecurrente() == 0:
-            os.system('echo OK > Tarea_70')
-
-    def output(self):
-        return luigi.LocalTarget('Tarea_70')
-
-
-class Tarea_80(luigi.Task):
-
-    def requires(self):
-        return Tarea_70()
-
-    def run(self):
-        if lt.EnviarMetadataLinajeRDS() == 0:
-            os.system('echo OK > Tarea_80')
-
-    def output(self):
-        return luigi.LocalTarget('Tarea_80')
-
 
 if __name__ == '__main__':
     luigi.run()
