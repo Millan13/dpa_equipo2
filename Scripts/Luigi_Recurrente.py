@@ -16,17 +16,17 @@ class Tarea_10_WebScrapingRecurrente(luigi.Task):
         return luigi.LocalTarget('Tarea_10_WebScrapingRecurrente')
 
 
-class Task_20_EnviarMetadataLinajeCargaRDS(luigi.Task):
+class Tarea_20_EnviarMetadataLinajeRecurrenteCargaRDS(luigi.Task):
 
     def requires(self):
         return Tarea_10_WebScrapingRecurrente()
 
     def run(self):
         if lt.EnviarMetadataLinajeCargaRDS() == 0:
-            os.system('echo OK > Task_20_EnviarMetadataLinajeCargaRDS')
+            os.system('echo OK > Tarea_20_EnviarMetadataLinajeRecurrenteCargaRDS')
 
     def output(self):
-        return luigi.LocalTarget('Task_20_EnviarMetadataLinajeCargaRDS')
+        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeRecurrenteCargaRDS')
 
 if __name__ == '__main__':
     luigi.run()

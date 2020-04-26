@@ -387,14 +387,14 @@ def WebScrapingRecurrente():
     # Query para verificar si ya se ha descargado el último mes disponible
     query = "select * from linaje.archivos where anio='"+anio+"' and mes='"+mes+"';"
     veces_descargado = objUtileria.EjecutarQuery(conn, query)
-    print('Los datos de ',mes,' ',anio,' habian sido descargados ',veces_descargado,' veces.')
+    print('Los datos de',mes,anio,'habian sido descargados',veces_descargado,'veces.')
 
-    if veces_descargado>0:
+    if veces_descargado < 1:
 
         try:
             objRita.DescargarAnioMes(anio, mes)
         except Exception:
-            print('Excepcion en WebScrapingInicial-DescargarAnioMes')
+            print('Excepcion en WebScrapingRecurrente-DescargarAnioMes')
             raise
             return 1
 
