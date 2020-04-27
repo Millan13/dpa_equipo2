@@ -363,17 +363,17 @@ def WebScrapingRecurrente():
 
     objUtileria = Utileria()
     objRita = Rita()
-    arr_Anios = objRita.ObtenerAnios()
-    arr_Meses = objRita.ObtenerMeses()
-
     objEjecucion = voEjecucion()
     objArchivo = voArchivos()
+    veces_descargado = 0
 
     # Se obtiene el id de ejecución
     conn = objUtileria.CrearConexionRDS()
+    #conn.autocommit = True
     nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId(conn,
                                                   'linaje.ejecuciones',
                                                   'id_ejec') + 1
+
 
     #Extraemos el último mes y año disponibles para descarga
     latest = objRita.ObtenerMesDescargaRecurrente()
@@ -383,84 +383,92 @@ def WebScrapingRecurrente():
     print('anio: ', anio)
     print('mes: ', mes)
 
-    try:
-        objRita.DescargarAnioMes(anio, mes)
-    except Exception:
-        print('Excepcion en WebScrapingInicial-DescargarAnioMes')
-        raise
-        return 1
 
-    if objRita.str_ArchivoDescargado != '':
-        print('Descarga completa')
-        print('objRita.str_ArchivoDescargado: ',
-              objRita.str_ArchivoDescargado)
-        os.system("unzip 'Descargas/*.zip' -d Descargas/")
-        os.system('rm Descargas/*.zip')
-        cnx_S3 = objUtileria.CrearConexionS3()
-        str_ArchivoLocal = 'Descargas/' + os.path.basename(objRita.str_ArchivoDescargado + '.csv')
-        str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
+    # Query para verificar si ya se ha descargado el último mes disponible
+    query = "select * from linaje.archivos where anio='"+anio+"' and mes='"+mes+"';"
+    veces_descargado = objUtileria.EjecutarQuery(conn, query)
+    print('Los datos de',mes,anio,'habian sido descargados',veces_descargado,'veces.')
+
+    if veces_descargado < 1:
 
         try:
-            # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-            print('Se omite el envío')
+            objRita.DescargarAnioMes(anio, mes)
         except Exception:
-            print('Excepcion en MandarArchivoS3')
+            print('Excepcion en WebScrapingRecurrente-DescargarAnioMes')
             raise
             return 1
 
-        # Antes de eliminar los archivos que ya fueron enviados a S3,
-        # obtenemos información de ellos
-        nbr_Tamanio = objUtileria.ObtenerTamanioArchivo(objRita.str_ArchivoDescargado + '.csv')
-        nbr_Filas = len(open(objRita.str_ArchivoDescargado + '.csv').readlines())
+        if objRita.str_ArchivoDescargado != '':
+            print('Descarga completa')
+            print('objRita.str_ArchivoDescargado: ',
+                  objRita.str_ArchivoDescargado)
+            os.system("unzip 'Descargas/*.zip' -d Descargas/")
+            os.system('rm Descargas/*.zip')
+            cnx_S3 = objUtileria.CrearConexionS3()
+            str_ArchivoLocal = 'Descargas/' + os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
 
-        # Se elimina la información descargada
-        os.system('rm Descargas/*.csv')
+            try:
+                # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                print('Se omite el envio')
+            except Exception:
+                print('Excepcion en MandarArchivoS3')
+                raise
+                return 1
 
-        # CSV Linaje.Archivos
-        objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-        objArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
-        objArchivo.nbr_tamanio_archivo = nbr_Tamanio
-        objArchivo.nbr_num_registros = nbr_Filas
+            # Antes de eliminar los archivos que ya fueron enviados a S3,
+            # obtenemos información de ellos
+            nbr_Tamanio = objUtileria.ObtenerTamanioArchivo(objRita.str_ArchivoDescargado + '.csv')
+            nbr_Filas = len(open(objRita.str_ArchivoDescargado + '.csv').readlines())
 
-        # Se filtra el diccionario para traer solo campos de activacion
-        dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
-        objArchivo.nbr_num_columnas = len(dict_Filtrado)
+            # Se elimina la información descargada
+            os.system('rm Descargas/*.csv')
 
-        objArchivo.str_anio = str(anio)
-        objArchivo.str_mes = str(mes)
-        objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-        objArchivo.str_ruta_almac_s3 = str_RutaS3
-        objArchivo.crearCSV()
+            # CSV Linaje.Archivos
+            objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+            objArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            objArchivo.nbr_tamanio_archivo = nbr_Tamanio
+            objArchivo.nbr_num_registros = nbr_Filas
 
-        # CSV Linaje.Archivos_Det
-        # Obtenemos los nombres de columnas del diccionario
-        # y los ponemos en un arreglo
-        objArchivo_Det = voArchivos_Det()
-        np_Campos = np.empty([0, 2])
-        for key, value in objRita.dict_Campos.items():
+            # Se filtra el diccionario para traer solo campos de activacion
+            dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
+            objArchivo.nbr_num_columnas = len(dict_Filtrado)
 
-            # Se pregunta si el campo esta marcado para activarse
-              if value['Flag'] == 'A':
-                np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+            objArchivo.str_anio = str(anio)
+            objArchivo.str_mes = str(mes)
+            objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+            objArchivo.str_ruta_almac_s3 = str_RutaS3
+            objArchivo.crearCSV()
 
-        objArchivo_Det.np_Campos = np_Campos
-        objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-        objArchivo_Det.crearCSV()
+            # CSV Linaje.Archivos_Det
+            # Obtenemos los nombres de columnas del diccionario
+            # y los ponemos en un arreglo
+            objArchivo_Det = voArchivos_Det()
+            np_Campos = np.empty([0, 2])
+            for key, value in objRita.dict_Campos.items():
 
-    # CSV Linaje.Ejecuciones
-    objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-    objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
-    objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
-    objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-    objEjecucion.str_tipo_ejec = 'R'
-    objEjecucion.str_url_webscrapping = objRita.str_Url
-    objEjecucion.str_status_ejec = 'Ok'
-    objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-    objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
-    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
-                                       + objEjecucion.str_tipo_ejec + '_' \
-                                       + str(objEjecucion.nbr_id_ejec) + '.csv'
-    objEjecucion.crearCSV()
+                # Se pregunta si el campo esta marcado para activarse
+                  if value['Flag'] == 'A':
+                    np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+
+            objArchivo_Det.np_Campos = np_Campos
+            objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+            objArchivo_Det.crearCSV()
+
+        # CSV Linaje.Ejecuciones
+        objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+        objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+        objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+        objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+        objEjecucion.str_tipo_ejec = 'R'
+        objEjecucion.str_url_webscrapping = objRita.str_Url
+        objEjecucion.str_status_ejec = 'Ok'
+        objEjecucion.dttm_fecha_hora_ejec = datetime.now()
+        objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+        objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                           + objEjecucion.str_tipo_ejec + '_' \
+                                           + str(objEjecucion.nbr_id_ejec) + '.csv'
+        objEjecucion.crearCSV()
 
     print('---Fin web scraping recurrente---\n')
     return 0
