@@ -217,7 +217,7 @@ def WebScrapingInicial():
                 archivo = open(str_ArchivoLocal)
 
                 # Mandamos la información raw del archivo al RDS
-                # print('Se omite el envio a RDS')
+                #print('Se omite el envio a RDS')
                 data_file = open(str_ArchivoLocal, "r")
                 objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
 
@@ -280,7 +280,7 @@ def WebScrapingInicial():
 
 
 def EnviarMetadataLinajeCargaRDS():
-    print('\n---Inicio carga de linaje carga---\n')
+    print('\n---Inicio envío de linaje carga---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -325,11 +325,11 @@ def EnviarMetadataLinajeCargaRDS():
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/ArchivosDet/*.csv')
 
-    print('\n---Fin carga de linaje carga---\n')
+    print('\n---Fin envío de linaje carga---\n')
     return 0
 
 def EnviarMetadataLinajeTransformRDS():
-    print('\n---Inicio carga de linaje transform ---\n')
+    print('\n---Inicio envío de linaje transform ---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -348,7 +348,7 @@ def EnviarMetadataLinajeTransformRDS():
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/Transform/*.csv')
 
-    print('\n---Fin carga de linaje transform---\n')
+    print('\n---Fin envío de linaje transform---\n')
     return 0
 
 
@@ -549,6 +549,190 @@ def HacerFeatureEngineering():
 
     print('---Fin de feature engineering---\n')
 
+    return 0
+
+
+def Modelar():
+    print('---Inicio de Modelar ---\n')
+    from Class_Eda import Eda
+    from Linaje import voModeling
+
+    objUtileria = Utileria()
+    objModeling = voModeling()
+
+    # Instanciamos el objeto Eda
+    objEda = Eda()
+
+    # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
+    objEda.strRutaDataSource = 'Transit_modeling.csv'
+
+    # Proceso de carga
+    objEda.Cargar_Datos()
+
+    # Proceso de limpieza
+    objEda.Limpiar_Datos()
+
+    # Guardamos el arreglo en la nueva columna
+    objEda.pdDataSet['y'] = objEda.pdDataSet.apply(lambda x: (x.etiqueta1), axis=1)
+
+    # Eliminamos las columnas
+    objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['bandera_delay'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso3'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['sum_efectos_domino'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tot_sum_domino'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['delay'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['year'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['etiqueta1'], axis=1)
+
+    # Variables a incluir que se eliminan en esta prueba:
+    objEda.pdDataSet = objEda.pdDataSet.drop(['horasalidaf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['hora_llegada_progf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['num_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_avion'], axis=1)
+
+    # Label encoder
+    objEda.npLabelEncoderFeat = np.array([])
+    objEda.Agregar_Features_LabelEnc('day_sem')
+    objEda.Agregar_Features_LabelEnc('origen')
+    objEda.Agregar_Features_LabelEnc('destino')
+
+    # Mostramos el dataSet Auxiliar para ver que aún no ocurre ningún cambio
+    objEda.LabelEncoder_OneHotEncoder()
+
+    objEda.Borrar_Cols_Base_LabelEnc()
+    objEda.Borrar_Cols_Inter_LabelEnc()
+
+    # Separamos las features de lo que vamos a predecir
+    pdX, pdY = objEda.SepararFeaturesYPred('y')
+
+    # Separamos nuestros datos en entrenamiento y pruebas utilizando la proporción 80-20
+    objEda.Generar_Train_Test(pdX, pdY, 0.2)
+
+    # Preparamos las variables que imputaremos
+    objEda.listTransform = ['']  # Limpiamos la propiedad de lista de features a imputar
+    objEda.Agregar_Features_Transform('median', 'vuelos_afectados')  # no hizo nada porque están como NaN
+
+    # Imputamos sobre el conjunto de entrenamiento y prueba
+    objEda.X_train = objEda.Imputar_Features(objEda.X_train)
+    objEda.X_test = objEda.Imputar_Features(objEda.X_test)
+
+    # Se crean los hyperparámetros con los que se trabajará
+    # Arreglo de diccionarios por modelo (deben ir en el órden a ejecutar)
+    npDictHiperParam = np.array([])
+
+    # Parametrización para Árboles
+    dictHyperParams = {'max_depth': [4],  # [4,7]
+                       'min_samples_split': [4],  # [4,16]
+                       'min_samples_leaf': [3],  # [3,7]
+                       'max_features': ['sqrt']  # ['sqrt','log2']
+                       }
+    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
+
+    # Parametrización para Bosques
+    dictHyperParams = {'n_estimators': [25],  # Se redujo a 50
+                       'max_depth': [4],  # [4,7]
+                       'max_features': ['sqrt'],  # ['sqrt','log2']
+                       'min_samples_split': [4],  # [4,16]
+                       'min_samples_leaf': [3]  # [3,7]
+                       }
+    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
+
+    # Parametrización para XGBoost
+    dictHyperParams = {'learning_rate': [0.25, 0.75],
+                       'n_estimators': [25],  # Se redujo a 50
+                       'min_samples_split': [4],  # [4,16]
+                       'min_samples_leaf': [3],  # [3,7]
+                       'max_depth': [4],  # [4,7]
+                       'max_features': ['sqrt']
+                       }
+    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
+
+    # Se crean los modelos de clasificaión que se emplearán (en el mismo orden que los diccionarios)
+    npNombreModelos = np.array([])
+    npNombreModelos = np.append(npNombreModelos, 'DECTREE')
+    npNombreModelos = np.append(npNombreModelos, 'RANDOMF')
+    npNombreModelos = np.append(npNombreModelos, 'XGBOOST')
+
+    arrModelos = objEda.prepModelos(npNombreModelos)
+
+    # #Se corre el magic loop para realizar las predicciones con los parámetros previamente establecidos
+    npGridSearchCv = objEda.magic_loop2(arrModelos,
+                                        npDictHiperParam,
+                                        objEda.X_train,
+                                        objEda.Y_train,
+                                        5)
+
+    npArrBestScores = np.array([])
+    npArrBestParams = np.array([])
+
+    # Barremos el arreglo de GridSearchCV´s para sacar los mejores scores y parámetros
+    for grid in npGridSearchCv:
+        npArrBestScores = np.append(npArrBestScores, grid.best_score_)
+        npArrBestParams = np.append(npArrBestParams, grid.best_params_)
+
+    # Obtenemos el índice del mejor score
+    nbrIndiceGanador = np.argmax(npArrBestScores, axis=0)
+
+    # Mostramos el modelo, parámetros y score ganador
+    print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
+
+    print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
+
+    print("Parámetros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
+
+    conn = objUtileria.CrearConexionRDS()
+    nbr_id_set_modelado = objUtileria.ObtenerMaxId(conn,
+                                                   'linaje.modeling',
+                                                   'id_set_modelado') + 1
+    for grid in npGridSearchCv:
+        objModeling.nbr_id_set_modelado = nbr_id_set_modelado
+        objModeling.str_nombre_modelo = str(type(grid.estimator))
+        objModeling.nbr_mejor_score_modelo = grid.best_score_
+        objModeling.str_NombreDataFrame = 'Linaje/Modeling/' \
+                                          + objModeling.str_nombre_modelo \
+                                          + '.csv'
+        objModeling.dttm_fecha_hora_ejec = datetime.now()
+        objModeling.str_usuario_ejec = objUtileria.ObtenerUsuario()
+        objModeling.str_instancia_ejec = objUtileria.ObtenerIp()
+        objModeling.crearCSV()
+        # print(grid.param_grid)
+        # print(grid.best_params_)
+
+    print('---Fin de Modelar---\n')
+
+    return 0
+
+def EnviarMetadataModelingRDS():
+    print('\n---Inicio envío metadata modeling ---\n')
+    from pathlib import Path
+    objUtileria = Utileria()
+    cnn = objUtileria.CrearConexionRDS()
+    cnn.autocommit = True
+
+    # Barremos los csv de Ejecuciones
+    for data_file in Path('Linaje/Modeling').glob('*.csv'):
+
+        try:
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.modeling')
+        except Exception:
+            print('Excepcion en EnviarMetadataModelingRDS')
+            raise
+            return 1
+
+    # Eliminamos el arhivo de linaje-archivosdet
+    os.system('rm Linaje/Modeling/*.csv')
+
+    print('\n---Fin envío metadata modeling---\n')
     return 0
 
 # ###############################################################

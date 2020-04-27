@@ -1,13 +1,14 @@
 # Librerias de python
 import luigi
 import os
+import time
 import luigi.contrib.postgres
 from dynaconf import settings
 from pathlib import Path
-import pandas as pd
 
 # Librerias de nosotros
 import Luigi_Tasks as lt
+from Utileria import Utileria
 
 
 class Task_05_CrearBD(luigi.Task):
@@ -124,6 +125,7 @@ class Task_60_EnviarMetadataLinajeCargaRDS(luigi.contrib.postgres.CopyToTable):
         os.system('rm Linaje/Ejecuciones/*.csv')
         print('\n---Fin carga de linaje ejecuciones---\n')
 
+        
 class Task_61_EnviarMetadataLinajeCargaRDS(luigi.contrib.postgres.CopyToTable):
     print('\n---Inicio carga de linaje carga Archivos---\n')
     def requires(self):
@@ -156,6 +158,7 @@ class Task_61_EnviarMetadataLinajeCargaRDS(luigi.contrib.postgres.CopyToTable):
         os.system('rm Linaje/Archivos/*.csv')
         print('\n---Fin carga de linaje archivos---\n')
 
+        
 class Task_62_EnviarMetadataLinajeCargaRDS(luigi.contrib.postgres.CopyToTable):
     print('\n---Inicio carga de linaje carga ArchivosDet---\n')
     def requires(self):
@@ -181,7 +184,6 @@ class Task_62_EnviarMetadataLinajeCargaRDS(luigi.contrib.postgres.CopyToTable):
                     yield filas
         os.system('rm Linaje/ArchivosDet/*.csv')
         print('\n---Fin carga de linaje archivos_det---\n')
-
 
 
 class Task_65_HacerFeatureEngineering(luigi.Task):
@@ -227,6 +229,34 @@ class Task_67_EnviarMetadataLinajeTransformRDS(luigi.contrib.postgres.CopyToTabl
                     yield filas
         os.system('rm Linaje/Transform/*.csv')
         print('\n---Fin carga de linaje transform---\n')
+
+
+class Task_68_Modelar(luigi.Task):
+
+    def requires(self):
+        return Task_67_EnviarMetadataLinajeTransformRDS()
+
+    def run(self):
+        if lt.Modelar() == 0:
+            os.system('echo OK > Task_68_Modelar')
+
+    def output(self):
+        return luigi.LocalTarget('Task_68_Modelar')
+
+class Task_69_EnviarMetadataModelingRDS(luigi.Task):
+
+        def requires(self):
+            return Task_68_Modelar()
+
+        def run(self):
+            objUtileria = Utileria()
+            if lt.EnviarMetadataModelingRDS() == 0:
+                os.system('echo OK > Task_69_EnviarMetadataModelingRDS')
+                objUtileria.DibujarLuigi()
+                time.sleep(5)
+
+        def output(self):
+            return luigi.LocalTarget('Task_69_EnviarMetadataModelingRDS')
 
 
 if __name__ == '__main__':
