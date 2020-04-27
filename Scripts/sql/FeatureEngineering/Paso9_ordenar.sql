@@ -1,0 +1,7 @@
+/*Paso 9: Ordenar esta tabla por Id_avion, Hora de salidaF y Fecha */
+CREATE TABLE RAW.NW8 AS
+SELECT *
+FROM RAW.NW7
+WHERE DELAY IS NOT NULL 
+ORDER BY ID_AVION, FECHA, HORASALIDAF
+;
