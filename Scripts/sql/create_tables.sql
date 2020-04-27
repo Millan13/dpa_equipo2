@@ -55,6 +55,16 @@ create table linaje.transform (
 );
 comment on table linaje.transform is 'describe detalles del transform';
 
+/**************************** Titulo modeling ****************************/
+drop table if exists linaje.modeling;
+create table linaje.modeling (
+  id_modelo NUMERIC,
+  algoritmo VARCHAR(20),
+  hiperparametros JSON,
+  performance NUMERIC
+);
+comment on table linaje.modeling is 'describe los datos principales del modelo';
+
 
 /**************************** Raw vuelos ****************************/
 drop table if exists raw.vuelos;
