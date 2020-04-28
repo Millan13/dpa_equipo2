@@ -1,0 +1,9 @@
+[default]
+# Conexiones RDS
+user = 'postgres'
+dbname = 'bd_rita'
+host = 'end-point'
+password = 'pass'
+
+# S3
+bucket_name = 'nombre_bucket'
