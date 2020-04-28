@@ -53,8 +53,9 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
 
 **Pipeline**
 
-El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluacón, puesta en producción y monitoreo.
+El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
 
+![pipeline](Imagenes/pipeline.png)
 
 **Proceso ELT**
 
@@ -64,7 +65,7 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 
 >**Load.** Bajo esta sección del código se establecerá una conexión entre la instancia EC2 y el servicio de almacenamiento S3, en donde permanecerán tanto los datos históricos, como los que se descarguen mensualmente. Adicional, los datos históricos serán enviados al esquema *Raw* ubicado en el servicio RDS, para su posterior transformación.
 
->**Transform.**
+>**Transform.** Lo relacionado con transformación involucra creación de nuevas variables, uso de one hot encoding para variables categóricas.
 
 ![Proceso ELT]()
 
