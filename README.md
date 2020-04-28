@@ -34,7 +34,7 @@ Considerando la cantidad de variables disponibles y tomando como base la informa
 
 Con respecto al producto final de datos, se pretende desarrollar una API que permita filtrar por fecha y enliste los vuelos junto con el Origen, Destino, Hora de Salida y una etiqueta más indicando si el despegue del éste se retrasará más de 20 minutos creando un efecto dominó en al menos 2 vuelos consecutivos, o no.
 
-![Mockup]()
+![Mockup](Imagenes/Mockup_AirConnect.png)
 
 **Implicaciones éticas**
 
