@@ -209,8 +209,8 @@ def WebScrapingInicial():
 
                 # Mandamos el archivo descargado a S3
                 try:
-                    # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                    print('Se omite el envio a S3')
+                    objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                    # print('Se omite el envio a S3')
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
@@ -226,9 +226,9 @@ def WebScrapingInicial():
                 archivo = open(str_ArchivoLocal)
 
                 # Mandamos la información raw del archivo al RDS
-                print('Se omite el envio a RDS')
-                #data_file = open(str_ArchivoLocal, "r")
-                #objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
+                # print('Se omite el envio a RDS')
+                data_file = open(str_ArchivoLocal, "r")
+                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
 
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
@@ -418,8 +418,8 @@ def WebScrapingRecurrente():
             str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
 
             try:
-                # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                print('Se omite el envio')
+                objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                # print('Se omite el envio')
             except Exception:
                 print('Excepcion en MandarArchivoS3')
                 raise
@@ -766,7 +766,7 @@ def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, 
                                      + '_' \
                                      + str(objTransform.nbr_num_seq) + '.csv'
 
-    print(objTransform.nbr_id_set_transform)
+    # print(objTransform.nbr_id_set_transform)
     objTransform.crearCSV()
 
 
@@ -778,9 +778,9 @@ def EnviarPickleAS3():
     str_RutaS3 = 'modelo_seleccionado/'
 
     try:
-        # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
-        # print("Pickle enviado a S3")
-        print('Se omite el envio')
+        objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
+        print("Pickle enviado a S3")
+        # print('Se omite el envio')
     except Exception:
         print('Excepcion en EnviarPickleAS3')
         raise
