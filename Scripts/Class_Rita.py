@@ -370,11 +370,9 @@ class Rita:
         nbrIndiceGanador = np.argmax(npArrBestScores, axis=0)
 
         # Mostramos el modelo, parámetros y score ganador
-        print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
-
-        print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
-
-        print("Parámetros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
+        # print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
+        # print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
+        # print("Parametros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
 
         # Se instancia el modelo ganador
         self.ModeloGanadorMagicLoop=objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
