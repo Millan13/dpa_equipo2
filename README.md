@@ -23,20 +23,20 @@ La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México
 
 ## 2. Resumen General
 
-**Descripción de la base de datos**
+**2.1 Descripción de la base de datos**
 
 La base de datos con la que se trabajará contiene detalles sobre el despegue y arribo de los vuelos comerciales dentro de Estados Unidos de octubre de 1987 a enero de 2020. El dataset contiene alrededor de 100 variables y se encuentra ubicado en [RITA](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236). La información está disponible en archivos con formato .csv; y en principio es actualizada de forma mensual; sin embargo se desconoce la fecha exacta de actualización.
 
 Considerando la cantidad de variables disponibles y tomando como base la información que fue utilizada en el concurso [data expo Airline on-time performance](http://stat-computing.org/dataexpo/2009/the-data.html), nos limitaremos a trabajar con 15 variables. El detalle y descripción de las variables finales puede encontrase en esta liga [variables](https://github.com/Millan13/dpa_equipo2/blob/dpa-laura/docs/descripcion_variables.md).
 
 
-**Mockup**
+**2.2 Mockup**
 
 Con respecto al producto final de datos, se pretende desarrollar una API que permita filtrar por fecha y enliste los vuelos junto con el Origen, Destino, Hora de Salida y una etiqueta más indicando si el despegue del éste se retrasará más de 20 minutos creando un efecto dominó en al menos 2 vuelos consecutivos, o no.
 
 ![Mockup](Imagenes/Mockup_AirConnect.png)
 
-**Implicaciones éticas**
+**2.3 Implicaciones éticas**
 
 Sin excepción alguna, cualquier producto de datos trae consigo una serie de implicaciones que deben considerarse en el alcance del modelo.
 
@@ -51,13 +51,13 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
   + Aglomeración de pasajeros en ciertos horarios por tener vuelos retrasados.
   + Falta de espacios disponibles para pasajeros que esperan la salida.
 
-**Pipeline**
+**2.4 Pipeline**
 
 El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
 
 ![pipeline](Imagenes/pipeline.png)
 
-**Proceso ELT**
+**2.5 Proceso ELT**
 
 La primera parte del pipeline anterior requiere de un proceso ELT que permita tener los datos en un formato adecuado para poder correr la parte de modelado. De manera breve, el proceso ELT consta de lo siguiente:
 
@@ -70,7 +70,7 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 ![Proceso ELT]()
 
 
-**Linaje**
+**2.6 Linaje**
 
 Puesto que los datos sufren transformaciones a lo largo de todo el pipeline, es importante tener la trazabilidad de todas estas modificaciones. La metadata que se generará durante el pipeline será almacenada en una base de datos conforme a lo siguiente:
 
