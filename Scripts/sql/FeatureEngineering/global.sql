@@ -1,13 +1,13 @@
 /*Paso 0: Copiar la tabla vuelos a vuelos2*/
 CREATE TABLE RAW.VUELOS2 AS
-SELECT * 
+SELECT *
 FROM RAW.VUELOS
 ;
 
 /* Paso 1: Quedarnos con operador de vuelo de WN */
 CREATE TABLE RAW.NW AS
 SELECT *
-FROM RAW.VUELOS2 
+FROM RAW.VUELOS2
 WHERE OP_UNIQUE_CARRIER = 'WN'
 ;
 
@@ -24,7 +24,7 @@ FROM RAW.NW
 /*Paso 3: Modificar a numerico algunas columnas para poder operarlas*/
 ALTER TABLE RAW.NW2
 ALTER COLUMN DELAY TYPE NUMERIC USING delay::numeric
-/*ALTER COLUMN column_name_2 [SET DATA] TYPE new_data_type, AQUÍ SE PUEDEN PONER MÁS VARIABLES*/
+/*ALTER COLUMN column_name_2 [SET DATA] TYPE new_data_type, AQUï¿½ SE PUEDEN PONER Mï¿½S VARIABLES*/
 ;
 
 /*Paso 4: Generar bandera Delay*/
@@ -45,12 +45,12 @@ FROM RAW.NW2
 /*Paso 5: Crear la fecha de vuelo*/
 CREATE TABLE RAW.NW4 AS
 SELECT * ,
-CASE WHEN DIA_MES = '1' OR DIA_MES = '2' OR DIA_MES = '3' OR DIA_MES = '4' OR DIA_MES = '5' 
-	OR DIA_MES = '6' OR DIA_MES = '7' OR DIA_MES = '8' OR DIA_MES = '9' THEN CONCAT('0',DIA_MES) 
+CASE WHEN DIA_MES = '1' OR DIA_MES = '2' OR DIA_MES = '3' OR DIA_MES = '4' OR DIA_MES = '5'
+	OR DIA_MES = '6' OR DIA_MES = '7' OR DIA_MES = '8' OR DIA_MES = '9' THEN CONCAT('0',DIA_MES)
 	ELSE DIA_MES END AS DAY,
 CASE WHEN MES = '1' OR MES = '2' OR MES = '3' OR MES = '4' OR MES = '5' OR MES = '6'
 	OR MES = '7' OR MES = '8' OR MES = '9' THEN CONCAT('0',MES) ELSE MES END AS MONTH,
-CASE WHEN DIA_SEMANA = '1' THEN 'A:LUNES' 
+CASE WHEN DIA_SEMANA = '1' THEN 'A:LUNES'
 	WHEN DIA_SEMANA = '2' THEN 'B:MARTES'
 	WHEN DIA_SEMANA = '3' THEN 'C:MIERCOLES'
 	WHEN DIA_SEMANA = '4' THEN 'D:JUEVES'
@@ -86,13 +86,13 @@ WHERE ID_AVION IS NOT NULL AND SALIDA_REALF IS NOT NULL
 CREATE TABLE RAW.NW8 AS
 SELECT *
 FROM RAW.NW7
-WHERE DELAY IS NOT NULL 
+WHERE DELAY IS NOT NULL
 ORDER BY ID_AVION, FECHA, HORASALIDAF
 ;
 
 /*Paso 10: Realizar el conteo de vuelos por Fecha y Id_vuelo*/
 CREATE TABLE RAW.NW9 AS
-SELECT *, 
+SELECT *,
 	RANK() OVER (
 			PARTITION BY ID_AVION, FECHA
 			ORDER BY ID_AVION, FECHA, HORASALIDAF) rank_contador
@@ -133,10 +133,10 @@ FROM RAW.NW11
 
 /*Paso 15: Generar el Lag con el ind_retraso2*/
 CREATE TABLE RAW.NW13 AS
-SELECT *, 
+SELECT *,
 	LAG(IND_RETRASO1 ,1) OVER (
 		ORDER BY ID_AVION, FECHA, HORASALIDAF
-	) IND_RETRASO2 
+	) IND_RETRASO2
 FROM RAW.NW12
 ;
 
@@ -146,19 +146,14 @@ SELECT *, CASE WHEN rank_contador = 1 THEN null ELSE IND_RETRASO2 END AS IND_RET
 FROM RAW.NW13
 ;
 
-/*Paso 17: Crear el efecto domino igualando IND1 vs IND3*/
 CREATE TABLE RAW.NW15 AS
 SELECT *, CASE WHEN IND_RETRASO1 = IND_RETRASO3 AND IND_RETRASO1 = 1
 THEN 'DOMINO' ELSE 'SIN EFECTO' END AS EFECTO
 FROM RAW.NW14 t1
 ;
 
-
-
 /*Aqui me quede-------------------------------------------------------------*/
-/*Paso 18: Filtrar la tabla para quedarse con puros retrasos*/
-/*Filtrar (la tabla queda de  2'454,328) donde Ind_Retraso1 = 1
-(para quedarme con todos los vuelos retrasados).*/
+/*Paso 18: Filtrar la tabla para quedarse con puros retras donde Ind_Retraso 1 vuelos retrasados)*/
 CREATE TABLE RAW.NW16 AS
 SELECT *
 FROM RAW.NW15 
@@ -268,10 +263,3 @@ VUELOS_AFECTADOS, EXTRACT(YEAR FROM FECHA) AS YEAR,
 CASE WHEN DELAY >= 20 AND VUELOS_AFECTADOS >= 2 THEN 1 ELSE 0 END AS ETIQUETA1
 FROM RAW.NW28
 ;
-
-
-
-
-
-
-
