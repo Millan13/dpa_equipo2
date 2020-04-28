@@ -619,13 +619,21 @@ def Modelar():
     print('---Inicio de Modelar ---\n')
 
     from Class_Rita import Rita
+    import pickle as pickle
 
     objRita = Rita()
 
     objRita.Modelar('Transit_modeling.csv')
 
-    # Aquí se deberá poner la función que envía el pickle a S3
+    # Se guarda el pickle del modelo ganador
+    pickleFile = open('parametros.pickle', 'wb')
+    pickle.dump(objRita.ModeloGanadorMagicLoop, pickleFile)
+    pickleFile.close()
 
+    # Se hace el envío a S3
+    EnviarPickleAS3()
+
+    # Aquí se deberá poner la función que envía el pickle a S3
     print('---Fin de Modelar---\n')
 
     return 0
@@ -678,20 +686,20 @@ def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, 
     print(objTransform.nbr_id_set_transform)
     objTransform.crearCSV()
 
+
 def EnviarPickleAS3():
     objUtileria = Utileria()
 
     cnx_S3 = objUtileria.CrearConexionS3()
-    str_ArchivoPickleLocal = 'parametros.pickle' #'Descargas/' + os.path.basename('parametros.pickle')
+    str_ArchivoPickleLocal = 'parametros.pickle'
     str_RutaS3 = 'modelo_seleccionado/'
 
-
     try:
-        objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
-        print("Pickle enviado a S3")
-        #print('Se omite el envio')
+        # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
+        # print("Pickle enviado a S3")
+        print('Se omite el envio')
     except Exception:
-        print('Excepcion en MandarArchivoS3')
+        print('Excepcion en EnviarPickleAS3')
         raise
         return 1
 
