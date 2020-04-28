@@ -545,6 +545,60 @@ def HacerFeatureEngineering():
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
     CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
+    # Query 10
+    str_NombreQuery = 'Paso9_ordenar'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 11
+    str_NombreQuery = 'Paso10_conteo'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 12
+    str_NombreQuery = 'Paso11_ranking_max'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 13
+    str_NombreQuery = 'Paso12_innerjoin'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 14
+    str_NombreQuery = 'Paso13_vuelosfaltantes'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 15
+    str_NombreQuery = 'Paso14_efectodomino1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 16
+    str_NombreQuery = 'Paso15_efectodomino2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 17
+    str_NombreQuery = 'Paso16_distraccion'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 18
+    str_NombreQuery = 'Paso17_banderadomino'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
     # Aquí se deben de poner el resto de queries del feature engineering
 
     print('---Fin de feature engineering---\n')

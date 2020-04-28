@@ -1,0 +1,8 @@
+/*Paso 12: Pegar la tabla de Maximos a la tabla del rank*/
+CREATE TABLE RAW.NW10 AS
+SELECT t1.*, t2.MAX
+FROM RAW.NW9 t1
+INNER JOIN RAW.MAX_NW t2
+ON (t1.ID_AVION = t2.ID_AVION AND t1.FECHA = t2.FECHA)
+ORDER BY t1.ID_AVION, t1.FECHA, t1.HORASALIDAF
+;
