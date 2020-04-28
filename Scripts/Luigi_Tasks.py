@@ -591,6 +591,89 @@ def HacerFeatureEngineering():
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
     CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
+    # Query 19
+    str_NombreQuery = 'Paso18_filtroretrasos'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 20
+    str_NombreQuery = 'Paso19_lagbandera'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 21
+    str_NombreQuery = 'Paso20_vueloculpable'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 22
+    str_NombreQuery = 'Paso21_efectodomino3'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 23
+    str_NombreQuery = 'Paso22_regresoretrasos'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 24
+    str_NombreQuery = 'Paso23_efectosmultiples'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 25
+    str_NombreQuery = 'Paso24_totaldomino'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 26
+    str_NombreQuery = 'Paso25_regresoretrasos2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 27
+    str_NombreQuery = 'Paso26_negativos1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 28
+    str_NombreQuery = 'Paso27_contadorinverso'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 29
+    str_NombreQuery = 'Paso28_contadorinverso2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 30
+    str_NombreQuery = 'Paso29_negativos2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 31
+    str_NombreQuery = 'Paso30_regresoretrasos3'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 32
+    str_NombreQuery = 'Paso31_etiqueta'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
     # Aquí se deben de poner el resto de queries del feature engineering
 
     print('---Fin de feature engineering---\n')
