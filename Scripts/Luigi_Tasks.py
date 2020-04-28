@@ -553,7 +553,8 @@ def EnviarPickleAS3():
 
     try:
         objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
-        print('Se omite el envio')
+        print("Pickle enviado a S3")
+        #print('Se omite el envio')
     except Exception:
         print('Excepcion en MandarArchivoS3')
         raise
