@@ -693,6 +693,16 @@ def HacerFeatureEngineering():
     CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
     # Aquí se deben de poner el resto de queries del feature engineering
 
+    # Se genera el CSV que servirá para el modelado:
+    str_Query1 = 'SELECT * FROM TRANSFORM.NWFINAL'
+    str_Query2 = "COPY ({0}) TO STDOUT WITH CSV HEADER".format(str_Query1)
+
+    str_NombreArch = 'DatasetModelado.csv'
+
+    db_cursor = conn.cursor()
+    with open(str_NombreArch, 'w') as file:
+        db_cursor.copy_expert(str_Query2, file)
+
     print('---Fin de feature engineering---\n')
 
     return 0
@@ -706,7 +716,8 @@ def Modelar():
 
     objRita = Rita()
 
-    objRita.Modelar('Transit_modeling.csv')
+    # objRita.Modelar('Transit_modeling.csv')
+    objRita.Modelar('DatasetModelado.csv')
 
     # Se guarda el pickle del modelo ganador
     pickleFile = open('parametros.pickle', 'wb')
