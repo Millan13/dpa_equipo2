@@ -1,4 +1,4 @@
-# RETRASO Y AFECTACIÓN DE VUELOS OPERADOS POR SOUTWESTH AIRLINES CO.
+# Retraso y afectación de vuelos operados por Southwest Airlines Co.
 
 El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwest Airlines Co.* con el fin de detectar retrasos de vuelos de más de 20 minutos en su despegue ocasinando un efecto dominó de 2 o más vuelos consecutivos. Los vuelos operados por la aerolínea *Soutwesth Airlines Co.* representan el 20.6% del total de vuelos nacionales en Estados Unidos, en el periodo comprendido de enero 2016 a diciembre 2019. Durante este periodo, el 25% de los vuelos de la aerolínea sufrieron un retraso en su despegue mayor a 20 minutos. Alertar a la aerolínea anticipadamente sobre posibles retrasos le permitiría conocer anticipadamente pérdidas monetarias asociadas a dichos retrasos, activar de planes de contingencia; y tomar acciones encaminadas a la disminución de costos operativos, contribuyendo en la mejora de la eficiencia de sus operaciones.
 
@@ -85,18 +85,47 @@ Los datos que se utilizan son almacenados en un bucket S3 de AWS, una instancia 
 ```
 Infraestructura: AWS
 
-+ AMI:
-+ EC2:
-
-+ OS: linux
++ AMI: ami-0915e09cc7ceee3ab, Amazon Linux AMI 2018.03.0 (HVM)
++ EC2 instance:
+  + GPU: 1
+  + vCPU: 1
+  + RAM: 1 GB
++ OS: Linux AMI 2018.03.0
++ Volumes: 1
+  + Type: gp2
+  + Size: 16 GB
 + RDS: PostgreSQL
+  + Engine: PostgreSQL
+  + Engine version: 10.6
+  + Instance: db.t2.micro
+  + vCPU: 1
+  + RAM: 1 GB
+  + Storage: 80 GB
 
 
 ```
 
 ## 4. Instalación y configuración
 
+**4.1 Requerimientos**
 
+En complemento a la infraestructura descrita en le punto 3, será necesario el siguiente software:
+
++ git
+
+A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.
+
+```
+sudo yum install git-all
+```
+**4.2 Clonar el repositorio**
+
+Después de instalar git, es necesario clonar este repositorio. Posteriormente, desde la carpeta Scripts ubicada en dpa_equipo2 se debe correr el script 00_install_packages.sh
+
+```
+cd dpa_equipo2/Scripts
+sh 00_install_packages.sh
+```
 
 ## 5. Corrida de Pipeline
 
