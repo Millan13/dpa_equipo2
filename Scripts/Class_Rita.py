@@ -237,7 +237,8 @@ class Rita:
         # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
         objEda.strRutaDataSource = str_ArchivoDataSet
 
-        # Proceso de carga
+        # Especificamos nuestro separador de columnas y cargamos el dataset
+        objEda.strSeparadorColumnas = ','
         objEda.Cargar_Datos()
 
         # Temporalmente se trabaja con una porción de los datos
@@ -282,18 +283,9 @@ class Rita:
         # del dataset de golpe y así evitar problemas de memoria
         objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('day_sem')
-        objEda.LabelEncoder_OneHotEncoder()
-        objEda.Borrar_Cols_Base_LabelEnc()
-        objEda.Borrar_Cols_Inter_LabelEnc()
-
-        objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('origen')
-        objEda.LabelEncoder_OneHotEncoder()
-        objEda.Borrar_Cols_Base_LabelEnc()
-        objEda.Borrar_Cols_Inter_LabelEnc()
-
-        objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('destino')
+
         objEda.LabelEncoder_OneHotEncoder()
         objEda.Borrar_Cols_Base_LabelEnc()
         objEda.Borrar_Cols_Inter_LabelEnc()
