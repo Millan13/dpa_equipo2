@@ -346,7 +346,7 @@ class Rita:
         arrModelos = objEda.prepModelos(npNombreModelos)
 
         # #Se corre el magic loop para realizar las predicciones con los parámetros previamente establecidos
-        npGridSearchCv = objEda.magic_loop2(arrModelos,
+        npGridSearchCv = objEda.Correr_Magic_Loop(arrModelos,
                                             npDictHiperParam,
                                             objEda.X_train,
                                             objEda.Y_train,
@@ -369,6 +369,9 @@ class Rita:
         print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
 
         print("Parámetros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
+
+        # Se instancia el modelo ganador
+        self.ModeloGanadorMagicLoop=objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
 
         conn = self.objUtileria.CrearConexionRDS()
         nbr_id_set_modelado = self.objUtileria.ObtenerMaxId(conn,
