@@ -237,8 +237,15 @@ class Rita:
         # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
         objEda.strRutaDataSource = str_ArchivoDataSet
 
-        # Proceso de carga
+        # Especificamos nuestro separador de columnas y cargamos el dataset
+        objEda.strSeparadorColumnas = ','
         objEda.Cargar_Datos()
+
+        # Temporalmente se trabaja con una porción de los datos
+        filas = objEda.pdDataSet.shape[0]
+        porcion = int(filas/10)
+        objEda.pdDataSet = objEda.pdDataSet.drop(objEda.pdDataSet.index[porcion:filas])
+        # filas = objEda.pdDataSet.shape[0]
 
         # Proceso de limpieza
         objEda.Limpiar_Datos()
@@ -276,18 +283,9 @@ class Rita:
         # del dataset de golpe y así evitar problemas de memoria
         objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('day_sem')
-        objEda.LabelEncoder_OneHotEncoder()
-        objEda.Borrar_Cols_Base_LabelEnc()
-        objEda.Borrar_Cols_Inter_LabelEnc()
-
-        objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('origen')
-        objEda.LabelEncoder_OneHotEncoder()
-        objEda.Borrar_Cols_Base_LabelEnc()
-        objEda.Borrar_Cols_Inter_LabelEnc()
-
-        objEda.npLabelEncoderFeat = np.array([])
         objEda.Agregar_Features_LabelEnc('destino')
+
         objEda.LabelEncoder_OneHotEncoder()
         objEda.Borrar_Cols_Base_LabelEnc()
         objEda.Borrar_Cols_Inter_LabelEnc()
@@ -346,7 +344,7 @@ class Rita:
         arrModelos = objEda.prepModelos(npNombreModelos)
 
         # #Se corre el magic loop para realizar las predicciones con los parámetros previamente establecidos
-        npGridSearchCv = objEda.magic_loop2(arrModelos,
+        npGridSearchCv = objEda.Correr_Magic_Loop(arrModelos,
                                             npDictHiperParam,
                                             objEda.X_train,
                                             objEda.Y_train,
@@ -364,11 +362,12 @@ class Rita:
         nbrIndiceGanador = np.argmax(npArrBestScores, axis=0)
 
         # Mostramos el modelo, parámetros y score ganador
-        print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
+        # print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
+        # print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
+        # print("Parametros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
 
-        print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
-
-        print("Parámetros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
+        # Se instancia el modelo ganador
+        self.ModeloGanadorMagicLoop=objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
 
         conn = self.objUtileria.CrearConexionRDS()
         nbr_id_set_modelado = self.objUtileria.ObtenerMaxId(conn,
