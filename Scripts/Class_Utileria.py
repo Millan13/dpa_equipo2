@@ -4,6 +4,7 @@ from pathlib import Path
 from dynaconf import settings
 import pandas
 
+
 class Utileria:
 
     # Atributos S3
@@ -183,3 +184,29 @@ class Utileria:
         except Exception:
             print('Excepcion en EjecutarQuery-cur.execute: ', query)
             raise
+
+    def DibujarLuigi(self):
+
+        strLuigi=''
+
+        strLuigi = strLuigi + "                 _'''''_                  \n"
+        strLuigi = strLuigi + "                .   L   .                 \n"
+        strLuigi = strLuigi + "               /  .===.  \                \n"
+        strLuigi = strLuigi + "               \/ 6   6 \/                \n"
+        strLuigi = strLuigi + "               (  \ _ /  )                \n"
+        strLuigi = strLuigi + "  _________OOO__\ _____ /_____________    \n"
+        strLuigi = strLuigi + " |                                    |   \n"
+        strLuigi = strLuigi + " |                                    |   \n"
+        strLuigi = strLuigi + " |         ¡Pipeline correcto!        |   \n"
+        strLuigi = strLuigi + " |                                    |   \n"
+        strLuigi = strLuigi + " |                                    |   \n"
+        strLuigi = strLuigi + " |________________________OOO_________|   \n"
+        strLuigi = strLuigi + "                 |  |  |                  \n"
+        strLuigi = strLuigi + "                 |_ | _|                  \n"
+        strLuigi = strLuigi + "                 |  |  |                  \n"
+        strLuigi = strLuigi + "                 |__|__|                  \n"
+        strLuigi = strLuigi + "                 /-'Y'-\                  \n"
+        strLuigi = strLuigi + "                (__/ \ _)                 \n"
+        print(strLuigi)
+
+        return
