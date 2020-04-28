@@ -4,7 +4,7 @@ import subprocess
 from datetime import datetime
 
 # Librerias de nosotros
-from Utileria import Utileria
+from Class_Utileria import Utileria
 
 # ###############################################################
 # ################### Funciones principales #####################
@@ -77,7 +77,7 @@ def CrearDirectoriosS3():
     print('\n---Inicio creacion directorio S3--- \n')
 
     # import boto3
-    from Rita import Rita
+    from Class_Rita import Rita
 
     objUtileria = Utileria()
     objRita = Rita()
@@ -156,10 +156,10 @@ def WebScrapingInicial():
 
     print('\n---Inicio web scraping Inicial---')
     # import glob, os, time
-    from Rita import Rita
-    from Linaje import voEjecucion
-    from Linaje import voArchivos
-    from Linaje import voArchivos_Det
+    from Class_Rita import Rita
+    from Class_ValueObjects import voEjecucion
+    from Class_ValueObjects import voArchivos
+    from Class_ValueObjects import voArchivos_Det
     from pathlib import Path
     import platform
 
@@ -168,8 +168,8 @@ def WebScrapingInicial():
     arr_Anios = objWebScraping.ObtenerAnios()
     arr_Meses = objWebScraping.ObtenerMeses()
 
-    objEjecucion = voEjecucion()
-    objArchivo = voArchivos()
+    voEjecucion = voEjecucion()
+    voArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
     conn = objUtileria.CrearConexionRDS()
@@ -217,9 +217,9 @@ def WebScrapingInicial():
                 archivo = open(str_ArchivoLocal)
 
                 # Mandamos la información raw del archivo al RDS
-                #print('Se omite el envio a RDS')
-                data_file = open(str_ArchivoLocal, "r")
-                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
+                print('Se omite el envio a RDS')
+                #data_file = open(str_ArchivoLocal, "r")
+                #objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
 
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
@@ -230,50 +230,50 @@ def WebScrapingInicial():
                 os.system('rm Descargas/*.csv')
 
                 # CSV Linaje.Archivos
-                objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-                objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
-                objArchivo.nbr_tamanio_archivo = nbr_Tamanio
-                objArchivo.nbr_num_registros = nbr_Filas
+                voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+                voArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+                voArchivo.nbr_tamanio_archivo = nbr_Tamanio
+                voArchivo.nbr_num_registros = nbr_Filas
 
                 # Se filtra el diccionario para traer solo campos de activacion
                 dict_Filtrado = {k: v for k, v in objWebScraping.dict_Campos.items() if v['Flag'] == 'A'}
-                objArchivo.nbr_num_columnas = len(dict_Filtrado)
+                voArchivo.nbr_num_columnas = len(dict_Filtrado)
 
-                objArchivo.str_anio = str(anio)
-                objArchivo.str_mes = str(mes)
-                objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-                objArchivo.str_ruta_almac_s3 = str_RutaS3
-                objArchivo.crearCSV()
+                voArchivo.str_anio = str(anio)
+                voArchivo.str_mes = str(mes)
+                voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+                voArchivo.str_ruta_almac_s3 = str_RutaS3
+                voArchivo.crearCSV()
 
                 # CSV Linaje.Archivos_Det
                 # Obtenemos los nombres de columnas del diccionario
                 # y los ponemos en un arreglo
-                objArchivo_Det = voArchivos_Det()
+                voArchivo_Det = voArchivos_Det()
                 np_Campos = np.empty([0, 2])
                 for key, value in objWebScraping.dict_Campos.items():
 
                     # Se pregunta si el campo esta marcado para activarse
                     if value['Flag'] == 'A':
-                        np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+                        np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
-                objArchivo_Det.np_Campos = np_Campos
-                objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-                objArchivo_Det.crearCSV()
+                voArchivo_Det.np_Campos = np_Campos
+                voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+                voArchivo_Det.crearCSV()
 
     # CSV Linaje.Ejecuciones
-    objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-    objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
-    objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
-    objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-    objEjecucion.str_tipo_ejec = 'CI'
-    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
-    objEjecucion.str_status_ejec = 'Ok'
-    objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-    objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
-    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
-                                       + objEjecucion.str_tipo_ejec + '_' \
-                                       + str(objEjecucion.nbr_id_ejec) + '.csv'
-    objEjecucion.crearCSV()
+    voEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+    voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+    voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+    voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+    voEjecucion.str_tipo_ejec = 'CI'
+    voEjecucion.str_url_webscrapping = objWebScraping.str_Url
+    voEjecucion.str_status_ejec = 'Ok'
+    voEjecucion.dttm_fecha_hora_ejec = datetime.now()
+    voEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+    voEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                       + voEjecucion.str_tipo_ejec + '_' \
+                                       + str(voEjecucion.nbr_id_ejec) + '.csv'
+    voEjecucion.crearCSV()
 
     print('---Fin web scraping Inicial---\n')
     return 0
@@ -356,15 +356,15 @@ def WebScrapingRecurrente():
 
     print('\n---Inicio web scraping recurrente---')
     # import glob, os, time
-    from Rita import Rita
-    from Linaje import voEjecucion
-    from Linaje import voArchivos
-    from Linaje import voArchivos_Det
+    from Class_Rita import Rita
+    from Class_ValueObjects import voEjecucion
+    from Class_ValueObjects import voArchivos
+    from Class_ValueObjects import voArchivos_Det
 
     objUtileria = Utileria()
     objRita = Rita()
-    objEjecucion = voEjecucion()
-    objArchivo = voArchivos()
+    voEjecucion = voEjecucion()
+    voArchivo = voArchivos()
     veces_descargado = 0
 
     # Se obtiene el id de ejecución
@@ -425,50 +425,50 @@ def WebScrapingRecurrente():
             os.system('rm Descargas/*.csv')
 
             # CSV Linaje.Archivos
-            objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-            objArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
-            objArchivo.nbr_tamanio_archivo = nbr_Tamanio
-            objArchivo.nbr_num_registros = nbr_Filas
+            voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+            voArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            voArchivo.nbr_tamanio_archivo = nbr_Tamanio
+            voArchivo.nbr_num_registros = nbr_Filas
 
             # Se filtra el diccionario para traer solo campos de activacion
             dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
-            objArchivo.nbr_num_columnas = len(dict_Filtrado)
+            voArchivo.nbr_num_columnas = len(dict_Filtrado)
 
-            objArchivo.str_anio = str(anio)
-            objArchivo.str_mes = str(mes)
-            objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-            objArchivo.str_ruta_almac_s3 = str_RutaS3
-            objArchivo.crearCSV()
+            voArchivo.str_anio = str(anio)
+            voArchivo.str_mes = str(mes)
+            voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+            voArchivo.str_ruta_almac_s3 = str_RutaS3
+            voArchivo.crearCSV()
 
             # CSV Linaje.Archivos_Det
             # Obtenemos los nombres de columnas del diccionario
             # y los ponemos en un arreglo
-            objArchivo_Det = voArchivos_Det()
+            voArchivo_Det = voArchivos_Det()
             np_Campos = np.empty([0, 2])
             for key, value in objRita.dict_Campos.items():
 
                 # Se pregunta si el campo esta marcado para activarse
                   if value['Flag'] == 'A':
-                    np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+                    np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
-            objArchivo_Det.np_Campos = np_Campos
-            objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-            objArchivo_Det.crearCSV()
+            voArchivo_Det.np_Campos = np_Campos
+            voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+            voArchivo_Det.crearCSV()
 
         # CSV Linaje.Ejecuciones
-        objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-        objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
-        objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
-        objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-        objEjecucion.str_tipo_ejec = 'R'
-        objEjecucion.str_url_webscrapping = objRita.str_Url
-        objEjecucion.str_status_ejec = 'Ok'
-        objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-        objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
-        objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
-                                           + objEjecucion.str_tipo_ejec + '_' \
-                                           + str(objEjecucion.nbr_id_ejec) + '.csv'
-        objEjecucion.crearCSV()
+        voEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+        voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+        voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+        voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+        voEjecucion.str_tipo_ejec = 'R'
+        voEjecucion.str_url_webscrapping = objRita.str_Url
+        voEjecucion.str_status_ejec = 'Ok'
+        voEjecucion.dttm_fecha_hora_ejec = datetime.now()
+        voEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+        voEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                           + voEjecucion.str_tipo_ejec + '_' \
+                                           + str(voEjecucion.nbr_id_ejec) + '.csv'
+        voEjecucion.crearCSV()
 
     print('---Fin web scraping recurrente---\n')
     return 0
@@ -554,163 +554,19 @@ def HacerFeatureEngineering():
 
 def Modelar():
     print('---Inicio de Modelar ---\n')
-    from Class_Eda import Eda
-    from Linaje import voModeling
 
-    objUtileria = Utileria()
-    objModeling = voModeling()
+    from Class_Rita import Rita
 
-    # Instanciamos el objeto Eda
-    objEda = Eda()
+    objRita = Rita()
 
-    # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource = 'Transit_modeling.csv'
+    objRita.Modelar('Transit_modeling.csv')
 
-    # Proceso de carga
-    objEda.Cargar_Datos()
-
-    # Proceso de limpieza
-    objEda.Limpiar_Datos()
-
-    # Guardamos el arreglo en la nueva columna
-    objEda.pdDataSet['y'] = objEda.pdDataSet.apply(lambda x: (x.etiqueta1), axis=1)
-
-    # Eliminamos las columnas
-    objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['bandera_delay'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso2'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso3'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['sum_efectos_domino'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['tot_sum_domino'], axis=1)
-
-    objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['delay'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
-
-    objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['year'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['etiqueta1'], axis=1)
-
-    # Variables a incluir que se eliminan en esta prueba:
-    objEda.pdDataSet = objEda.pdDataSet.drop(['horasalidaf'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['hora_llegada_progf'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['num_vuelo'], axis=1)
-    objEda.pdDataSet = objEda.pdDataSet.drop(['id_avion'], axis=1)
-
-    # Label encoder
-    objEda.npLabelEncoderFeat = np.array([])
-    objEda.Agregar_Features_LabelEnc('day_sem')
-    objEda.Agregar_Features_LabelEnc('origen')
-    objEda.Agregar_Features_LabelEnc('destino')
-
-    # Mostramos el dataSet Auxiliar para ver que aún no ocurre ningún cambio
-    objEda.LabelEncoder_OneHotEncoder()
-
-    objEda.Borrar_Cols_Base_LabelEnc()
-    objEda.Borrar_Cols_Inter_LabelEnc()
-
-    # Separamos las features de lo que vamos a predecir
-    pdX, pdY = objEda.SepararFeaturesYPred('y')
-
-    # Separamos nuestros datos en entrenamiento y pruebas utilizando la proporción 80-20
-    objEda.Generar_Train_Test(pdX, pdY, 0.2)
-
-    # Preparamos las variables que imputaremos
-    objEda.listTransform = ['']  # Limpiamos la propiedad de lista de features a imputar
-    objEda.Agregar_Features_Transform('median', 'vuelos_afectados')  # no hizo nada porque están como NaN
-
-    # Imputamos sobre el conjunto de entrenamiento y prueba
-    objEda.X_train = objEda.Imputar_Features(objEda.X_train)
-    objEda.X_test = objEda.Imputar_Features(objEda.X_test)
-
-    # Se crean los hyperparámetros con los que se trabajará
-    # Arreglo de diccionarios por modelo (deben ir en el órden a ejecutar)
-    npDictHiperParam = np.array([])
-
-    # Parametrización para Árboles
-    dictHyperParams = {'max_depth': [4],  # [4,7]
-                       'min_samples_split': [4],  # [4,16]
-                       'min_samples_leaf': [3],  # [3,7]
-                       'max_features': ['sqrt']  # ['sqrt','log2']
-                       }
-    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
-
-    # Parametrización para Bosques
-    dictHyperParams = {'n_estimators': [25],  # Se redujo a 50
-                       'max_depth': [4],  # [4,7]
-                       'max_features': ['sqrt'],  # ['sqrt','log2']
-                       'min_samples_split': [4],  # [4,16]
-                       'min_samples_leaf': [3]  # [3,7]
-                       }
-    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
-
-    # Parametrización para XGBoost
-    dictHyperParams = {'learning_rate': [0.25, 0.75],
-                       'n_estimators': [25],  # Se redujo a 50
-                       'min_samples_split': [4],  # [4,16]
-                       'min_samples_leaf': [3],  # [3,7]
-                       'max_depth': [4],  # [4,7]
-                       'max_features': ['sqrt']
-                       }
-    npDictHiperParam = np.append(npDictHiperParam, dictHyperParams)
-
-    # Se crean los modelos de clasificaión que se emplearán (en el mismo orden que los diccionarios)
-    npNombreModelos = np.array([])
-    npNombreModelos = np.append(npNombreModelos, 'DECTREE')
-    npNombreModelos = np.append(npNombreModelos, 'RANDOMF')
-    npNombreModelos = np.append(npNombreModelos, 'XGBOOST')
-
-    arrModelos = objEda.prepModelos(npNombreModelos)
-
-    # #Se corre el magic loop para realizar las predicciones con los parámetros previamente establecidos
-    npGridSearchCv = objEda.magic_loop2(arrModelos,
-                                        npDictHiperParam,
-                                        objEda.X_train,
-                                        objEda.Y_train,
-                                        5)
-
-    npArrBestScores = np.array([])
-    npArrBestParams = np.array([])
-
-    # Barremos el arreglo de GridSearchCV´s para sacar los mejores scores y parámetros
-    for grid in npGridSearchCv:
-        npArrBestScores = np.append(npArrBestScores, grid.best_score_)
-        npArrBestParams = np.append(npArrBestParams, grid.best_params_)
-
-    # Obtenemos el índice del mejor score
-    nbrIndiceGanador = np.argmax(npArrBestScores, axis=0)
-
-    # Mostramos el modelo, parámetros y score ganador
-    print("Modelo ganador: \n", arrModelos[nbrIndiceGanador])
-
-    print("Score del modelo ganador: \n", npArrBestScores[nbrIndiceGanador])
-
-    print("Parámetros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
-
-    conn = objUtileria.CrearConexionRDS()
-    nbr_id_set_modelado = objUtileria.ObtenerMaxId(conn,
-                                                   'linaje.modeling',
-                                                   'id_set_modelado') + 1
-    for grid in npGridSearchCv:
-        objModeling.nbr_id_set_modelado = nbr_id_set_modelado
-        objModeling.str_nombre_modelo = str(type(grid.estimator))
-        objModeling.nbr_mejor_score_modelo = grid.best_score_
-        objModeling.str_NombreDataFrame = 'Linaje/Modeling/' \
-                                          + objModeling.str_nombre_modelo \
-                                          + '.csv'
-        objModeling.dttm_fecha_hora_ejec = datetime.now()
-        objModeling.str_usuario_ejec = objUtileria.ObtenerUsuario()
-        objModeling.str_instancia_ejec = objUtileria.ObtenerIp()
-        objModeling.crearCSV()
-        # print(grid.param_grid)
-        # print(grid.best_params_)
+    # Aquí se deberá poner la función que envía el pickle a S3
 
     print('---Fin de Modelar---\n')
 
     return 0
+
 
 def EnviarMetadataModelingRDS():
     print('\n---Inicio envío metadata modeling ---\n')
@@ -730,8 +586,7 @@ def EnviarMetadataModelingRDS():
             return 1
 
     # Eliminamos el arhivo de linaje-archivosdet
-    os.system('rm Linaje/Modeling/*.csv')
-
+    # os.system('rm Linaje/Modeling/*.csv')
     print('\n---Fin envío metadata modeling---\n')
     return 0
 
@@ -741,7 +596,7 @@ def EnviarMetadataModelingRDS():
 
 def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta):
 
-    from Linaje import voTransform
+    from Class_ValueObjects import voTransform
     objUtileria = Utileria()
     objTransform = voTransform()
 

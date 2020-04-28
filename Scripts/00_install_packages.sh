@@ -26,6 +26,7 @@ pip3 install selenium --user
 pip3 install luigi
 pip3 install boto3
 pip3 install numpy
+pip3 install -U scikit-learn
 
 sudo yum update
 sudo yum install postgresql postgresql-contrib

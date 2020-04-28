@@ -148,6 +148,7 @@ class voModeling:
 
     nbr_id_set_modelado = 0
     str_nombre_modelo = ''
+    # dict_hiperparametros = {}
     nbr_mejor_score_modelo = 0
     dttm_fecha_hora_ejec = ''
     str_usuario_ejec = ''
@@ -160,6 +161,7 @@ class voModeling:
 
         dict_Transform = {'id_set_modelado': [self.nbr_id_set_modelado],
                           'nombre_modelo': [self.str_nombre_modelo],
+                          # 'hiperparametros': [self.dict_hiperparametros],
                           'mejor_score_modelo': [self.nbr_mejor_score_modelo],
                           'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
                           'usuario_ejec': [self.str_usuario_ejec],
@@ -168,6 +170,7 @@ class voModeling:
 
         df = pd.DataFrame(dict_Transform, columns=['id_set_modelado',
                                                    'nombre_modelo',
+                                                   # 'hiperparametros'
                                                    'mejor_score_modelo',
                                                    'fecha_hora_ejec',
                                                    'usuario_ejec',
