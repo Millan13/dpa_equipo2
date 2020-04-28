@@ -187,26 +187,33 @@ class Utileria:
 
     def DibujarLuigi(self):
 
-        strLuigi=''
-
-        strLuigi = strLuigi + "                 _'''''_                  \n"
-        strLuigi = strLuigi + "                .   L   .                 \n"
-        strLuigi = strLuigi + "               /  .===.  \                \n"
-        strLuigi = strLuigi + "               \/ 6   6 \/                \n"
-        strLuigi = strLuigi + "               (  \ _ /  )                \n"
-        strLuigi = strLuigi + "  _________OOO__\ _____ /_____________    \n"
-        strLuigi = strLuigi + " |                                    |   \n"
-        strLuigi = strLuigi + " |                                    |   \n"
-        strLuigi = strLuigi + " |         ¡Pipeline correcto!        |   \n"
-        strLuigi = strLuigi + " |                                    |   \n"
-        strLuigi = strLuigi + " |                                    |   \n"
-        strLuigi = strLuigi + " |________________________OOO_________|   \n"
-        strLuigi = strLuigi + "                 |  |  |                  \n"
-        strLuigi = strLuigi + "                 |_ | _|                  \n"
-        strLuigi = strLuigi + "                 |  |  |                  \n"
-        strLuigi = strLuigi + "                 |__|__|                  \n"
-        strLuigi = strLuigi + "                 /-'Y'-\                  \n"
-        strLuigi = strLuigi + "                (__/ \ _)                 \n"
+        strLuigi = ''
+        strLuigi = strLuigi + "                                           \n"
+        strLuigi = strLuigi + "                                           \n"
+        strLuigi = strLuigi + "              /(         )\                \n"
+        strLuigi = strLuigi + "              \ \       / /                \n"
+        strLuigi = strLuigi + "               \ _'''''_ /                 \n"
+        strLuigi = strLuigi + "                .   L   .                  \n"
+        strLuigi = strLuigi + "               /  .===.  \                 \n"
+        strLuigi = strLuigi + "               \/ 6   6 \/                 \n"
+        strLuigi = strLuigi + "               (  \___/  )                 \n"
+        strLuigi = strLuigi + "   ________OOO__\_______/_____________     \n"
+        strLuigi = strLuigi + "  /                                    \   \n"
+        strLuigi = strLuigi + " |                                      |  \n"
+        strLuigi = strLuigi + " |          Pipeline correcto           |  \n"
+        strLuigi = strLuigi + " |                                      |  \n"
+        strLuigi = strLuigi + " |                                      |  \n"
+        strLuigi = strLuigi + "  \_______________________OOO__________/   \n"
+        strLuigi = strLuigi + "                 |  |  |                   \n"
+        strLuigi = strLuigi + "                 |_ | _|                   \n"
+        strLuigi = strLuigi + "                 |  |  |                   \n"
+        strLuigi = strLuigi + "                 |__|__|                   \n"
+        strLuigi = strLuigi + "                 /-'Y'-\                   \n"
+        strLuigi = strLuigi + "                (__/ \__)                  \n"
+        strLuigi = strLuigi + "                                           \n"
+        strLuigi = strLuigi + "              -Luigi Deamon-               \n"
+        strLuigi = strLuigi + "                                           \n"
+        strLuigi = strLuigi + "                                           \n"
         print(strLuigi)
 
         return
