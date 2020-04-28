@@ -1,0 +1,8 @@
+/*Paso 19: Generar el Lag con la bandera de efecto*/
+CREATE TABLE RAW.NW17 AS 
+SELECT *, 
+	LAG(EFECTO ,1) OVER (
+		ORDER BY ID_AVION, FECHA, HORASALIDAF
+	) EFECTO2 
+FROM RAW.NW16
+;
