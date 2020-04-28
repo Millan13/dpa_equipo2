@@ -240,6 +240,12 @@ class Rita:
         # Proceso de carga
         objEda.Cargar_Datos()
 
+        # Temporalmente se trabaja con una porción de los datos
+        filas = objEda.pdDataSet.shape[0]
+        porcion = int(filas/10)
+        objEda.pdDataSet = objEda.pdDataSet.drop(objEda.pdDataSet.index[porcion:filas])
+        # filas = objEda.pdDataSet.shape[0]
+
         # Proceso de limpieza
         objEda.Limpiar_Datos()
 
