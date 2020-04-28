@@ -1,0 +1,7 @@
+/*Paso 25: Regresar a la tabla NW23 pegando el total*/
+CREATE TABLE RAW.NW23 AS
+SELECT t1.*, t2.TOT_SUM_DOMINO
+FROM RAW.NW21 t1
+LEFT JOIN RAW.NW22 t2
+ON (t1.FECHA = t2.FECHA AND t1.ID_AVION = t2.ID_AVION)
+;

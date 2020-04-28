@@ -1,0 +1,6 @@
+/*Paso 20: Encontrar el vuelo que genera el efecto domino*/
+CREATE TABLE RAW.NW18 AS
+SELECT *, CASE WHEN EFECTO = 'DOMINO' AND EFECTO2 = 'SIN EFECTO'
+THEN 1 ELSE 0 END AS EFECTOS_DOMINO
+FROM RAW.NW17
+;

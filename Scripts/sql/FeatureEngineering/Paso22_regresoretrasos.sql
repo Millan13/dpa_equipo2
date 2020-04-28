@@ -1,0 +1,8 @@
+/*Paso 22: Regreso a la tabla retrasos - Se debe regresar a la tabla de RAW.NW16  */
+CREATE TABLE RAW.NW20 AS
+SELECT t1.*, t2.SUM_EFECTOS_DOMINO
+FROM RAW.NW16 t1
+LEFT JOIN RAW.NW19 t2
+ON (t1.FECHA = t2.FECHA AND t1.ID_AVION = t2.ID_AVION)
+ORDER BY t1.ID_AVION, t1.FECHA, t1.HORASALIDAF
+;
