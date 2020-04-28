@@ -60,6 +60,7 @@ drop table if exists linaje.modeling;
 create table linaje.modeling (
   id_set_modelado NUMERIC,
   nombre_modelo VARCHAR(100),
+  --hiperparametros JSON,
   mejor_score_modelo NUMERIC,
   fecha_hora_ejec TIMESTAMP,
   usuario_ejec VARCHAR(20),
