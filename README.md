@@ -1,1 +1,141 @@
-﻿﻿# Proyecto Arquitectura de Producto de Datos**Maestría en Ciencia de Datos ITAM**Integrantes del equipo:+ Laura Gómez Bustamante 191294 + Miguel Ángel Millán Dorado 191401 + Elizabeth Rodríguez Sánchez 191430 + Marco Julio Monroy Ayala 187825 + Rodrigo Suárez Segovia 191351La organización de los vuelos operados por cada aerolínea involucra la definición de rutas específicas, es decir, el avión X tiene como origen la ciudad A y como destino la ciudad B; y opera únicamente en esta ruta. Otro caso podría implicar que dicho avión se mueva a la ciudad C, teniendo como destino final la ciudad inicial A, de forma que la ruta de este avión sea A-B-C. De acuerdo con esta operación resulta natural pensar que un retraso en el despegue del avión hacia la ruta A-B afectará la salida a tiempo hacia la ruta B-C; y por consiguiente a la ruta C-A, dando lugar a un efecto dominó.Contar con información sobre posibles efectos dominó podría ser de gran utilidad para las compañías aéreas para conocer anticipadamente pérdidas monetarias asociadas a dichos retrasos, activar planes de contingencia, y tomar acciones encaminadas a la disminución de costos operativos.  ## Objetivo del proyecto:Garantizar la eficiencia de las operaciones aeroportuarias mediante un producto de datos basado en información relacionada con el vuelo (fecha, origen, destino, etc), capaz de predecir si habrá un retraso de ciertos minutos para el despegue, así como el número de vuelos que serán afectados. Entendiéndose como afectación, vuelos cuya salida también se retrasará. ## Problemática a resolver:El negocio de los aeropuertos incluye muchos procesos, regulaciones y partes interesadas definidas. Que un vuelo despegue a tiempo depende de múltiples factores: como la distancia al suelo, la autorización del control de tráfico aéreo, la reposición de alimentos, el reabastecimiento de combustible así como retrasos de vuelos procedentes de otros lugares. Una demora en cualquiera de estos factores puede llevar a un efecto dominó en las operaciones del aeropuerto. Imaginemos cuál sería el impacto en un aeropuerto con alto tráfico como los de Atlanta, Chicago o Beijing. Las cosas se vuelven aún más difíciles en el caso de condiciones climáticas extremas o eventos perturbadores. Con un número cada vez mayor de pasajeros y vuelos, la eficiencia operativa se ha convertido en un gran desafío para los aeropuertos.Mejorar la eficiencia y el rendimiento general de un aeropuerto se pueden lograr mediante el intercambio de información oportuna con todas las partes interesadas. Por tanto, este producto de datos representa un diferenciador importante que empodera y da libertad a operadores de servicios aeroportuarios, brindándoles información importante de posibles retrasos; permitiendo tomar decisiones a las partes interesadas de la aerolínea (operadores de aeropuertos, líneas aéreas, operadores de tierra y controladores de tráfico aéreo, etc.) intercambiando información de retrasos, y alentando a la colaboración para una gestión eficiente de las operaciones, buscando disminuir los costos involucrados en dichos retrasos.![](Imagenes/Mockup_AirConnect.png)## Recursos+ Información del Departamento de Transporte de los EUA (https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236)+ Servicios de AWS para almacenamiento y procesamiento## Pipeline![](Imagenes/Pipeline_Entrega.png)## Descripción de las variablesLa información que será utilizada para el desarrollo de este proyecto contiene detalles sobre el despegue y arribo de los vuelos comerciales dentro de Estados Unidos, de octubre de 1987 a diciembre de 2019. El dataset contiene alrededor de 100 variables ubicado en la siguiente ruta: https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236. La información está disponible en archivos con formato .csv.En principio la información es actualizada de forma mensual; sin embargo se desconoce la fecha exacta de actualización. Debido a la cantidad de variables con que se cuenta, y tomando como base la información utilizada en **data expo Airline on-time performance**  (http://stat-computing.org/dataexpo/2009/the-data.html), nos limitaremos a trabajar únicamente con las siguientes 29 variables:||Nombre variable	|Descripción||---|---|---||1	|report	|Year (from 1987 to the present)||2	|MONTH	|1-12||3	|DAY\_OF\_MONTH	|1-31||4	|DAY\_OF_WEEK	|1 (Monday) - 7 (Sunday)||5	|DEP_TIME	|Actual departure time (local, hhmm)||6	|CRS\_DEP_TIME	|Scheduled departure time (local, hhmm)||7	|ARR_TIME	|Actual arrival time (local, hhmm)||8	|CRS\_ARR_TIME	|Scheduled arrival time (local, hhmm)||9	|OP\_UNIQUE_CARRIER|Unique carrier code||10	|OP\_CARRIER\_FL\_NUM	|Flight number||11	|TAIL_NUM	|Plane tail number||12	|ACTUAL\_ELAPSED_TIME	|Elapsed Time of Flight, in minutes||13	|CRS\_ELAPSED_TIME	|CRS Elapsed Time of Flight, in minutes||14	|AIR_TIME	|Flight Time, in minutes||15	|ARR_DELAY	|Difference in minutes between scheduled and actual arrival time. Early arrivals show negative numbers.||16	|DEP_DELAY	|Difference in minutes between scheduled and actual departure time. Early departures set to 0.||17	|ORIGIN	|Origin IATA airport code||18	|DEST	|Destination IATA airport code||19	|DISTANCE	|Distance between airports, in miles||20	|TAXI_IN	|Taxi in time, in minutes||21	|TAXI_OUT	|Taxi out time in minutes||22	|CANCELLED	|Cancelled Flight Indicator (1=Yes)||23	|CANCELLATION_CODE	|Reason for cancellation (A = carrier, B = weather, C = NAS, D = security)||24	|DIVERTED	|Diverted Flight Indicator, 1 = yes, 0 = no||25	|CARRIER_DELAY	|Carrier Delay, in minutes||26	|WEATHER_DELAY	|Weather Delay, in minutes||27	|NAS_DELAY	|National Air System Delay, in minutes||28	|SECURITY_DELAY	|Security Delay, in minutes||29	|LATE\_AIRCRAFT_DELAY	|Late Aircraft Delay, in minutes|## Proceso ELTEl proyecto requerirá la aplicación de un proceso ELT, el cual se efecturará conforme a lo siguiente:+ **EXTRACT**Este parte del proceso requerirá de una carga inicial que permita obtener los datos históricos con los que se desarrollará el producto de datos. Adicionalmente será necesario realizar una carga periódica (mensual) con los datos sobre los que se realizarán las predicciones. Con relación a la carga inicial, a partir de una instancia EC2 se ejecutará lo siguiente:+ Script de bash que permita instalar las paqueterías y programas necesarios: Chrome-Driver, Google Chrome, Luigi, Python 3.6 y Selenium. Este será ejecutado una sola vez, antes de la carga inicial (00\_install\_packages.sh).+ Script de bash que permita crear los directorios *Descargas* y *Linaje*, así como *Ejecuciones, Archivos, ArchivosDet* como subfolders de *Linaje* (05\_create\_dirs.sh)+ Archivo .py (10\_web\_Scrapping_Rita.py) para: 	+ realizar web-scrapping utilizando Selenium y Chrome-Driver. La descarga de archivos se guardará en la carpeta *Descargas* en formato .zip.	+ realizar unzip de los archivos anteriores.	+  eliminar archivos .zip+ **LOAD**Lo correspondiente a LOAD permitirá establecer una conexión entre la instancia EC2 y el servicio de almacenamiento S3. En este último permancerán tanto los datos históricos, como los que se irán descargando mensualmente.+ Archivo .py (07\_créate\_S3\_structure.py) para crear la + Archivo .py para: que permite mover los datos del directorio *Descargas* al bucket configurado. Los datos relacionados con la carga incial se almacenarán en la carpeta *carga_inicial* y los datos mensuales en la carpeta *cargas_periodicas*. En ambas carpetas tenemos subcarpetas por año y mes.Cabe observar que la descarga no puede hacerse directamente al S3, dado que no se tiene una API, sino que el archivo se construye al momento de solicitar la descarga![](Imagenes/EL_equipo2.png)## IMPLICACIONES ÉTICAS### Falsos positivos+ Aumento de costos de operación de la aerolínea derivado de alertas de retrasos, cuando éstos no ocurrirán. Por ejemplo: aumento de horas de trabajo de personal, solicitar equipos de tránsito y/o seguridad, etc.+ Propiciar movilización y sentido de alerta del personal involucrado a raíz de la alerta de retraso, cuando en realidad no existirá retraso alguno.### Falsos negativos+ Causar una aglomeración de personas en ciertos horarios por tener vuelos retrasados.+ No tener suficientes espacios habilitados disponibles para las personas mientras esperan por un retraso,+ Planificar obras de mantenimiento en zonas que requieren los usuarios de las aerolíneas.Derivado de estas implicaciones, se debe buscar un equilibrio entre un modelo preciso pero sensible a través de la optimización de la medida F (media armónica) que da una ponderación y penaliza un desempeño malo en dichas medidas que el promedio armónico.### ERD-Linaje![](Imagenes/ERD_Rita2.png)#### Diccionario de datos linaje##### Tabla1:Ejecuciones+ Id_ejec: identificador de cada ejecución realizada.+ Id_archivo: Identificador único de descarga.+ Usuario_ejec: Usuario en la instancia que dispara el proceso.+ Instancia_ejec: Nombre de la instancia donde se ejecuta el proceso.+ Fecha_hora_ejec: Fecha y hora de la ejecución del proceso.+ Bucket_S3: Nombre del bucket donde se almacenará los archivos descargados.+ Ruta_almac_S3: Ruta de almacenamiento dentro de S3.+ Tag_script: Tag del script utilizado para la ejecución.+ Tipo_ejec: Si fue la ejecución inicial (único) o la recurrente.+ Url_webscrapping: Url de la página donde se realiza la extracción de información.+ Status_ejec: Si fue exitosa o no la ejecución.##### Tabla2: Archivos+ Id_archivo: Identificador único de descarga.+ Num_registros: Cantidad de observaciones que contiene el archivo (sin contar el header).+ Num_columnas: Cantidad de variables que contiene el archivo.+ Tamanio_archivo:Tamaño del archivo descargado.+ Anio: Año del archivo descargado.+ Mes: Mes del archivo descargado.##### Tabla3: Archivos_det(detalles del archivo)+ Id_archivo: Identificador único de descarga.+ Id_col: Identificador de las columnas del archivo.##### Tabla4: columnas+ Id_col: Identificador de las columnas del archivo.+ Etiqueta_col: Nombre de la columna del archivo.+ Tipo_col: Tipo de variable a manejar dentro de la columna.
+# Retraso y afectación de vuelos operados por Southwest Airlines Co.
+
+El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwest Airlines Co.* con el fin de detectar retrasos de vuelos de más de 20 minutos en su despegue ocasinando un efecto dominó de 2 o más vuelos consecutivos. Los vuelos operados por la aerolínea *Soutwesth Airlines Co.* representan el 20.6% del total de vuelos nacionales en Estados Unidos, en el periodo comprendido de enero 2016 a diciembre 2019. Durante este periodo, el 25% de los vuelos de la aerolínea sufrieron un retraso en su despegue mayor a 20 minutos. Alertar a la aerolínea anticipadamente sobre posibles retrasos le permitiría conocer anticipadamente pérdidas monetarias asociadas a dichos retrasos, activar de planes de contingencia; y tomar acciones encaminadas a la disminución de costos operativos, contribuyendo en la mejora de la eficiencia de sus operaciones.
+
+
+
+## Contenidos
+
+1. Introducción
+2. Resumen General
+3. Requerimientos e Infraestructura
+4. Instalación y configuración
+5. Corrida del Pipeline
+6. Organización del código
+7. Colaboradores
+
+
+## 1. Introducción
+
+**Maestría en Ciencia de Datos ITAM**
+
+La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México (ITAM) es un programa que busca desarrollar en los estudiantes habilidades computacionales en el diseño y uso de bases de datos en varias escalas de magnitud, dominio de técnicas estadísticas modernas aplicadas al análisis y uso productivo de datos, así como habilidades en el uso de lenguajes de programación y sus aplicaciones para desarrollar software. Como parte del programa de maestría, en segundo semestre se imparte la materia de *Arquitectura y Producto de Datos* la cual busca desarrollar un producto de datos de inicio a fin. Este proyecto corresponde al producto desarrollado a lo largo del semestre primavera 2020.
+
+## 2. Resumen General
+
+**2.1 Descripción de la base de datos**
+
+La base de datos con la que se trabajará contiene detalles sobre el despegue y arribo de los vuelos comerciales dentro de Estados Unidos de octubre de 1987 a enero de 2020. El dataset contiene alrededor de 100 variables y se encuentra ubicado en [RITA](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236). La información está disponible en archivos con formato .csv; y en principio es actualizada de forma mensual; sin embargo se desconoce la fecha exacta de actualización.
+
+Considerando la cantidad de variables disponibles y tomando como base la información que fue utilizada en el concurso [data expo Airline on-time performance](http://stat-computing.org/dataexpo/2009/the-data.html), nos limitaremos a trabajar con 15 variables. El detalle y descripción de las variables finales puede encontrase en esta liga [variables](https://github.com/Millan13/dpa_equipo2/blob/dpa-laura/docs/descripcion_variables.md).
+
+
+**2.2 Mockup**
+
+Con respecto al producto final de datos, se pretende desarrollar una API que permita filtrar por fecha y enliste los vuelos junto con el Origen, Destino, Hora de Salida y una etiqueta más indicando si el despegue del éste se retrasará más de 20 minutos creando un efecto dominó en al menos 2 vuelos consecutivos, o no.
+
+![Mockup](Imagenes/Mockup_AirConnect.png)
+
+**2.3 Implicaciones éticas**
+
+Sin excepción alguna, cualquier producto de datos trae consigo una serie de implicaciones que deben considerarse en el alcance del modelo.
+
+Particularmente dividimos las implicaciones éticas en falsos positivos y falsos negativos:
+
++ Falsos positivos
+  + Propiciar movilización y sentido de alerta del personal involucrado a raíz de la alerta de retraso, cuando en realidad tal retraso no existirá.
+  + Aumento de costos de operación de la aerolínea relacionados con el aumento de horas de trabajo del personal, solicitar equipos de tránsito/seguridad, etc.
+
+
++ Falsos negativos
+  + Aglomeración de pasajeros en ciertos horarios por tener vuelos retrasados.
+  + Falta de espacios disponibles para pasajeros que esperan la salida.
+
+**2.4 Pipeline**
+
+El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
+
+![pipeline](Imagenes/pipeline.png)
+
+**2.5 Proceso ELT**
+
+La primera parte del pipeline anterior requiere de un proceso ELT que permita tener los datos en un formato adecuado para poder correr la parte de modelado. De manera breve, el proceso ELT consta de lo siguiente:
+
+>**Extract.** Esta parte del proceso consta de dos etapas. En un primer momento es necesario hacer la carga inicial que permita obtener los datos históricos con los que se desarrollará el producto de datos. Por otro lado, es necesario realizar una carga periódica (mensual) con los datos sobre los cuáles se realizarán las predicciones.
+
+>**Load.** Bajo esta sección del código se establecerá una conexión entre la instancia EC2 y el servicio de almacenamiento S3, en donde permanecerán tanto los datos históricos, como los que se descarguen mensualmente. Adicional, los datos históricos serán enviados al esquema *Raw* ubicado en el servicio RDS, para su posterior transformación.
+
+>**Transform.** Lo relacionado con transformación involucra creación de nuevas variables, uso de one hot encoding para variables categóricas.
+
+![Proceso ELT]()
+
+
+**2.6 Linaje**
+
+Puesto que los datos sufren transformaciones a lo largo de todo el pipeline, es importante tener la trazabilidad de todas estas modificaciones. La metadata que se generará durante el pipeline será almacenada en una base de datos conforme a lo siguiente:
+
+![linaje](Imagenes/tablas_metadata.png)
+
+El detalle de cada uno de los campos de la metadata se ubica en [diccionario linaje](https://github.com/Millan13/dpa_equipo2/blob/dpa-laura/docs/diccionario_linaje.md).
+
+
+## 3. Requerimientos e Infraestructura
+
+Los datos que se utilizan son almacenados en un bucket S3 de AWS, una instancia EC2 de AWS es utilizada para correr todo el código; y los resultados de cada etapa son almacenados en un servicio RDS de AWS.
+
+```
+Infraestructura: AWS
+
++ AMI: ami-0915e09cc7ceee3ab, Amazon Linux AMI 2018.03.0 (HVM)
++ EC2 instance:
+  + GPU: 1
+  + vCPU: 1
+  + RAM: 1 GB
++ OS: Linux AMI 2018.03.0
++ Volumes: 1
+  + Type: gp2
+  + Size: 16 GB
++ RDS: PostgreSQL
+  + Engine: PostgreSQL
+  + Engine version: 10.6
+  + Instance: db.t2.micro
+  + vCPU: 1
+  + RAM: 1 GB
+  + Storage: 80 GB
+
+
+```
+
+## 4. Instalación y configuración
+
+**4.1 Requerimientos**
+
+En complemento a la infraestructura descrita en le punto 3, será necesario el siguiente software:
+
++ git
+
+A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.
+
+```
+sudo yum install git-all
+```
+**4.2 Clonar el repositorio**
+
+Después de instalar git, es necesario clonar este repositorio. Posteriormente, desde la carpeta Scripts ubicada en dpa_equipo2 se debe correr el script 00_install_packages.sh
+
+```
+cd dpa_equipo2/Scripts
+sh 00_install_packages.sh
+```
+
+## 5. Corrida de Pipeline
+
+## 6. Organización del código
+
+## 7. Colaboradores
+
++ Laura Gómez Bustamante
++ Miguel Ángel Millán Dorado
++ Elizabeth Rodríguez Sánchez
++ Marco Julio Monroy Ayala
++ Rodrigo Suárez Segovia
