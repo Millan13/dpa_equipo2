@@ -263,8 +263,8 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
                     yield fila
         os.system('rm Linaje/Modeling/*.csv')
         print('\n---Fin carga de linaje modeling---\n')
-        self.objRita.objUtileria.DibujarLuigi()
-        time.sleep(5)
+        # self.objRita.objUtileria.DibujarLuigi()
+        # time.sleep(5)
 
 
 if __name__ == '__main__':
