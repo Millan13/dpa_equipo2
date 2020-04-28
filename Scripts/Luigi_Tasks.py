@@ -108,6 +108,15 @@ def CrearDirectoriosS3():
         print('Excepcion en CrearDirectoriosS3-put_object():')
         raise
         return 1
+
+    directory_name = 'modelo_seleccionado'
+    print('directory_name: ', directory_name)
+    try:
+        cnx_S3.put_object(Bucket=objUtileria.str_NombreBucket, Key=(directory_name + '/'))
+    except Exception:
+        print('Excepcion en CrearDirectoriosS3-put_object():')
+        raise
+        return 1
     print('---Fin creacion directorio S3---\n')
     return 0
 
@@ -668,5 +677,22 @@ def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, 
 
     print(objTransform.nbr_id_set_transform)
     objTransform.crearCSV()
+
+def EnviarPickleAS3():
+    objUtileria = Utileria()
+
+    cnx_S3 = objUtileria.CrearConexionS3()
+    str_ArchivoPickleLocal = 'parametros.pickle' #'Descargas/' + os.path.basename('parametros.pickle')
+    str_RutaS3 = 'modelo_seleccionado/'
+
+
+    try:
+        objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
+        print("Pickle enviado a S3")
+        #print('Se omite el envio')
+    except Exception:
+        print('Excepcion en MandarArchivoS3')
+        raise
+        return 1
 
     return 0
