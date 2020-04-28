@@ -110,7 +110,7 @@ class voTransform:
     nbr_id_set_transform = 0
     nbr_num_seq = 0
     str_nombre_query = ''
-    nbr_filas_afectadas = ''
+    nbr_filas_afectadas = 0
     dttm_fecha_hora_ejec = ''
     str_usuario_ejec = ''
     str_instancia_ejec = ''
@@ -119,7 +119,7 @@ class voTransform:
 
     def crearCSV(self):
         import pandas as pd
-        print(self.nbr_id_set_transform)
+
         dict_Transform = {'id_set_transform': [self.nbr_id_set_transform],
                           'num_seq': [self.nbr_num_seq],
                           'nombre_query': [self.str_nombre_query],
@@ -138,7 +138,46 @@ class voTransform:
                                                    'instancia_ejec'
                                                    ]
                           )
-        print(df)
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voModeling:
+
+    nbr_id_set_modelado = 0
+    str_nombre_modelo = ''
+    # dict_hiperparametros = {}
+    nbr_mejor_score_modelo = 0
+    dttm_fecha_hora_ejec = ''
+    str_usuario_ejec = ''
+    str_instancia_ejec = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Transform = {'id_set_modelado': [self.nbr_id_set_modelado],
+                          'nombre_modelo': [self.str_nombre_modelo],
+                          # 'hiperparametros': [self.dict_hiperparametros],
+                          'mejor_score_modelo': [self.nbr_mejor_score_modelo],
+                          'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
+                          'usuario_ejec': [self.str_usuario_ejec],
+                          'instancia_ejec': [self.str_instancia_ejec]
+                          }
+
+        df = pd.DataFrame(dict_Transform, columns=['id_set_modelado',
+                                                   'nombre_modelo',
+                                                   # 'hiperparametros'
+                                                   'mejor_score_modelo',
+                                                   'fecha_hora_ejec',
+                                                   'usuario_ejec',
+                                                   'instancia_ejec'
+                                                   ]
+                          )
+
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return

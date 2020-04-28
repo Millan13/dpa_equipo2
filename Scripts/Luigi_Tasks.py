@@ -4,7 +4,7 @@ import subprocess
 from datetime import datetime
 
 # Librerias de nosotros
-from Utileria import Utileria
+from Class_Utileria import Utileria
 
 # ###############################################################
 # ################### Funciones principales #####################
@@ -77,7 +77,7 @@ def CrearDirectoriosS3():
     print('\n---Inicio creacion directorio S3--- \n')
 
     # import boto3
-    from Rita import Rita
+    from Class_Rita import Rita
 
     objUtileria = Utileria()
     objRita = Rita()
@@ -165,10 +165,10 @@ def WebScrapingInicial():
 
     print('\n---Inicio web scraping Inicial---')
     # import glob, os, time
-    from Rita import Rita
-    from Linaje import voEjecucion
-    from Linaje import voArchivos
-    from Linaje import voArchivos_Det
+    from Class_Rita import Rita
+    from Class_ValueObjects import voEjecucion
+    from Class_ValueObjects import voArchivos
+    from Class_ValueObjects import voArchivos_Det
     from pathlib import Path
     import platform
 
@@ -177,8 +177,8 @@ def WebScrapingInicial():
     arr_Anios = objWebScraping.ObtenerAnios()
     arr_Meses = objWebScraping.ObtenerMeses()
 
-    objEjecucion = voEjecucion()
-    objArchivo = voArchivos()
+    voEjecucion = voEjecucion()
+    voArchivo = voArchivos()
 
     # Se obtiene el id de ejecución
     conn = objUtileria.CrearConexionRDS()
@@ -209,8 +209,8 @@ def WebScrapingInicial():
 
                 # Mandamos el archivo descargado a S3
                 try:
-                    # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                    print('Se omite el envio a S3')
+                    objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                    # print('Se omite el envio a S3')
                 except Exception:
                     print('Excepcion en MandarArchivoS3')
                     raise
@@ -239,57 +239,57 @@ def WebScrapingInicial():
                 os.system('rm Descargas/*.csv')
 
                 # CSV Linaje.Archivos
-                objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-                objArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
-                objArchivo.nbr_tamanio_archivo = nbr_Tamanio
-                objArchivo.nbr_num_registros = nbr_Filas
+                voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+                voArchivo.str_id_archivo = os.path.basename(objWebScraping.str_ArchivoDescargado + '.csv')
+                voArchivo.nbr_tamanio_archivo = nbr_Tamanio
+                voArchivo.nbr_num_registros = nbr_Filas
 
                 # Se filtra el diccionario para traer solo campos de activacion
                 dict_Filtrado = {k: v for k, v in objWebScraping.dict_Campos.items() if v['Flag'] == 'A'}
-                objArchivo.nbr_num_columnas = len(dict_Filtrado)
+                voArchivo.nbr_num_columnas = len(dict_Filtrado)
 
-                objArchivo.str_anio = str(anio)
-                objArchivo.str_mes = str(mes)
-                objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-                objArchivo.str_ruta_almac_s3 = str_RutaS3
-                objArchivo.crearCSV()
+                voArchivo.str_anio = str(anio)
+                voArchivo.str_mes = str(mes)
+                voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+                voArchivo.str_ruta_almac_s3 = str_RutaS3
+                voArchivo.crearCSV()
 
                 # CSV Linaje.Archivos_Det
                 # Obtenemos los nombres de columnas del diccionario
                 # y los ponemos en un arreglo
-                objArchivo_Det = voArchivos_Det()
+                voArchivo_Det = voArchivos_Det()
                 np_Campos = np.empty([0, 2])
                 for key, value in objWebScraping.dict_Campos.items():
 
                     # Se pregunta si el campo esta marcado para activarse
                     if value['Flag'] == 'A':
-                        np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+                        np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
-                objArchivo_Det.np_Campos = np_Campos
-                objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-                objArchivo_Det.crearCSV()
+                voArchivo_Det.np_Campos = np_Campos
+                voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+                voArchivo_Det.crearCSV()
 
     # CSV Linaje.Ejecuciones
-    objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-    objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
-    objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
-    objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-    objEjecucion.str_tipo_ejec = 'CI'
-    objEjecucion.str_url_webscrapping = objWebScraping.str_Url
-    objEjecucion.str_status_ejec = 'Ok'
-    objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-    objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
-    objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
-                                       + objEjecucion.str_tipo_ejec + '_' \
-                                       + str(objEjecucion.nbr_id_ejec) + '.csv'
-    objEjecucion.crearCSV()
+    voEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+    voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+    voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+    voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+    voEjecucion.str_tipo_ejec = 'CI'
+    voEjecucion.str_url_webscrapping = objWebScraping.str_Url
+    voEjecucion.str_status_ejec = 'Ok'
+    voEjecucion.dttm_fecha_hora_ejec = datetime.now()
+    voEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+    voEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                       + voEjecucion.str_tipo_ejec + '_' \
+                                       + str(voEjecucion.nbr_id_ejec) + '.csv'
+    voEjecucion.crearCSV()
 
     print('---Fin web scraping Inicial---\n')
     return 0
 
 
 def EnviarMetadataLinajeCargaRDS():
-    print('\n---Inicio carga de linaje carga---\n')
+    print('\n---Inicio envío de linaje carga---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -334,11 +334,11 @@ def EnviarMetadataLinajeCargaRDS():
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/ArchivosDet/*.csv')
 
-    print('\n---Fin carga de linaje carga---\n')
+    print('\n---Fin envío de linaje carga---\n')
     return 0
 
 def EnviarMetadataLinajeTransformRDS():
-    print('\n---Inicio carga de linaje transform ---\n')
+    print('\n---Inicio envío de linaje transform ---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -357,7 +357,7 @@ def EnviarMetadataLinajeTransformRDS():
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/Transform/*.csv')
 
-    print('\n---Fin carga de linaje transform---\n')
+    print('\n---Fin envío de linaje transform---\n')
     return 0
 
 
@@ -365,15 +365,15 @@ def WebScrapingRecurrente():
 
     print('\n---Inicio web scraping recurrente---')
     # import glob, os, time
-    from Rita import Rita
-    from Linaje import voEjecucion
-    from Linaje import voArchivos
-    from Linaje import voArchivos_Det
+    from Class_Rita import Rita
+    from Class_ValueObjects import voEjecucion
+    from Class_ValueObjects import voArchivos
+    from Class_ValueObjects import voArchivos_Det
 
     objUtileria = Utileria()
     objRita = Rita()
-    objEjecucion = voEjecucion()
-    objArchivo = voArchivos()
+    voEjecucion = voEjecucion()
+    voArchivo = voArchivos()
     veces_descargado = 0
 
     # Se obtiene el id de ejecución
@@ -418,8 +418,8 @@ def WebScrapingRecurrente():
             str_RutaS3 = 'carga_recurrente/' + str(anio) + '/' + mes + '/'
 
             try:
-                # objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
-                print('Se omite el envio')
+                objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                # print('Se omite el envio')
             except Exception:
                 print('Excepcion en MandarArchivoS3')
                 raise
@@ -434,50 +434,50 @@ def WebScrapingRecurrente():
             os.system('rm Descargas/*.csv')
 
             # CSV Linaje.Archivos
-            objArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
-            objArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
-            objArchivo.nbr_tamanio_archivo = nbr_Tamanio
-            objArchivo.nbr_num_registros = nbr_Filas
+            voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+            voArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            voArchivo.nbr_tamanio_archivo = nbr_Tamanio
+            voArchivo.nbr_num_registros = nbr_Filas
 
             # Se filtra el diccionario para traer solo campos de activacion
             dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
-            objArchivo.nbr_num_columnas = len(dict_Filtrado)
+            voArchivo.nbr_num_columnas = len(dict_Filtrado)
 
-            objArchivo.str_anio = str(anio)
-            objArchivo.str_mes = str(mes)
-            objArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
-            objArchivo.str_ruta_almac_s3 = str_RutaS3
-            objArchivo.crearCSV()
+            voArchivo.str_anio = str(anio)
+            voArchivo.str_mes = str(mes)
+            voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+            voArchivo.str_ruta_almac_s3 = str_RutaS3
+            voArchivo.crearCSV()
 
             # CSV Linaje.Archivos_Det
             # Obtenemos los nombres de columnas del diccionario
             # y los ponemos en un arreglo
-            objArchivo_Det = voArchivos_Det()
+            voArchivo_Det = voArchivos_Det()
             np_Campos = np.empty([0, 2])
             for key, value in objRita.dict_Campos.items():
 
                 # Se pregunta si el campo esta marcado para activarse
                   if value['Flag'] == 'A':
-                    np_Campos = np.append(np_Campos, [[objArchivo.str_id_archivo, key]], axis=0)
+                    np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
-            objArchivo_Det.np_Campos = np_Campos
-            objArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
-            objArchivo_Det.crearCSV()
+            voArchivo_Det.np_Campos = np_Campos
+            voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+            voArchivo_Det.crearCSV()
 
         # CSV Linaje.Ejecuciones
-        objEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
-        objEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
-        objEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
-        objEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-        objEjecucion.str_tipo_ejec = 'R'
-        objEjecucion.str_url_webscrapping = objRita.str_Url
-        objEjecucion.str_status_ejec = 'Ok'
-        objEjecucion.dttm_fecha_hora_ejec = datetime.now()
-        objEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
-        objEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
-                                           + objEjecucion.str_tipo_ejec + '_' \
-                                           + str(objEjecucion.nbr_id_ejec) + '.csv'
-        objEjecucion.crearCSV()
+        voEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+        voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+        voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+        voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+        voEjecucion.str_tipo_ejec = 'R'
+        voEjecucion.str_url_webscrapping = objRita.str_Url
+        voEjecucion.str_status_ejec = 'Ok'
+        voEjecucion.dttm_fecha_hora_ejec = datetime.now()
+        voEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+        voEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                           + voEjecucion.str_tipo_ejec + '_' \
+                                           + str(voEjecucion.nbr_id_ejec) + '.csv'
+        voEjecucion.crearCSV()
 
     print('---Fin web scraping recurrente---\n')
     return 0
@@ -501,21 +501,258 @@ def HacerFeatureEngineering():
     str_Ruta = 'Linaje/Transform/'
 
     # Query 1
-    str_NombreQuery = 'update1'
+    str_NombreQuery = 'Paso0_copytable'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
     CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
-    # Query 1
-    str_NombreQuery = 'update2'
+    # Query 2
+    str_NombreQuery = 'Paso1_filtroWN'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
     CrearMetadataTrans(nbr_IdSet, 2, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
+    # Query 3
+    str_NombreQuery = 'Paso2_rename'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 3, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 4
+    str_NombreQuery = 'Paso3_delaynumeric'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 4, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 5
+    str_NombreQuery = 'Paso4_banderadelay'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 5, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 6
+    str_NombreQuery = 'Paso5_crearfecha1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 6, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 7
+    str_NombreQuery = 'Paso6_crearfecha2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 7, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 8
+    str_NombreQuery = 'Paso7_crearfecha2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 8, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 9
+    str_NombreQuery = 'Paso8_tantitalimpieza'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 10
+    str_NombreQuery = 'Paso9_ordenar'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 11
+    str_NombreQuery = 'Paso10_conteo'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 12
+    str_NombreQuery = 'Paso11_ranking_max'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 13
+    str_NombreQuery = 'Paso12_innerjoin'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 14
+    str_NombreQuery = 'Paso13_vuelosfaltantes'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 15
+    str_NombreQuery = 'Paso14_efectodomino1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 16
+    str_NombreQuery = 'Paso15_efectodomino2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 17
+    str_NombreQuery = 'Paso16_distraccion'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 18
+    str_NombreQuery = 'Paso17_banderadomino'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 19
+    str_NombreQuery = 'Paso18_filtroretrasos'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 20
+    str_NombreQuery = 'Paso19_lagbandera'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 21
+    str_NombreQuery = 'Paso20_vueloculpable'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 22
+    str_NombreQuery = 'Paso21_efectodomino3'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 23
+    str_NombreQuery = 'Paso22_regresoretrasos'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 24
+    str_NombreQuery = 'Paso23_efectosmultiples'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 25
+    str_NombreQuery = 'Paso24_totaldomino'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 26
+    str_NombreQuery = 'Paso25_regresoretrasos2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 27
+    str_NombreQuery = 'Paso26_negativos1'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 28
+    str_NombreQuery = 'Paso27_contadorinverso'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 29
+    str_NombreQuery = 'Paso28_contadorinverso2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 30
+    str_NombreQuery = 'Paso29_negativos2'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 31
+    str_NombreQuery = 'Paso30_regresoretrasos3'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
+    # Query 32
+    str_NombreQuery = 'Paso31_etiqueta'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
     # Aquí se deben de poner el resto de queries del feature engineering
+
+    # Se genera el CSV que servirá para el modelado:
+    str_Query1 = 'SELECT * FROM TRANSFORM.NWFINAL'
+    str_Query2 = "COPY ({0}) TO STDOUT WITH CSV HEADER".format(str_Query1)
+
+    str_NombreArch = 'DatasetModelado.csv'
+
+    db_cursor = conn.cursor()
+    with open(str_NombreArch, 'w') as file:
+        db_cursor.copy_expert(str_Query2, file)
 
     print('---Fin de feature engineering---\n')
 
+    return 0
+
+
+def Modelar():
+    print('---Inicio de Modelar ---\n')
+
+    from Class_Rita import Rita
+    import pickle as pickle
+
+    objRita = Rita()
+
+    # objRita.Modelar('Transit_modeling.csv')
+    objRita.Modelar('DatasetModelado.csv')
+
+    # Se guarda el pickle del modelo ganador
+    pickleFile = open('parametros.pickle', 'wb')
+    pickle.dump(objRita.ModeloGanadorMagicLoop, pickleFile)
+    pickleFile.close()
+
+    # Se hace el envío a S3
+    EnviarPickleAS3()
+
+    # Aquí se deberá poner la función que envía el pickle a S3
+    print('---Fin de Modelar---\n')
+
+    return 0
+
+
+def EnviarMetadataModelingRDS():
+    print('\n---Inicio envío metadata modeling ---\n')
+    from pathlib import Path
+    objUtileria = Utileria()
+    cnn = objUtileria.CrearConexionRDS()
+    cnn.autocommit = True
+
+    # Barremos los csv de Ejecuciones
+    for data_file in Path('Linaje/Modeling').glob('*.csv'):
+
+        try:
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.modeling')
+        except Exception:
+            print('Excepcion en EnviarMetadataModelingRDS')
+            raise
+            return 1
+
+    # Eliminamos el arhivo de linaje-archivosdet
+    os.system('rm Linaje/Modeling/*.csv')
+    print('\n---Fin envío metadata modeling---\n')
     return 0
 
 # ###############################################################
@@ -524,7 +761,7 @@ def HacerFeatureEngineering():
 
 def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta):
 
-    from Linaje import voTransform
+    from Class_ValueObjects import voTransform
     objUtileria = Utileria()
     objTransform = voTransform()
 
@@ -540,23 +777,23 @@ def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, 
                                      + '_' \
                                      + str(objTransform.nbr_num_seq) + '.csv'
 
-    print(objTransform.nbr_id_set_transform)
+    # print(objTransform.nbr_id_set_transform)
     objTransform.crearCSV()
+
 
 def EnviarPickleAS3():
     objUtileria = Utileria()
 
     cnx_S3 = objUtileria.CrearConexionS3()
-    str_ArchivoPickleLocal = 'parametros.pickle' #'Descargas/' + os.path.basename('parametros.pickle')
+    str_ArchivoPickleLocal = 'parametros.pickle'
     str_RutaS3 = 'modelo_seleccionado/'
-
 
     try:
         objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoPickleLocal)
         print("Pickle enviado a S3")
-        #print('Se omite el envio')
+        # print('Se omite el envio')
     except Exception:
-        print('Excepcion en MandarArchivoS3')
+        print('Excepcion en EnviarPickleAS3')
         raise
         return 1
 
