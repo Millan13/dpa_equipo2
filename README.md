@@ -121,14 +121,59 @@ sudo yum install git-all
 ```
 **4.2 Clonar el repositorio**
 
-Después de instalar git, es necesario clonar este repositorio. Posteriormente, desde la carpeta Scripts ubicada en dpa_equipo2 se debe correr el script 00_install_packages.sh
+Después de instalar git, es necesario clonar este repositorio. Posteriormente, desde el directorio `Scripts` ubicado en `dpa_equipo2` se debe correr el script `00_install_packages.sh`.
 
 ```
+git clone https://github.com/Millan13/dpa_equipo2.git
 cd dpa_equipo2/Scripts
 sh 00_install_packages.sh
 ```
 
+**4.3 Crear archivos de credenciales**
+
+La corrida del pipeline involucra la lectura de una serie de credenciales relacionadas con los servicios S3 y RDS de aws, las cuales deben especificarse en los siguientes dos archivos:
+
+**credenciales s3**
+
+```
+mkdir ~/.aws
+nano ~/.aws credentials
+
+# Pegar en este archivo *access id* y *key*
+
+aws_access_key_id=your_key_id
+aws_secret_access_key=your_secret_key
+region_name=us-west-2
+use_ssl=False
+
+```
+
+**credenciales postgres y bucket**
+
+```
+nano settings.toml
+
+# Modificar las siguientes credenciales de postgres
+
+# Conexiones RDS
+user = 'your_user'
+dbname = 'bd_rita'
+host = 'your_end-point'
+password = 'your_databse_password'
+
+# Modificar el nombre del bucket
+
+# S3
+bucket_name = 'your_bucket_name'
+```
+
 ## 5. Corrida de Pipeline
+
+Desde el directorio `Scripts` ubicado en `dpa_equipo2` deberá ejecutarse el archivo `Luigi_Inicial.py` indicando la última tarea que debe resolver:
+
+```
+python3 -m luigi --module Luigi_Inicial T_130_EnviarMetadataModelado_RDS --local-scheduler
+```
 
 ## 6. Organización del código
 
