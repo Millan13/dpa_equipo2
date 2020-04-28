@@ -751,7 +751,7 @@ def EnviarMetadataModelingRDS():
             return 1
 
     # Eliminamos el arhivo de linaje-archivosdet
-    # os.system('rm Linaje/Modeling/*.csv')
+    os.system('rm Linaje/Modeling/*.csv')
     print('\n---Fin envío metadata modeling---\n')
     return 0
 
