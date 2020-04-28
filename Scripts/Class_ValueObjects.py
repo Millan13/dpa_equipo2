@@ -138,7 +138,7 @@ class voTransform:
                                                    'instancia_ejec'
                                                    ]
                           )
-        print(df)
+
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return
@@ -177,7 +177,7 @@ class voModeling:
                                                    'instancia_ejec'
                                                    ]
                           )
-        print(df)
+
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return

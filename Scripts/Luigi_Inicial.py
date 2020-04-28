@@ -13,88 +13,88 @@ import Luigi_Tasks as lt
 from Class_Rita import Rita
 
 
-class Task_05_CrearBD(luigi.Task):
+class T_010_CrearBD(luigi.Task):
 
     def run(self):
         # Si puede crear la base bien, generamos el archivo output
         if lt.CrearDB() == 0:
-            os.system('echo OK > Task_05_CrearBD')
+            os.system('echo OK > T_010_CrearBD')
 
     def output(self):
-        return luigi.LocalTarget('Task_05_CrearBD')
+        return luigi.LocalTarget('T_010_CrearBD')
 
 
-class Task_10_CrearDirectoriosEC2(luigi.Task):
+class T_020_CrearDirectoriosEC2(luigi.Task):
 
     def requires(self):
-        return Task_05_CrearBD()
+        return T_010_CrearBD()
 
     def run(self):
         # Si puede crear los directorios bien, generamos el archivo output
         if lt.CrearDirectoriosEC2() == 0:
-            os.system('echo OK > Task_10_CrearDirectoriosEC2')
+            os.system('echo OK > T_020_CrearDirectoriosEC2')
 
     def output(self):
-        return luigi.LocalTarget('Task_10_CrearDirectoriosEC2')
+        return luigi.LocalTarget('T_020_CrearDirectoriosEC2')
 
 
-class Task_20_CrearDirectoriosS3(luigi.Task):
+class T_030_CrearDirectoriosS3(luigi.Task):
 
     def requires(self):
-        return Task_10_CrearDirectoriosEC2()
+        return T_020_CrearDirectoriosEC2()
 
     def run(self):
 
         if lt.CrearDirectoriosS3() == 0:
-            os.system('echo OK > Task_20_CrearDirectoriosS3')
+            os.system('echo OK > T_030_CrearDirectoriosS3')
 
     def output(self):
-        return luigi.LocalTarget('Task_20_CrearDirectoriosS3')
+        return luigi.LocalTarget('T_030_CrearDirectoriosS3')
 
 
-class Task_30_CrearSchemasRDS(luigi.Task):
+class T_040_CrearSchemasRDS(luigi.Task):
 
     def requires(self):
-        return Task_20_CrearDirectoriosS3()
+        return T_030_CrearDirectoriosS3()
 
     def run(self):
         if lt.CrearSchemasRDS() == 0:
-            os.system('echo OK > Task_30_CrearSchemasRDS')
+            os.system('echo OK > T_040_CrearSchemasRDS')
 
     def output(self):
-        return luigi.LocalTarget('Task_30_CrearSchemasRDS')
+        return luigi.LocalTarget('T_040_CrearSchemasRDS')
 
 
-class Task_40_CrearTablasRDS(luigi.Task):
+class T_050_CrearTablasRDS(luigi.Task):
 
     def requires(self):
-        return Task_30_CrearSchemasRDS()
+        return T_040_CrearSchemasRDS()
 
     def run(self):
         if lt.CrearTablasRDS() == 0:
-            os.system('echo OK > Task_40_CrearTablasRDS')
+            os.system('echo OK > T_050_CrearTablasRDS')
 
     def output(self):
-        return luigi.LocalTarget('Task_40_CrearTablasRDS')
+        return luigi.LocalTarget('T_050_CrearTablasRDS')
 
 
-class Task_50_WebScrapingInicial(luigi.Task):
+class T_060_WebScrapingInicial(luigi.Task):
 
     def requires(self):
-        return Task_40_CrearTablasRDS()
+        return T_050_CrearTablasRDS()
 
     def run(self):
         if lt.WebScrapingInicial() == 0:
-            os.system('echo OK > Task_50_WebScrapingInicial')
+            os.system('echo OK > T_060_WebScrapingInicial')
 
     def output(self):
-        return luigi.LocalTarget('Task_50_WebScrapingInicial')
+        return luigi.LocalTarget('T_060_WebScrapingInicial')
 
 
-class Task_60_EnviarMetadataCargaPt1_RDS(luigi.contrib.postgres.CopyToTable):
+class T_070_EnviarMetadataCargaPt1_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return Task_50_WebScrapingInicial()
+        return T_060_WebScrapingInicial()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -118,14 +118,14 @@ class Task_60_EnviarMetadataCargaPt1_RDS(luigi.contrib.postgres.CopyToTable):
                 for fila in reader.itertuples(index=False):
                     yield fila
 
-        # os.system('rm Linaje/Ejecuciones/*.csv')
+        os.system('rm Linaje/Ejecuciones/*.csv')
         print('\n---Fin carga de linaje ejecuciones---\n')
 
 
-class Task_70_EnviarMetadataCargaPt2_RDS(luigi.contrib.postgres.CopyToTable):
+class T_080_EnviarMetadataCargaPt2_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return Task_60_EnviarMetadataCargaPt1_RDS()
+        return T_070_EnviarMetadataCargaPt1_RDS()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -147,14 +147,14 @@ class Task_70_EnviarMetadataCargaPt2_RDS(luigi.contrib.postgres.CopyToTable):
                 reader = pd.read_csv(csv_file, header=None)
                 for fila in reader.itertuples(index=False):
                     yield fila
-        # os.system('rm Linaje/Archivos/*.csv')
+        os.system('rm Linaje/Archivos/*.csv')
         print('\n---Fin carga de linaje archivos---\n')
 
 
-class Task_80_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
+class T_090_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return Task_70_EnviarMetadataCargaPt2_RDS()
+        return T_080_EnviarMetadataCargaPt2_RDS()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -177,27 +177,27 @@ class Task_80_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
                 reader = pd.read_csv(csv_file, header=None)
                 for fila in reader.itertuples(index=False):
                     yield fila
-        # os.system('rm Linaje/ArchivosDet/*.csv')
+        os.system('rm Linaje/ArchivosDet/*.csv')
         print('\n---Fin carga de linaje archivos_det---\n')
 
 
-class Task_90_HacerFeatureEngineering(luigi.Task):
+class T_100_HacerFeatureEngineering(luigi.Task):
 
     def requires(self):
-        return Task_80_EnviarMetadataCargaPt3_RDS()
+        return T_090_EnviarMetadataCargaPt3_RDS()
 
     def run(self):
         if lt.HacerFeatureEngineering() == 0:
-            os.system('echo OK > Task_65_HacerFeatureEngineering')
+            os.system('echo OK > T_100_HacerFeatureEngineering')
 
     def output(self):
-        return luigi.LocalTarget('Task_65_HacerFeatureEngineering')
+        return luigi.LocalTarget('T_100_HacerFeatureEngineering')
 
 
-class Task_100_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTable):
+class T_110_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return Task_90_HacerFeatureEngineering()
+        return T_100_HacerFeatureEngineering()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -219,27 +219,27 @@ class Task_100_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyT
                 reader = pd.read_csv(csv_file, header=None)
                 for fila in reader.itertuples(index=False):
                     yield fila
-        # os.system('rm Linaje/Transform/*.csv')
+        os.system('rm Linaje/Transform/*.csv')
         print('\n---Fin carga de linaje transform---\n')
 
 
-class Task_110_Modelar(luigi.Task):
+class T_120_Modelar(luigi.Task):
 
     def requires(self):
-        return Task_100_EnviarMetadataFeatureEngineering_RDS()
+        return T_110_EnviarMetadataFeatureEngineering_RDS()
 
     def run(self):
         if lt.Modelar() == 0:
-            os.system('echo OK > Task_68_Modelar')
+            os.system('echo OK > T_120_Modelar')
 
     def output(self):
-        return luigi.LocalTarget('Task_68_Modelar')
+        return luigi.LocalTarget('T_120_Modelar')
 
 
-class Task_120_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
+class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return Task_110_Modelar()
+        return T_120_Modelar()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -261,8 +261,10 @@ class Task_120_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
                 reader = pd.read_csv(csv_file, header=None)
                 for fila in reader.itertuples(index=False):
                     yield fila
-        # os.system('rm Linaje/Transform/*.csv')
+        os.system('rm Linaje/Modeling/*.csv')
         print('\n---Fin carga de linaje modeling---\n')
+        # self.objRita.objUtileria.DibujarLuigi()
+        # time.sleep(5)
 
 
 if __name__ == '__main__':

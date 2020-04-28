@@ -560,7 +560,7 @@ class Eda:
 
         return npArrayModelos
 
-    def magic_loop2(self, npClassifier, npDictHyperParams, X_train, Y_train, nbrCv):
+    def Correr_Magic_Loop(self, npClassifier, npDictHyperParams, X_train, Y_train, nbrCv):
 
         npResultados = np.array([])
         for i, classifier in enumerate(npClassifier):
