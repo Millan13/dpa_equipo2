@@ -212,8 +212,6 @@ class Utileria:
         strLuigi = strLuigi + "                (__/ \__)                  \n"
         strLuigi = strLuigi + "                                           \n"
         strLuigi = strLuigi + "              -Luigi Deamon-               \n"
-        strLuigi = strLuigi + "                                           \n"
-        strLuigi = strLuigi + "                                           \n"
         print(strLuigi)
 
         return
