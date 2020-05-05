@@ -46,6 +46,14 @@ class Utileria:
                                 )
         return conn
 
+    def ObtenerParametrosRDS(self):
+
+        return (self.str_UsuarioDB,
+                self.str_PassDB,
+                self.str_NombreDB,
+                self.str_EndPointDB)
+
+
     def ExisteBaseCreada(self):
 
         import psycopg2
