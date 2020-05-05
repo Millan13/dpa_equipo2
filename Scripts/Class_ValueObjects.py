@@ -181,3 +181,99 @@ class voModeling:
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return
+
+
+class voUTExtract:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTLoad:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTTransform:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTModeling:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
