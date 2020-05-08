@@ -37,3 +37,10 @@ pip3 install dynaconf
 pip3 install pandas
 
 export LC_ALL=en_US.UTF-8
+
+# programar ejecución periódica de la  descarga re
+# Actualizar permisos del script
+chmod 700 Descarga_Recurrente.sh
+# sudo cp Descarga_Recurrente.sh /etc/cron.weekly
+#Programar d�ia y hora de ejeucion
+echo "30 22 * * 4 root /home/ec2-user/dpa_equipo2/Scripts/DescargaRecurrente.sh" | sudo tee -a /etc/crontab
