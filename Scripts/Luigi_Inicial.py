@@ -173,10 +173,36 @@ class T_090_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
         print('\n---Fin carga de linaje archivos_det---\n')
 
 
-class T_100_HacerFeatureEngineering(luigi.Task):
+class T_093_UT_Extract(luigi.Task):
 
     def requires(self):
         return T_090_EnviarMetadataCargaPt3_RDS()
+
+    def run(self):
+        ut.Extract()
+        os.system('echo OK > T_093_UT_Extract')
+
+    def output(self):
+        return luigi.LocalTarget('T_093_UT_Extract')
+
+
+class T_096_UT_Load(luigi.Task):
+
+    def requires(self):
+        return T_093_UT_Extract()
+
+    def run(self):
+        ut.Load()
+        os.system('echo OK > T_096_UT_Load')
+
+    def output(self):
+        return luigi.LocalTarget('T_096_UT_Load')
+
+
+class T_100_HacerFeatureEngineering(luigi.Task):
+
+    def requires(self):
+        return T_096_UT_Load()
 
     def run(self):
         if lt.HacerFeatureEngineering() == 0:
@@ -210,6 +236,19 @@ class T_110_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTa
                     yield fila
         os.system('rm Linaje/Transform/*.csv')
         print('\n---Fin carga de linaje transform---\n')
+
+
+class T_115_UT_Transform(luigi.Task):
+
+    def requires(self):
+        return T_110_EnviarMetadataFeatureEngineering_RDS()
+
+    def run(self):
+        ut.Transform()
+        os.system('echo OK > T_115_UT_Transform')
+
+    def output(self):
+        return luigi.LocalTarget('T_115_UT_Transform')
 
 
 class T_120_Modelar(luigi.Task):
@@ -253,10 +292,22 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         time.sleep(4)
 
 
+class T_135_UT_Modeling(luigi.Task):
+
+    def requires(self):
+        return T_130_EnviarMetadataModelado_RDS()
+
+    def run(self):
+        ut.Modeling()
+        os.system('echo OK > T_135_UT_Modeling')
+
+    def output(self):
+        return luigi.LocalTarget('UT_070_Modeling')
+
+
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
 
-    str_Tipo = luigi.Parameter()
     str_Tarea = luigi.Parameter()
 
     def requires(self):
@@ -272,133 +323,18 @@ class T_Manejador(luigi.Task):
                    '070': {'Clase': T_070_EnviarMetadataCargaPt1_RDS()},
                    '080': {'Clase': T_080_EnviarMetadataCargaPt2_RDS()},
                    '090': {'Clase': T_090_EnviarMetadataCargaPt3_RDS()},
+                   '093': {'Clase': T_093_UT_Extract()},  # Unit Test
+                   '096': {'Clase': T_096_UT_Load()},  # Unit Test
                    '100': {'Clase': T_100_HacerFeatureEngineering()},
                    '110': {'Clase': T_110_EnviarMetadataFeatureEngineering_RDS()},
+                   '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   '135': {'Clase': T_135_UT_Modeling()}  # Unit Test
                    }
 
-        dict_UT = {'010': {'Clase': UT_010_Extract()},
-                   '020': {'Clase': UT_020_Metadata_Extract()},
-                   '030': {'Clase': UT_030_Load()},
-                   '040': {'Clase': UT_040_Metadata_Load()},
-                   '050': {'Clase': UT_050_Transform()},
-                   '060': {'Clase': UT_060_Metadata_Transform()},
-                   '070': {'Clase': UT_070_Modeling()},
-                   '080': {'Clase': UT_080_Metadata_Modeling()},
-                   }
-
-        if self.str_Tipo == 'LT':
-
-            # Ejemplo: return dict_LT.get('010').get('Clase')
-            return dict_LT.get(self.str_Tarea).get('Clase')
-
-        elif self.str_Tipo == 'UT':
-
-            # Ejemplo: return dict_UT.get('010').get('Clase')
-            return dict_UT.get(self.str_Tarea).get('Clase')
-
-
-# ##################### Unit Tests #####################
-class UT_010_Extract(luigi.Task):
-
-    def run(self):
-        ut.Extract()
-        os.system('echo OK > UT_010_Extract')
-
-    def output(self):
-        return luigi.LocalTarget('UT_010_Extract')
-
-
-class UT_020_Metadata_Extract(luigi.Task):
-
-    def requires(self):
-        return UT_010_Extract()
-
-    def run(self):
-        ut.Metadata_Extract()
-        os.system('echo OK > UT_020_Metadata_Extract')
-
-    def output(self):
-        return luigi.LocalTarget('UT_020_Metadata_Extract')
-
-
-class UT_030_Load(luigi.Task):
-
-    def requires(self):
-        return UT_020_Metadata_Extract()
-
-    def run(self):
-        ut.Load()
-        os.system('echo OK > UT_030_Load')
-
-    def output(self):
-        return luigi.LocalTarget('UT_030_Load')
-
-
-class UT_040_Metadata_Load(luigi.Task):
-
-    def requires(self):
-        return UT_030_Load()
-
-    def run(self):
-        ut.Metadata_Load()
-        os.system('echo OK > UT_040_Metadata_Load')
-
-    def output(self):
-        return luigi.LocalTarget('UT_040_Metadata_Load')
-
-
-class UT_050_Transform(luigi.Task):
-
-    def requires(self):
-        return UT_040_Metadata_Load()
-
-    def run(self):
-        ut.Transform()
-        os.system('echo OK > UT_050_Transform')
-
-    def output(self):
-        return luigi.LocalTarget('UT_050_Transform')
-
-
-class UT_060_Metadata_Transform(luigi.Task):
-
-    def requires(self):
-        return UT_050_Transform()
-
-    def run(self):
-        ut.Metadata_Transform()
-        os.system('echo OK > UT_060_Metadata_Transform')
-
-    def output(self):
-        return luigi.LocalTarget('UT_060_Metadata_Transform')
-
-
-class UT_070_Modeling(luigi.Task):
-
-    def requires(self):
-        return UT_060_Metadata_Transform()
-
-    def run(self):
-        ut.Modeling()
-        os.system('echo OK > UT_070_Modeling')
-
-    def output(self):
-        return luigi.LocalTarget('UT_070_Modeling')
-
-
-class UT_080_Metadata_Modeling(luigi.Task):
-
-    def requires(self):
-        return UT_070_Modeling()
-
-    def run(self):
-        ut.Metadata_Modeling()
-        os.system('echo OK > UT_080_Metadata_Modeling')
-
-    def output(self):
-        return luigi.LocalTarget('UT_080_Metadata_Modeling')
+        # Ejemplo: return dict_LT.get('010').get('Clase')
+        return dict_LT.get(self.str_Tarea).get('Clase')
 
 
 if __name__ == '__main__':
