@@ -51,11 +51,11 @@ def CrearDirectoriosEC2():
                        'Linaje/ArchivosDet',
                        'Linaje/Transform',
                        'Linaje/Modeling',
-                       'Unit_Tests',
-                       'Unit_Tests/Extract',
-                       'Unit_Tests/Load',
-                       'Unit_Tests/Transform',
-                       'Unit_Tests/Modeling']
+                       'testing',
+                       'testing/Extract',
+                       'testing/Load',
+                       'testing/Transform',
+                       'testing/Modeling']
 
     try:
         # Barremos para eliminar los directorios
