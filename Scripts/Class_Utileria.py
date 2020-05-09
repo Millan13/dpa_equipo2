@@ -2,7 +2,9 @@ import os
 import boto3
 from pathlib import Path
 from dynaconf import settings
-import pandas
+
+# import pandas
+# from datetime import datetime
 
 
 class Utileria:
