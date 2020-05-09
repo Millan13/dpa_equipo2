@@ -89,3 +89,15 @@ create table raw.vuelos(
   DISTANCE VARCHAR(50)
 );
 comment on table raw.vuelos is 'detalles por vuelo';
+
+/**************************** Linaje transform ****************************/
+drop table if exists linaje.unit_tests;
+create table linaje.unit_tests (
+  id_unit_test NUMERIC,
+  nombre_clase VARCHAR(40),
+  nombre_metodo VARCHAR(40),
+  str_estatus VARCHAR(20),
+  str_mensaje TEXT,
+  fecha_hora_ejec TIMESTAMP
+);
+comment on table linaje.unit_tests is 'resultados de unit tests';
