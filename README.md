@@ -53,9 +53,10 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
   
   
 **2.4 Bias and fairness**
+
 A través de la estadística, intentamos discriminar datos y apoyar en la toma de decisiones; en ese sentido, podemos afectar a algún grupo sin la intención de querer hacerlo, ofreciendo ventajas/desventajas de manera sistemática a un grupo de referencia en particular.
 
-Para este modelo, definimos al grupo de referencia o nuestro atributo protegido será:
+Para este modelo, definimos un grupo de referencia o atributo protegido como:
 
 
 Por tanto, las métricas de fairness que utilizaremos será la siguiente:
