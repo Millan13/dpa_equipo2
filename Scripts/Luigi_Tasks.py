@@ -529,173 +529,179 @@ def HacerFeatureEngineering():
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
     CrearMetadataTrans(nbr_IdSet, 4, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
+    # Query 4_5
+    str_NombreQuery = 'Paso3_5_delaypositive'
+    query = queries.get(str_NombreQuery)
+    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    CrearMetadataTrans(nbr_IdSet, 5, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+
     # Query 5
     str_NombreQuery = 'Paso4_banderadelay'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 5, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 6, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 6
     str_NombreQuery = 'Paso5_crearfecha1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 6, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 7, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 7
     str_NombreQuery = 'Paso6_crearfecha2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 7, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 8, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 8
     str_NombreQuery = 'Paso7_crearfecha2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 8, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 9
     str_NombreQuery = 'Paso8_tantitalimpieza'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 10
     str_NombreQuery = 'Paso9_ordenar'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 11
     str_NombreQuery = 'Paso10_conteo'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 12
     str_NombreQuery = 'Paso11_ranking_max'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 13
     str_NombreQuery = 'Paso12_innerjoin'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 14
     str_NombreQuery = 'Paso13_vuelosfaltantes'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 15
     str_NombreQuery = 'Paso14_efectodomino1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 16
     str_NombreQuery = 'Paso15_efectodomino2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 17
     str_NombreQuery = 'Paso16_distraccion'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 18
     str_NombreQuery = 'Paso17_banderadomino'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 19
     str_NombreQuery = 'Paso18_filtroretrasos'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 20
     str_NombreQuery = 'Paso19_lagbandera'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 21
     str_NombreQuery = 'Paso20_vueloculpable'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 22
     str_NombreQuery = 'Paso21_efectodomino3'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 23
     str_NombreQuery = 'Paso22_regresoretrasos'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 24
     str_NombreQuery = 'Paso23_efectosmultiples'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 25
     str_NombreQuery = 'Paso24_totaldomino'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 26
     str_NombreQuery = 'Paso25_regresoretrasos2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 27
     str_NombreQuery = 'Paso26_negativos1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 28
     str_NombreQuery = 'Paso27_contadorinverso'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 29
     str_NombreQuery = 'Paso28_contadorinverso2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 30
     str_NombreQuery = 'Paso29_negativos2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 31
     str_NombreQuery = 'Paso30_regresoretrasos3'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 32
     str_NombreQuery = 'Paso31_etiqueta'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 33, str_NombreQuery, nbr_FilasAfec, str_Ruta)
     # Aquí se deben de poner el resto de queries del feature engineering
 
     # Se genera el CSV que servirá para el modelado:
