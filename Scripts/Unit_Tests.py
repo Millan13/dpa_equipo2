@@ -26,6 +26,14 @@ def Extract():
 def Load():
 
     print('\n---Inicio Load ---\n')
+    from testing import test_load as tst
+
+    obj_UT = tst.TestLoad()
+
+    # PRUEBA 1
+    # Se realiza la prueba unitaria y se procesa la metadata
+    obj_UT.test_load_count_columns()
+    procesar_metadata_unit_test(obj_UT, 'testing/Load/')
     print('\n---Fin Load ---\n')
 
 
