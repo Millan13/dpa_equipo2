@@ -73,7 +73,7 @@ Considerando que nuestro modelo da información acerca de un posible tiempo de r
 
 Por tanto, las métricas de fairness que utilizaremos será la siguiente:
 
-*Pendiente
+* False Negative Rate Parity 
 
 Considerando las siguientes razones:
 
