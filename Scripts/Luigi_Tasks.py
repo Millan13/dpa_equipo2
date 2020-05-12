@@ -10,6 +10,7 @@ from Class_Utileria import Utileria
 # ################### Funciones principales #####################
 # ###############################################################
 
+
 def CrearDB():
 
     print('\n---Inicio creacion DB ---\n')
@@ -40,6 +41,7 @@ def CrearDB():
     print('\n---Fin creacion DB ---\n')
     return 0
 
+
 def CrearDirectoriosEC2():
 
     print('\n---Inicio creacion directorio EC2 ---\n')
@@ -51,7 +53,6 @@ def CrearDirectoriosEC2():
                        'Linaje/ArchivosDet',
                        'Linaje/Transform',
                        'Linaje/Modeling',
-                       'testing',
                        'testing/Extract',
                        'testing/Load',
                        'testing/Transform',
@@ -174,7 +175,6 @@ def WebScrapingInicial():
     from Class_ValueObjects import voEjecucion
     from Class_ValueObjects import voArchivos
     from Class_ValueObjects import voArchivos_Det
-    from pathlib import Path
     import platform
 
     objUtileria = Utileria()
@@ -228,7 +228,6 @@ def WebScrapingInicial():
 
                 # ####### método 1
                 cnn = objUtileria.CrearConexionRDS()
-                archivo = open(str_ArchivoLocal)
 
                 # Mandamos la información raw del archivo al RDS
                 # print('Se omite el envio a RDS')
@@ -342,6 +341,7 @@ def EnviarMetadataLinajeCargaRDS():
     print('\n---Fin envío de linaje carga---\n')
     return 0
 
+
 def EnviarMetadataLinajeTransformRDS():
     print('\n---Inicio envío de linaje transform ---\n')
     from pathlib import Path
@@ -383,20 +383,17 @@ def WebScrapingRecurrente():
 
     # Se obtiene el id de ejecución
     conn = objUtileria.CrearConexionRDS()
-    #conn.autocommit = True
     nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId(conn,
                                                   'linaje.ejecuciones',
                                                   'id_ejec') + 1
 
-
-    #Extraemos el último mes y año disponibles para descarga
+    # Extraemos el último mes y año disponibles para descarga
     latest = objRita.ObtenerMesDescargaRecurrente()
-    latest_date = latest.split(" ") #Separamos el mes y el año por espacio
+    latest_date = latest.split(" ")  # Separamos el mes y el año por espacio
     anio =  latest_date[1]
     mes  =  latest_date[0]
     print('anio: ', anio)
     print('mes: ', mes)
-
 
     # Query para verificar si ya se ha descargado el último mes disponible
     query = "select * from linaje.archivos where anio='"+anio+"' and mes='"+mes+"';"
@@ -462,7 +459,7 @@ def WebScrapingRecurrente():
             for key, value in objRita.dict_Campos.items():
 
                 # Se pregunta si el campo esta marcado para activarse
-                  if value['Flag'] == 'A':
+                if value['Flag'] == 'A':
                     np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
             voArchivo_Det.np_Campos = np_Campos
@@ -769,6 +766,7 @@ def EnviarMetadataModelingRDS():
 # ###############################################################
 # #################### Funciones de apoyo #######################
 # ###############################################################
+
 
 def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta):
 
