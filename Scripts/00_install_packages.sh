@@ -27,6 +27,7 @@ pip3 install luigi
 pip3 install boto3
 pip3 install numpy
 pip3 install -U scikit-learn
+pip3 install marbles
 
 sudo yum update
 sudo yum install postgresql postgresql-contrib
