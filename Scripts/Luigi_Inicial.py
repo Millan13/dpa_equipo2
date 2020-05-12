@@ -9,7 +9,8 @@ import pandas as pd
 
 # Librerias de nosotros
 import Luigi_Tasks as lt
-# from Class_Utileria import Utileria
+import Unit_Tests as ut
+from Class_Utileria import Utileria
 from Class_Rita import Rita
 
 
@@ -100,10 +101,7 @@ class T_070_EnviarMetadataCargaPt1_RDS(luigi.contrib.postgres.CopyToTable):
     objRita = Rita()
 
     # Parámetros de conexión a la RDS
-    user = objRita.objUtileria.str_UsuarioDB
-    password = objRita.objUtileria.str_PassDB
-    database = objRita.objUtileria.str_NombreDB
-    host = objRita.objUtileria.str_EndPointDB
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
     table = 'linaje.ejecuciones'
@@ -131,10 +129,7 @@ class T_080_EnviarMetadataCargaPt2_RDS(luigi.contrib.postgres.CopyToTable):
     objRita = Rita()
 
     # Parámetros de conexión a la RDS
-    user = objRita.objUtileria.str_UsuarioDB
-    password = objRita.objUtileria.str_PassDB
-    database = objRita.objUtileria.str_NombreDB
-    host = objRita.objUtileria.str_EndPointDB
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
     table = 'linaje.archivos'
@@ -160,10 +155,7 @@ class T_090_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
     objRita = Rita()
 
     # Parámetros de conexión a la RDS
-    user = objRita.objUtileria.str_UsuarioDB
-    password = objRita.objUtileria.str_PassDB
-    database = objRita.objUtileria.str_NombreDB
-    host = objRita.objUtileria.str_EndPointDB
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
     table = 'linaje.archivos_det'
@@ -181,10 +173,23 @@ class T_090_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
         print('\n---Fin carga de linaje archivos_det---\n')
 
 
-class T_100_HacerFeatureEngineering(luigi.Task):
+class T_096_UT_Load(luigi.Task):
 
     def requires(self):
         return T_090_EnviarMetadataCargaPt3_RDS()
+
+    def run(self):
+        ut.UT_Load()
+        os.system('echo OK > T_096_UT_Load')
+
+    def output(self):
+        return luigi.LocalTarget('T_096_UT_Load')
+
+
+class T_100_HacerFeatureEngineering(luigi.Task):
+
+    def requires(self):
+        return T_096_UT_Load()
 
     def run(self):
         if lt.HacerFeatureEngineering() == 0:
@@ -203,10 +208,7 @@ class T_110_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTa
     objRita = Rita()
 
     # Parámetros de conexión a la RDS
-    user = objRita.objUtileria.str_UsuarioDB
-    password = objRita.objUtileria.str_PassDB
-    database = objRita.objUtileria.str_NombreDB
-    host = objRita.objUtileria.str_EndPointDB
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
     table = 'linaje.transform'
@@ -223,10 +225,23 @@ class T_110_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTa
         print('\n---Fin carga de linaje transform---\n')
 
 
-class T_120_Modelar(luigi.Task):
+class T_115_UT_Transform(luigi.Task):
 
     def requires(self):
         return T_110_EnviarMetadataFeatureEngineering_RDS()
+
+    def run(self):
+        ut.UT_Transform()
+        os.system('echo OK > T_115_UT_Transform')
+
+    def output(self):
+        return luigi.LocalTarget('T_115_UT_Transform')
+
+
+class T_120_Modelar(luigi.Task):
+
+    def requires(self):
+        return T_115_UT_Transform()
 
     def run(self):
         if lt.Modelar() == 0:
@@ -245,10 +260,7 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
     objRita = Rita()
 
     # Parámetros de conexión a la RDS
-    user = objRita.objUtileria.str_UsuarioDB
-    password = objRita.objUtileria.str_PassDB
-    database = objRita.objUtileria.str_NombreDB
-    host = objRita.objUtileria.str_EndPointDB
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
     table = 'linaje.modeling'
@@ -263,7 +275,41 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
                     yield fila
         os.system('rm Linaje/Modeling/*.csv')
         print('\n---Fin carga de linaje modeling---\n')
-        self.objRita.objUtileria.DibujarLuigi()
+        # self.objRita.objUtileria.DibujarLuigi()
+        # time.sleep(4)
+
+
+# ##################### Task principal de todo el flujo #####################
+class T_Manejador(luigi.Task):
+
+    str_Tarea = luigi.Parameter()
+
+    def requires(self):
+
+        # Diccionarios que tienen todas las clases que pueden ser llamadas
+        # dependiendo de los parámetros recibidos
+        dict_LT = {'010': {'Clase': T_010_CrearBD()},
+                   '020': {'Clase': T_020_CrearDirectoriosEC2()},
+                   '030': {'Clase': T_030_CrearDirectoriosS3()},
+                   '040': {'Clase': T_040_CrearSchemasRDS()},
+                   '050': {'Clase': T_050_CrearTablasRDS()},
+                   '060': {'Clase': T_060_WebScrapingInicial()},
+                   '070': {'Clase': T_070_EnviarMetadataCargaPt1_RDS()},
+                   '080': {'Clase': T_080_EnviarMetadataCargaPt2_RDS()},
+                   '090': {'Clase': T_090_EnviarMetadataCargaPt3_RDS()},
+                   '096': {'Clase': T_096_UT_Load()},  # Unit Test
+                   '100': {'Clase': T_100_HacerFeatureEngineering()},
+                   '110': {'Clase': T_110_EnviarMetadataFeatureEngineering_RDS()},
+                   '115': {'Clase': T_115_UT_Transform()},  # Unit Test
+                   '120': {'Clase': T_120_Modelar()},
+                   '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   }
+
+        # Ejemplo: return dict_LT.get('010').get('Clase')
+        return dict_LT.get(self.str_Tarea).get('Clase')
+
+    def run(self):
+        Utileria().DibujarLuigi()
         time.sleep(4)
 
 

@@ -2,7 +2,9 @@ import os
 import boto3
 from pathlib import Path
 from dynaconf import settings
-import pandas
+
+# import pandas
+# from datetime import datetime
 
 
 class Utileria:
@@ -45,6 +47,14 @@ class Utileria:
                                 port='5432'
                                 )
         return conn
+
+    def ObtenerParametrosRDS(self):
+
+        return (self.str_UsuarioDB,
+                self.str_PassDB,
+                self.str_NombreDB,
+                self.str_EndPointDB)
+
 
     def ExisteBaseCreada(self):
 

@@ -181,3 +181,134 @@ class voModeling:
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 
         return
+
+
+class voUnitTest:
+
+    nbr_id_unittest = 0
+    str_nombre_clase = ''
+    str_nombre_metodo = ''
+    str_estatus = ''
+    str_mensaje = ''
+    dt_hora_ejec = None
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'id_unittest': [self.nbr_id_unittest],
+                          'nombre_clase': [self.str_nombre_clase],
+                          'nombre_metodo': [self.str_nombre_metodo],
+                          'estatus': [self.str_estatus],
+                          'mensaje': [self.str_mensaje],
+                          'hora_ejec': [self.dt_hora_ejec],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['id_unittest',
+                                                   'nombre_clase',
+                                                   'nombre_metodo',
+                                                   'estatus',
+                                                   'mensaje',
+                                                   'hora_ejec'
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+class voUTExtract:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTLoad:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTTransform:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voUTModeling:
+
+    str_col1 = ''
+    str_col2 = ''
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'col1': [self.str_col1],
+                          'col2': [self.str_col2],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['col1',
+                                                   'col2',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
