@@ -8,24 +8,9 @@ from Class_Utileria import Utileria
 # ###############################################################
 
 
-def Extract():
+def UT_Load():
 
-    print('\n---Inicio Extract ---\n')
-    from testing import test_pandas as tst
-
-    obj_UT = tst.TestPandas()
-
-    # PRUEBA 1
-    # Se realiza la prueba unitaria y se procesa la metadata
-    obj_UT.test_pandas_dataframes_equals()
-    procesar_metadata_unit_test(obj_UT, 'testing/Extract/')
-
-    print('\n---Fin Extract ---\n')
-
-
-def Load():
-
-    print('\n---Inicio Load ---\n')
+    print('\n---Inicio UT_Load ---\n')
     from testing import test_load as tst
 
     obj_UT = tst.TestLoad()
@@ -34,20 +19,20 @@ def Load():
     # Se realiza la prueba unitaria y se procesa la metadata
     obj_UT.test_load_count_columns()
     procesar_metadata_unit_test(obj_UT, 'testing/Load/')
-
-    print('\n---Fin Load ---\n')
-
-
-def Transform():
-
-    print('\n---Inicio Transform ---\n')
-    print('\n---Fin Transform ---\n')
+    print('\n---Fin UT_Load ---\n')
 
 
-def Modeling():
+def UT_Transform():
 
-    print('\n---Inicio Modeling ---\n')
-    print('\n---Fin Modeling ---\n')
+    print('\n---Inicio UT_Transform ---\n')
+    from testing import test_transform as tst
+
+    obj_UT = tst.TestTransform()
+
+    obj_UT.test_transform_delay_positive()
+    procesar_metadata_unit_test(obj_UT, 'testing/Transform/')
+
+    print('\n---Fin UT_Transform ---\n')
 
 
 def procesar_metadata_unit_test(par_UI, par_Ruta):
@@ -96,15 +81,11 @@ def enviar_metadata_ut(par_Ruta_Arch):
     cnn = objUtileria.CrearConexionRDS()
     cnn.autocommit = True
 
-    print('--1')
     # Barremos los csv de Ejecuciones
     for data_file in Path(par_Ruta_Arch).glob('*.csv'):
-        print('--2')
         try:
-            print('--3')
             objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.unit_tests')
         except Exception:
-            print('--4')
             print('Excepcion en Metadata_Extract')
             raise ('Excepción de prueba')
 
