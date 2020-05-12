@@ -76,6 +76,7 @@ Por tanto, las métricas de fairness que utilizaremos será la siguiente:
 *Pendiente
 
 Considerando las siguientes razones:
+
 a) El modelo necesita ser muy bueno en detectar la etiqueta positiva.
 
 b) No hay -mucho- costo en introducir falsos positivos al sistema, pues al operador le resultará no le impactará saber que existirá una afectación de retraso y efecto dominó cuando no ocurrirá (pues estará preparado).
