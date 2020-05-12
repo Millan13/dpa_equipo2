@@ -50,14 +50,26 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
 + Falsos negativos
   + Aglomeración de pasajeros en ciertos horarios por tener vuelos retrasados.
   + Falta de espacios disponibles para pasajeros que esperan la salida.
+  
+  
+**2.4 Bias and fairness**
 
-**2.4 Pipeline**
+A través de la estadística, intentamos discriminar datos y apoyar en la toma de decisiones; en ese sentido, podemos afectar a algún grupo sin la intención de querer hacerlo, ofreciendo ventajas/desventajas de manera sistemática a un grupo de referencia en particular.
+
+Para este modelo, definimos un grupo de referencia o atributo protegido como:
+
+
+Por tanto, las métricas de fairness que utilizaremos será la siguiente:
+
+
+
+**2.5 Pipeline**
 
 El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
 
 ![pipeline](Imagenes/pipeline.png)
 
-**2.5 Proceso ELT**
+**2.6 Proceso ELT**
 
 La primera parte del pipeline anterior requiere de un proceso ELT que permita tener los datos en un formato adecuado para poder correr la parte de modelado. De manera breve, el proceso ELT consta de lo siguiente:
 
@@ -70,7 +82,7 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 ![Proceso ELT]()
 
 
-**2.6 Linaje**
+**2.7 Linaje**
 
 Puesto que los datos sufren transformaciones a lo largo de todo el pipeline, es importante tener la trazabilidad de todas estas modificaciones. La metadata que se generará durante el pipeline será almacenada en una base de datos conforme a lo siguiente:
 

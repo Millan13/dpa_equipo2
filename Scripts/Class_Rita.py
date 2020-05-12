@@ -265,7 +265,7 @@ class Rita:
 
         objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
         objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
-        objEda.pdDataSet = objEda.pdDataSet.drop(['delay'], axis=1)
+        objEda.pdDataSet = objEda.pdDataSet.drop(['delay2'], axis=1)
         objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
 
         objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)

@@ -26,12 +26,27 @@ def Extract():
 def Load():
 
     print('\n---Inicio Load ---\n')
+    from testing import test_load as tst
+
+    obj_UT = tst.TestLoad()
+
+    # PRUEBA 1
+    # Se realiza la prueba unitaria y se procesa la metadata
+    obj_UT.test_load_count_columns()
+    procesar_metadata_unit_test(obj_UT, 'testing/Load/')
     print('\n---Fin Load ---\n')
 
 
 def Transform():
 
     print('\n---Inicio Transform ---\n')
+    from testing import test_transform as tst
+
+    obj_UT = tst.TestTransform()
+
+
+    obj_UT.test_transform_delay_positive()
+    procesar_metadata_unit_test(obj_UT,'testing/Transform/')
     print('\n---Fin Transform ---\n')
 
 

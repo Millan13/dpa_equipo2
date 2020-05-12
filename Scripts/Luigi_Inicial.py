@@ -202,7 +202,7 @@ class T_096_UT_Load(luigi.Task):
 class T_100_HacerFeatureEngineering(luigi.Task):
 
     def requires(self):
-        return T_096_UT_Load()
+        return T_090_EnviarMetadataCargaPt3_RDS()
 
     def run(self):
         if lt.HacerFeatureEngineering() == 0:
@@ -211,6 +211,17 @@ class T_100_HacerFeatureEngineering(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_100_HacerFeatureEngineering')
 
+class T_105_UT_Transform(luigi.Task):
+
+    def requires(self):
+        return T_100_HacerFeatureEngineering()
+
+    def run(self):
+        ut.Transform()
+        os.system('echo OK > T_105_UT_Transform')
+
+    def output(self):
+        return luigi.LocalTarget('T_105_UT_Transform')
 
 class T_110_EnviarMetadataFeatureEngineering_RDS(luigi.contrib.postgres.CopyToTable):
 
