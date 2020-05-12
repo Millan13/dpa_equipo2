@@ -54,13 +54,34 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
   
 **2.4 Bias and fairness**
 
+
 A través de la estadística, intentamos discriminar datos y apoyar en la toma de decisiones; en ese sentido, podemos afectar a algún grupo sin la intención de querer hacerlo, ofreciendo ventajas/desventajas de manera sistemática a un grupo de referencia en particular.
 
-Para este modelo, definimos un grupo de referencia o atributo protegido como:
+Para este modelo, definiremos a nuestro grupo de referencia o atributo protegido considerando lo siguiente:
 
+1) Grupo 1: Personal que trabaja entre semana (lunes a jueves).
+2) Grupo 2: Personal que trabaja fines de semana. (viernes a domingo).
+
+Lo que buscamos es no realizar alguna afectación únicamente por el hecho de estar contratado bajo cierta jornada laboral a la semana.
+Por tanto, basados en la referencia del grupo más pequeño, seleccionamos como atributo protegido a:
+
+* Grupo 2: Grupo del personal que trabaja fin de semana. 
+
+Por otro lado y con apoyo del personal de aerolíneas, sabemos que sus jornadas laborales estan basados en el número de horas de vuelo. Dichas horas de vuelo comienzan a partir del cierre de puertas de la aeronave hasta la apertura en el lugar de destino. Por tanto, el tiempo en tierra, llamado "tiempo entre calzos" que no es más que el tiempo desde la detención del avión hasta su puesta en marcha de nuevo no está considerado en la jornada del personal.
+
+Considerando que nuestro modelo da información acerca de un posible tiempo de retraso, afectando a un cierto número de vuelos subsecuentes (del mismo avión en el mismo día) es relevante la consecuencia al personal en la decisión de clasificación. Por ende, y buscando asistir al personal informando sobre posibles retrasos, nos interesa reducir el número de Falsos Negativos; es decir, la predicción de que no existirá retraso en tiempo y efecto dominó del avión cuando en realidad si ocurrirá.
 
 Por tanto, las métricas de fairness que utilizaremos será la siguiente:
 
+* False Negative Rate Parity 
+
+Considerando las siguientes razones:
+
+a) El modelo necesita ser muy bueno en detectar la etiqueta positiva.
+
+b) No hay -mucho- costo en introducir falsos positivos al sistema, pues al operador le resultará no le impactará saber que existirá una afectación de retraso y efecto dominó cuando no ocurrirá (pues estará preparado).
+
+c) La definición de la variable target no es subjetiva. Ocurre o no ocurre un retraso de más de 20 min con afectación de retraso los siguientes 2 vuelos. 
 
 
 **2.5 Pipeline**
