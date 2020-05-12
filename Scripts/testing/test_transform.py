@@ -26,7 +26,7 @@ class TestTransform(marbles.core.TestCase):
     def test_transform_delay_positive(self):
 
         __df = pd.read_csv('/home/ec2-user/dpa_equipo2/Scripts/DatasetModelado.csv')
-        __df['delay2'].iloc[0] = -1
+        #__df['delay2'].iloc[0] = -1
         __m = (__df['delay2']>=0).all()
         __str_note = 'existen delays negativos'
 
