@@ -32,6 +32,13 @@ def Load():
 def Transform():
 
     print('\n---Inicio Transform ---\n')
+    from testing import test_transform as tst
+
+    obj_UT = tst.TestTransform()
+
+
+    obj_UT.test_transform_delay_positive()
+    procesar_metadata_unit_test(obj_UT,'testing/Transform/')
     print('\n---Fin Transform ---\n')
 
 
