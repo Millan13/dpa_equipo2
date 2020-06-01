@@ -817,3 +817,122 @@ def EnviarPickleAS3():
         return 1
 
     return 0
+
+
+def WebScrapingScheduleVuelos():
+
+    print('\n---Inicio web scraping Schedule vuelos---')
+    # import glob, os, time
+    from Class_Rita import Rita
+    from Class_ValueObjects import voEjecucion
+    from Class_ValueObjects import voArchivos
+    from Class_ValueObjects import voArchivos_Det
+
+    objUtileria = Utileria()
+    objRita = Rita()
+    voEjecucion = voEjecucion()
+    voArchivo = voArchivos()
+    veces_descargado = 0
+
+    # Se obtiene el id de ejecución
+    conn = objUtileria.CrearConexionRDS()
+    nbr_Id_Ejec_Actual = objUtileria.ObtenerMaxId(conn,
+                                                  'linaje.ejecuciones',
+                                                  'id_ejec') + 1
+
+    # Extraemos el último mes y año disponibles para descarga
+    latest = objRita.ObtenerMesDescargaRecurrente()
+    latest_date = latest.split(" ")  # Separamos el mes y el año por espacio
+    anio =  latest_date[1]
+    mes  =  latest_date[0]
+    print('anio: ', anio)
+    print('mes: ', mes)
+
+    # Query para verificar si ya se ha descargado el último mes disponible
+    query = "select * from linaje.schedules where anio='"+anio+"' and mes='"+mes+"';"
+    veces_descargado = objUtileria.EjecutarQuery(conn, query)
+    print('Los datos de',mes,anio,'habian sido descargados',veces_descargado,'veces.')
+
+    if veces_descargado < 1:
+
+        try:
+            objRita.DescargarAnioMesSchedules(anio, mes)
+        except Exception:
+            print('Excepcion en WebScrapingScheduleVuelos-DescargarAnioMesSchedules')
+            raise
+            return 1
+
+        if objRita.str_ArchivoDescargado != '':
+            print('Descarga completa')
+            print('objRita.str_ArchivoDescargado: ',
+                  objRita.str_ArchivoDescargado)
+            os.system("unzip 'Descargas/*.zip' -d Descargas/")
+            os.system('rm Descargas/*.zip')
+            cnx_S3 = objUtileria.CrearConexionS3()
+            str_ArchivoLocal = 'Descargas/' + os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            str_RutaS3 = 'schedule_vuelos/'
+
+            try:
+                objUtileria.MandarArchivoS3(cnx_S3, objUtileria.str_NombreBucket, str_RutaS3, str_ArchivoLocal)
+                # print('Se omite el envio')
+            except Exception:
+                print('Excepcion en MandarArchivoS3')
+                raise
+                return 1
+
+            # Antes de eliminar los archivos que ya fueron enviados a S3,
+            # obtenemos información de ellos
+            nbr_Tamanio = objUtileria.ObtenerTamanioArchivo(objRita.str_ArchivoDescargado + '.csv')
+            nbr_Filas = len(open(objRita.str_ArchivoDescargado + '.csv').readlines())
+
+            # Se elimina la información descargada
+            os.system('rm Descargas/*.csv')
+
+            # CSV Linaje.Archivos
+            voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
+            voArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
+            voArchivo.nbr_tamanio_archivo = nbr_Tamanio
+            voArchivo.nbr_num_registros = nbr_Filas
+
+            # Se filtra el diccionario para traer solo campos de activacion
+            dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
+            voArchivo.nbr_num_columnas = len(dict_Filtrado)
+
+            voArchivo.str_anio = str(anio)
+            voArchivo.str_mes = str(mes)
+            voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+            voArchivo.str_ruta_almac_s3 = str_RutaS3
+            voArchivo.crearCSV()
+
+            # CSV Linaje.Archivos_Det
+            # Obtenemos los nombres de columnas del diccionario
+            # y los ponemos en un arreglo
+            voArchivo_Det = voArchivos_Det()
+            np_Campos = np.empty([0, 2])
+            for key, value in objRita.dict_Campos.items():
+
+                # Se pregunta si el campo esta marcado para activarse
+                if value['Flag'] == 'A':
+                    np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
+
+            voArchivo_Det.np_Campos = np_Campos
+            voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+            voArchivo_Det.crearCSV()
+
+        # CSV Linaje.Ejecuciones
+        voEjecucion.nbr_id_ejec = nbr_Id_Ejec_Actual
+        voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
+        voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
+        voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
+        voEjecucion.str_tipo_ejec = 'R'
+        voEjecucion.str_url_webscrapping = objRita.str_Url
+        voEjecucion.str_status_ejec = 'Ok'
+        voEjecucion.dttm_fecha_hora_ejec = datetime.now()
+        voEjecucion.str_tag_script =str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))[2:-3]
+        voEjecucion.str_NombreDataFrame = 'Linaje/Ejecuciones/' \
+                                           + voEjecucion.str_tipo_ejec + '_' \
+                                           + str(voEjecucion.nbr_id_ejec) + '.csv'
+        voEjecucion.crearCSV()
+
+    print('---Fin web scraping recurrente---\n')
+    return 0

@@ -101,3 +101,18 @@ create table linaje.unit_tests (
   fecha_hora_ejec TIMESTAMP
 );
 comment on table linaje.unit_tests is 'resultados de unit tests';
+
+
+/**************************** Linaje schedules ****************************/
+drop table if exists linaje.schedules;
+create table linaje.schedules (
+  id_ejec NUMERIC,
+  id_archivo VARCHAR(40),
+  num_registros VARCHAR(20),
+  num_columnas VARCHAR(10),
+  tamanio_archivo FLOAT,
+  anio VARCHAR(5),
+  mes VARCHAR(10),
+  ruta_almac_s3 VARCHAR(100)
+);
+comment on table linaje.archivos is 'describe caracteristicas especificas de schedules para predicciones';
