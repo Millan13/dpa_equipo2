@@ -485,7 +485,7 @@ def WebScrapingRecurrente():
     return 0
 
 
-def HacerFeatureEngineering():
+def HacerFeatureEngineering(str_tipo_ejecucion):
     print('---Inicio de feature engineering---\n')
 
     objUtileria = Utileria()
@@ -501,6 +501,20 @@ def HacerFeatureEngineering():
                                          'linaje.transform',
                                          'id_set_transform') + 1
     str_Ruta = 'Linaje/Transform/'
+
+
+    if str_tipo_ejecucion == 'train':
+        # Query 1 train
+        str_NombreQuery = 'Paso0_copytable'
+        query = queries.get(str_NombreQuery)
+        nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    elif str_tipo_ejecuion == 'predict':
+        # Query 1 predict
+        str_NombreQuery = 'Paso0_copytable_recurrente'
+        query = queries.get(str_NombreQuery)
+        nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
 
     # Query 1
     str_NombreQuery = 'Paso0_copytable'
