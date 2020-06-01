@@ -192,7 +192,7 @@ class T_100_HacerFeatureEngineering(luigi.Task):
         return T_096_UT_Load()
 
     def run(self):
-        if lt.HacerFeatureEngineering() == 0:
+        if lt.HacerFeatureEngineering('train') == 0:
             os.system('echo OK > T_100_HacerFeatureEngineering')
 
     def output(self):
