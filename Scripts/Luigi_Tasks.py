@@ -123,6 +123,16 @@ def CrearDirectoriosS3():
         print('Excepcion en CrearDirectoriosS3-put_object():')
         raise
         return 1
+
+    directory_name = 'schedule_vuelos'
+    print('directory_name: ', directory_name)
+    try:
+        cnx_S3.put_object(Bucket=objUtileria.str_NombreBucket, Key=(directory_name + '/'))
+    except Exception:
+        print('Excepcion en CrearDirectoriosS3-put_object():')
+        raise
+        return 1
+
     print('---Fin creacion directorio S3---\n')
     return 0
 
