@@ -98,7 +98,13 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 
 >**Load.** Bajo esta sección del código se establecerá una conexión entre la instancia EC2 y el servicio de almacenamiento S3, en donde permanecerán tanto los datos históricos, como los que se descarguen mensualmente. Adicional, los datos históricos serán enviados al esquema *Raw* ubicado en el servicio RDS, para su posterior transformación.
 
->**Transform.** Lo relacionado con transformación involucra creación de nuevas variables, uso de one hot encoding para variables categóricas.
+>**Transform.** El proceso de transformación se puede resumir en 4 fases del proceso:
+
+1. Construcción del Flag Delay para aquellos vuelos retrasados.
+2. Creación de la columna de efecto dominó: Se manipuló el dataset para generar un indicador recursivo que permite conocer si el vuelo actual retrasado es consecuencia de un vuelo anterior retrasado en más de 20 minutos.
+3. Construcción del número de vuelos retrasados de manera consecutiva: Creación de un contador que permite numerar el número de vuelos acumulados retrasados consecutivamente.
+4. Uso de one hot encoding para variables categóricas previo al proceso de selección de variables para entrenamiento del modelo.
+
 
 ![Proceso ELT]()
 
