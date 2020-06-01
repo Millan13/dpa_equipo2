@@ -69,6 +69,28 @@ create table linaje.modeling (
 comment on table linaje.modeling is 'describe detalles del modeling';
 
 
+/**************************** Raw historico ****************************/
+drop table if exists raw.historico;
+create table raw.historico(
+  YEAR VARCHAR(50),
+  MONTH VARCHAR(50),
+  DAY_OF_MONTH VARCHAR(50),
+  DAY_OF_WEEK VARCHAR(50),
+  OP_UNIQUE_CARRIER VARCHAR(50),
+  TAIL_NUM VARCHAR(50),
+  OP_CARRIER_FL_NUM VARCHAR(50),
+  ORIGIN VARCHAR(50),
+  DEST VARCHAR(50),
+  CRS_DEP_TIME VARCHAR(50),
+  DEP_TIME VARCHAR(50),
+  DEP_DELAY VARCHAR(50),
+  CRS_ARR_TIME VARCHAR(50),
+  CRS_ELAPSED_TIME VARCHAR(50),
+  DISTANCE VARCHAR(50)
+);
+comment on table raw.historico is 'detalles por vuelo historico';
+
+
 /**************************** Raw vuelos ****************************/
 drop table if exists raw.vuelos;
 create table raw.vuelos(
