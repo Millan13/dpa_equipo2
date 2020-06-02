@@ -19,7 +19,7 @@ El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwe
 
 **Maestría en Ciencia de Datos ITAM**
 
-La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México (ITAM) es un programa que busca desarrollar en los estudiantes habilidades computacionales en el diseño y uso de bases de datos en varias escalas de magnitud, dominio de técnicas estadísticas modernas aplicadas al análisis y uso productivo de datos, así como habilidades en el uso de lenguajes de programación y sus aplicaciones para desarrollar software. Como parte del programa de maestría, en segundo semestre se imparte la materia de *Arquitectura y Producto de Datos* la cual busca desarrollar un producto de datos de inicio a fin. Este proyecto corresponde al producto desarrollado a lo largo del semestre primavera 2020.
+La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México (ITAM) es un programa que busca desarrollar en los estudiantes habilidades computacionales en el diseño y uso de bases de datos en varias escalas de magnitud, dominio de técnicas estadísticas modernas aplicadas al análisis y uso productivo de datos, así como habilidades en el uso de lenguajes de programación y sus aplicaciones para desarrollar software. Como parte del programa de maestría, en segundo semestre se imparte la materia de *Arquitectura y Producto de Datos* la cual tiene como objetivo principal el desarrollo un producto de datos de inicio a fin. Este proyecto corresponde al producto desarrollado a lo largo del semestre primavera 2020.
 
 ## 2. Resumen General
 
@@ -86,7 +86,16 @@ c) La definición de la variable target no es subjetiva. Ocurre o no ocurre un r
 
 **2.5 Pipeline**
 
-El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
+El pipeline diseñado para analizar el retraso de los vuelos incluye las siguientes etapas:
+* **Extract**: Mediante Webscrapping, descargamos los datos del sitio de [RITA](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236). Se obtienen inicialmente en formato ZIP.
+* **Load**: Una vez descomprimidos, los datos se cargan a S3 y al las tablas del esquema `raw` del RDS.
+* **Transform**: Se aplica Feature Engineering para obtener las columnas que el modelo requerirá, así como la columna target necesaria para el entrenamiento (si es el caso). 
+
+* **Modelado**: Mediante un magic loop, se obtiene el mejor modelo, mismo que será almacenado en S3.
+
+* **Evaluación de Bias & Fairness**: Con la ayuda del paquete `aequitas` evaluamos el modelo elegido.
+
+* **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en el punto anterior, se obtienen las predicciones.
 
 ![pipeline](Imagenes/pipeline.png)
 
@@ -168,36 +177,38 @@ Después de instalar git, es necesario clonar este repositorio. Posteriormente, 
 
 ```
 git clone https://github.com/Millan13/dpa_equipo2.git
-cd dpa_equipo2/Scripts
-#sh 00_install_packages.sh
 ```
 
 **4.3 Crear archivos de credenciales**
 
 La corrida del pipeline involucra la lectura de una serie de credenciales relacionadas con los servicios S3 y RDS de aws, las cuales deben especificarse en los siguientes dos archivos:
 
-**credenciales s3**
++ **credenciales s3**
 
+Crearemos un archivo `credentials` con  las credenciales de AWS:
 ```
-mkdir ~/.aws
-nano ~/.aws credentials
+mkdir .aws
+cd .aws
+nano credentials
+```
 
-# Pegar en este archivo *access id* y *key*
-
+Pegar en este archivo *access id* y *key*
+```
+[default]
 aws_access_key_id=<your_key_id>
 aws_secret_access_key=<your_secret_key>
-region_name=us-west-2
-use_ssl=False
-
+aws_session_token=<your_session_token_for_aws_educate_only>
 ```
 
-**credenciales postgres y bucket**
++ **credenciales postgres y bucket**
 
 ```
+cd ../dpa_equipo2/Scripts
 nano settings.toml
+```
 
-# Modificar las siguientes credenciales de postgres
-
+Modificar las siguientes credenciales de postgres
+```
 # Conexiones RDS
 user = 'your_user'
 dbname = 'bd_rita'
@@ -213,7 +224,7 @@ bucket_name = 'your_bucket_name'
 
 Por último, sugerimos la creación de un *pyenv* en donde se instalarán las paqueterías necesarias. Una vez completados los puntos anteriores, crearemos nuestro *pyenv* mediante:
 ```
-python3 -m venv rita2/env
+python3 -m venv ~/rita2/env
 ```
 Y procedemos a su activación:
 ```
@@ -222,6 +233,14 @@ source ~/rita2/env/bin/activate
 Con esto, se mostrará un `(env)` al inicio del cursor. Realizamos la instalación de los paquetes incluidos en el `requirements.txt`:
 ```
 pip3 install -r requirements.txt
+```
+Finalmente, realizamos las últimas configuraciones necesarias ejecutando:
+```
+sh 00_install_packages.sh
+```
+Una vez terminemos, podemos desactivar el *pyenv* con :
+```
+deactivate
 ```
 
 
