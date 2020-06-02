@@ -53,6 +53,8 @@ def CrearDirectoriosEC2():
                        'Linaje/ArchivosDet',
                        'Linaje/Transform',
                        'Linaje/Modeling',
+                       'Linaje/Schedules',
+                       'Linaje/SchedulesDet',
                        'testing/Extract',
                        'testing/Load',
                        'testing/Transform',
