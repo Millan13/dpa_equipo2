@@ -168,8 +168,6 @@ Después de instalar git, es necesario clonar este repositorio. Posteriormente, 
 
 ```
 git clone https://github.com/Millan13/dpa_equipo2.git
-cd dpa_equipo2/Scripts
-#sh 00_install_packages.sh
 ```
 
 **4.3 Crear archivos de credenciales**
@@ -177,27 +175,30 @@ cd dpa_equipo2/Scripts
 La corrida del pipeline involucra la lectura de una serie de credenciales relacionadas con los servicios S3 y RDS de aws, las cuales deben especificarse en los siguientes dos archivos:
 
 **credenciales s3**
-
+Crearemos un archivo `credentials` con  las credenciales de AWS:
 ```
-mkdir ~/.aws
-nano ~/.aws credentials
+mkdir /.aws
+cd .aws
+nano credentials
+```
 
-# Pegar en este archivo *access id* y *key*
-
+Pegar en este archivo *access id* y *key*
+```
+[default]
 aws_access_key_id=<your_key_id>
 aws_secret_access_key=<your_secret_key>
-region_name=us-west-2
-use_ssl=False
-
+aws_session_token=<your_session_token_for_aws_educate_only>
 ```
 
 **credenciales postgres y bucket**
 
 ```
+cd dpa_equipo2/Scripts
 nano settings.toml
+```
 
-# Modificar las siguientes credenciales de postgres
-
+Modificar las siguientes credenciales de postgres
+```
 # Conexiones RDS
 user = 'your_user'
 dbname = 'bd_rita'
@@ -223,6 +224,11 @@ Con esto, se mostrará un `(env)` al inicio del cursor. Realizamos la instalaci�
 ```
 pip3 install -r requirements.txt
 ```
+Finalmente, realizamos las últimas configuraciones necesarias ejecutando:
+```
+#sh 00_install_packages.sh
+```
+
 
 
 ## 5. Corrida de Pipeline
