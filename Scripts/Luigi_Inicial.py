@@ -237,6 +237,19 @@ class T_115_UT_Transform(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_115_UT_Transform')
 
+class T_200_UT_Predict(luigi.Task):
+
+    def requires(self):
+        return T_115_UT_Transform()
+
+    def run(self):
+        ut.UT_Predict()
+        os.system('echo OK > T_200_UT_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_200_UT_Predict')
+
+
 
 class T_120_Modelar(luigi.Task):
 

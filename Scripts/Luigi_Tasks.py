@@ -56,7 +56,8 @@ def CrearDirectoriosEC2():
                        'testing/Extract',
                        'testing/Load',
                        'testing/Transform',
-                       'testing/Modeling']
+                       'testing/Modeling',
+                       'testing/Predict']
 
     try:
         # Barremos para eliminar los directorios
