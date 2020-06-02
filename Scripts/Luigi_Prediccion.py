@@ -17,3 +17,16 @@ class Tarea_10_WebScrapingScheduleVuelos(luigi.Task):
 
 if __name__ == '__main__':
     luigi.run()
+
+
+class Tarea_20_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
+
+    def requires(self):
+        return Tarea_10_WebScrapingScheduleVuelos()
+
+    def run(self):
+        if lt.EnviarMetadataLinajeCargaRDS() == 0:
+            os.system('echo OK > Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')

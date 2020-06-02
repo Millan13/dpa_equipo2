@@ -350,6 +350,33 @@ def EnviarMetadataLinajeCargaRDS():
     # Eliminamos el arhivo de linaje-archivosdet
     os.system('rm Linaje/ArchivosDet/*.csv')
 
+
+    # Barremos los csv de Schedules
+    for data_file in Path('Linaje/Schedules').glob('*.csv'):
+
+        try:
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.Schedules')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeCargaRDS')
+            raise
+            return 1
+
+    # Eliminamos el arhivo de linaje-Schedules
+    os.system('rm Linaje/Schedules/*.csv')
+
+    # Barremos los csv de SchedulesDet
+    for data_file in Path('Linaje/SchedulesDet').glob('*.csv'):
+
+        try:
+            objUtileria.InsertarEnRDSDesdeArchivo(cnn, data_file, 'linaje.Schedules_det')
+        except Exception:
+            print('Excepcion en EnviarMetadataLinajeCargaRDS')
+            raise
+            return 1
+
+    # Eliminamos el arhivo de linaje-Schedulesdet
+    os.system('rm Linaje/SchedulesDet/*.csv')
+
     print('\n---Fin envío de linaje carga---\n')
     return 0
 
