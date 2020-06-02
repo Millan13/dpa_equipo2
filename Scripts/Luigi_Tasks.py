@@ -509,7 +509,7 @@ def HacerFeatureEngineering(str_tipo_ejecucion):
         query = queries.get(str_NombreQuery)
         nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
         CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
-    elif str_tipo_ejecuion == 'predict':
+    elif str_tipo_ejecucion == 'predict':
         # Query 1 predict
         str_NombreQuery = 'Paso0_copytable_recurrente'
         query = queries.get(str_NombreQuery)
@@ -777,6 +777,45 @@ def EnviarMetadataModelingRDS():
     print('\n---Fin envío metadata modeling---\n')
     return 0
 
+
+
+def PrepararScheduleVuelos():
+    print('\n---Inicio preparación schedule vuelos---\n')
+
+    import boto3
+    import os
+    import platform
+    from Class_Utileria import Utileria
+
+    objUtileria = Utileria()
+
+    path_s3 = 'schedule_vuelos/1016151238_T_ONTIME_REPORTING.csv'
+    s3_resource = boto3.resource('s3')
+    nombre_bucket = objUtileria.str_NombreBucket
+
+    # Descarga del archivo de s3 en carpeta Descargas
+    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
+    
+    file_vuelos = 'Descargas/vuelos.csv'
+
+    # elimnando comas al final de cada línea del csv
+    if platform.system()=='Darwin':
+        os.system("sed -i '' 's/.$//' Descargas/*.csv")
+    else:
+	os.system("sed -i 's/.$//' Descargas/*.csv")
+    
+    # envío de la información data_file_vuelos a la RDS
+    data_file_vuelos = open(file_vuelos,'r')
+    cnn = objUtileria.CrearConexionRDS()
+    objUtileria.InsertarEnRDSDesdeArchivo2(cnn,data_file_vuelos,'raw.vuelos')
+
+    print('---Fin preparación schedule vuelos---\n')
+    return 0
+
+
+
+
+
 # ###############################################################
 # #################### Funciones de apoyo #######################
 # ###############################################################
@@ -824,35 +863,3 @@ def EnviarPickleAS3():
 
 
 
-def PrepararScheduleVuelos():
-    print('\n---Inicio preparación schedule vuelos---\n')
-
-    import boto3
-    import os
-    import platform
-    from Class_Utileria import Utileria
-
-    objUtileria = Utileria()
-
-    path_s3 = 'schedule_vuelos/1016151238_T_ONTIME_REPORTING.csv'
-    s3_resource = boto3.resource('s3')
-    nombre_bucket = objUtileria.str_NombreBucket
-
-    # Descarga del archivo de s3 en carpeta Descargas
-    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
-    
-    file_vuelos = 'Descargas/vuelos.csv'
-
-    # elimnando comas al final de cada línea del csv
-    if platform.system()=='Darwin':
-        os.system("sed -i '' 's/.$//' Descargas/*.csv")
-    else:
-        os.system("sed -i 's/.$//' Descargas/*.csv")
-    
-    # envío de la información data_file_vuelos a la RDS
-    data_file_vuelos = open(file_vuelos,'r')
-    cnn = objUtileria.CrearConexionRDS()
-    objUtileria.InsertarEnRDSDesdeArchivo2(cnn,data_file_vuelos,'raw.vuelos')
-
-    print('---Fin preparación schedule vuelos---\n')
-    return 0
