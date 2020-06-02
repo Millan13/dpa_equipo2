@@ -174,7 +174,8 @@ git clone https://github.com/Millan13/dpa_equipo2.git
 
 La corrida del pipeline involucra la lectura de una serie de credenciales relacionadas con los servicios S3 y RDS de aws, las cuales deben especificarse en los siguientes dos archivos:
 
-**credenciales s3**
++ **credenciales s3**
+
 Crearemos un archivo `credentials` con  las credenciales de AWS:
 ```
 mkdir /.aws
@@ -190,7 +191,7 @@ aws_secret_access_key=<your_secret_key>
 aws_session_token=<your_session_token_for_aws_educate_only>
 ```
 
-**credenciales postgres y bucket**
++ **credenciales postgres y bucket**
 
 ```
 cd dpa_equipo2/Scripts
