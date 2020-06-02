@@ -279,6 +279,20 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         # time.sleep(4)
 
 
+class T_140_PrepararScheduleVuelos(luigi.Task):
+
+    def requires(self):
+        return T_130_EnviarMetadataModelado_RDS()
+
+    def run(self):
+        if lt.PrepararScheduleVuelos() == 0:
+            os.system('echo OK > T_140_PrepararScheduleVuelos')
+
+    def output(self):
+        return luigi.LocalTarget('T_140_PrepararScheduleVuelos')
+
+
+
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
 
@@ -303,6 +317,7 @@ class T_Manejador(luigi.Task):
                    '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   '140': {'Clase': T_140_PrepararScheduleVuelos()},
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
