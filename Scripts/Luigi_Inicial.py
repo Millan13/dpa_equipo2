@@ -10,7 +10,7 @@ import pandas as pd
 # Librerias de nosotros
 import Luigi_Tasks as lt
 import Unit_Tests as ut
-# from Class_Utileria import Utileria
+from Class_Utileria import Utileria
 from Class_Rita import Rita
 
 
@@ -173,26 +173,13 @@ class T_090_EnviarMetadataCargaPt3_RDS(luigi.contrib.postgres.CopyToTable):
         print('\n---Fin carga de linaje archivos_det---\n')
 
 
-class T_093_UT_Extract(luigi.Task):
+class T_096_UT_Load(luigi.Task):
 
     def requires(self):
         return T_090_EnviarMetadataCargaPt3_RDS()
 
     def run(self):
-        ut.Extract()
-        os.system('echo OK > T_093_UT_Extract')
-
-    def output(self):
-        return luigi.LocalTarget('T_093_UT_Extract')
-
-
-class T_096_UT_Load(luigi.Task):
-
-    def requires(self):
-        return T_093_UT_Extract()
-
-    def run(self):
-        ut.Load()
+        ut.UT_Load()
         os.system('echo OK > T_096_UT_Load')
 
     def output(self):
@@ -244,7 +231,7 @@ class T_115_UT_Transform(luigi.Task):
         return T_110_EnviarMetadataFeatureEngineering_RDS()
 
     def run(self):
-        ut.Transform()
+        ut.UT_Transform()
         os.system('echo OK > T_115_UT_Transform')
 
     def output(self):
@@ -254,7 +241,7 @@ class T_115_UT_Transform(luigi.Task):
 class T_120_Modelar(luigi.Task):
 
     def requires(self):
-        return T_110_EnviarMetadataFeatureEngineering_RDS()
+        return T_115_UT_Transform()
 
     def run(self):
         if lt.Modelar() == 0:
@@ -288,21 +275,8 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
                     yield fila
         os.system('rm Linaje/Modeling/*.csv')
         print('\n---Fin carga de linaje modeling---\n')
-        self.objRita.objUtileria.DibujarLuigi()
-        time.sleep(4)
-
-
-class T_135_UT_Modeling(luigi.Task):
-
-    def requires(self):
-        return T_130_EnviarMetadataModelado_RDS()
-
-    def run(self):
-        ut.Modeling()
-        os.system('echo OK > T_135_UT_Modeling')
-
-    def output(self):
-        return luigi.LocalTarget('UT_070_Modeling')
+        # self.objRita.objUtileria.DibujarLuigi()
+        # time.sleep(4)
 
 
 # ##################### Task principal de todo el flujo #####################
@@ -323,18 +297,20 @@ class T_Manejador(luigi.Task):
                    '070': {'Clase': T_070_EnviarMetadataCargaPt1_RDS()},
                    '080': {'Clase': T_080_EnviarMetadataCargaPt2_RDS()},
                    '090': {'Clase': T_090_EnviarMetadataCargaPt3_RDS()},
-                   '093': {'Clase': T_093_UT_Extract()},  # Unit Test
                    '096': {'Clase': T_096_UT_Load()},  # Unit Test
                    '100': {'Clase': T_100_HacerFeatureEngineering()},
                    '110': {'Clase': T_110_EnviarMetadataFeatureEngineering_RDS()},
                    '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
-                   '135': {'Clase': T_135_UT_Modeling()}  # Unit Test
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
         return dict_LT.get(self.str_Tarea).get('Clase')
+
+    def run(self):
+        Utileria().DibujarLuigi()
+        time.sleep(4)
 
 
 if __name__ == '__main__':
