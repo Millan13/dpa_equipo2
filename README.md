@@ -229,7 +229,10 @@ Finalmente, realizamos las últimas configuraciones necesarias ejecutando:
 ```
 #sh 00_install_packages.sh
 ```
-
+Una vez terminemos, podemos desactivar el *pyenv* con :
+```
+deactivate
+```
 
 
 ## 5. Corrida de Pipeline
