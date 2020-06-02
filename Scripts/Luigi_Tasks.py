@@ -305,7 +305,7 @@ def WebScrapingInicial():
 
 
 def EnviarMetadataLinajeCargaRDS():
-    print('\n---Inicio envío de linaje carga---\n')
+    print('\n---Inicio envio de linaje carga---\n')
     from pathlib import Path
     objUtileria = Utileria()
     cnn = objUtileria.CrearConexionRDS()
@@ -377,7 +377,7 @@ def EnviarMetadataLinajeCargaRDS():
     # Eliminamos el arhivo de linaje-Schedulesdet
     os.system('rm Linaje/SchedulesDet/*.csv')
 
-    print('\n---Fin envío de linaje carga---\n')
+    print('\n---Fin envio de linaje carga---\n')
     return 0
 
 
