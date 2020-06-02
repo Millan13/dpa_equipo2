@@ -303,6 +303,7 @@ class T_150_FeatureEngineering_Predict(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_150_FeatureEngineering_Predict')
 
+
 class T_160_MetadataFeatureEngineering_Predict(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
@@ -329,7 +330,17 @@ class T_160_MetadataFeatureEngineering_Predict(luigi.contrib.postgres.CopyToTabl
         print('\n---Fin carga de linaje transform---\n')
 
 
+class T_170_UT_TransformPredict(luigi.Task):
 
+    def requires(self):
+        return T_160_MetadataFeatureEngineering_Predict()
+
+    def run(self):
+        ut.UT_Transform_Predict()
+        os.system('echo OK > T_170_UT_TransformPredict')
+
+    def output(self):
+        return luigi.LocalTarget('T_170_UT_TransformPredict')
 
 
 
