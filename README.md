@@ -113,7 +113,7 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 
 Puesto que los datos sufren transformaciones a lo largo de todo el pipeline, es importante tener la trazabilidad de todas estas modificaciones. La metadata que se generará durante el pipeline será almacenada en una base de datos conforme a lo siguiente:
 
-![linaje](Imagenes/Esquema_Linaje.png)
+![linaje](Imagenes/Esquema_LinajeF.png)
 
 El detalle de cada uno de los campos de la metadata se ubica en [diccionario linaje](https://github.com/Millan13/dpa_equipo2/blob/dpa-laura/docs/diccionario_linaje.md).
 
