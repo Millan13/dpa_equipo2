@@ -114,6 +114,7 @@ class voTransform:
     dttm_fecha_hora_ejec = ''
     str_usuario_ejec = ''
     str_instancia_ejec = ''
+    str_tipo_ejec = ''
 
     str_NombreDataFrame = ''
 
@@ -126,7 +127,8 @@ class voTransform:
                           'filas_afectadas': [self.nbr_filas_afectadas],
                           'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
                           'usuario_ejec': [self.str_usuario_ejec],
-                          'instancia_ejec': [self.str_instancia_ejec]
+                          'instancia_ejec': [self.str_instancia_ejec],
+                          'tipo_ejec': [self.str_tipo_ejec]
                           }
 
         df = pd.DataFrame(dict_Transform, columns=['id_set_transform',
@@ -135,7 +137,8 @@ class voTransform:
                                                    'filas_afectadas',
                                                    'fecha_hora_ejec',
                                                    'usuario_ejec',
-                                                   'instancia_ejec'
+                                                   'instancia_ejec',
+                                                   'tipo_ejec'
                                                    ]
                           )
 

@@ -192,7 +192,7 @@ class T_100_HacerFeatureEngineering(luigi.Task):
         return T_096_UT_Load()
 
     def run(self):
-        if lt.HacerFeatureEngineering() == 0:
+        if lt.HacerFeatureEngineering('train') == 0:
             os.system('echo OK > T_100_HacerFeatureEngineering')
 
     def output(self):
@@ -279,6 +279,71 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         # time.sleep(4)
 
 
+class T_140_PrepararScheduleVuelos(luigi.Task):
+
+    def requires(self):
+        return T_130_EnviarMetadataModelado_RDS()
+
+    def run(self):
+        if lt.PrepararScheduleVuelos() == 0:
+            os.system('echo OK > T_140_PrepararScheduleVuelos')
+
+    def output(self):
+        return luigi.LocalTarget('T_140_PrepararScheduleVuelos')
+
+
+class T_150_FeatureEngineering_Predict(luigi.Task):
+    def requires(self):
+        return T_140_PrepararScheduleVuelos()
+
+    def run(self):
+        if lt.HacerFeatureEngineering('test') == 0:
+            os.system('echo OK > T_150_FeatureEngineering_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_150_FeatureEngineering_Predict')
+
+
+class T_160_MetadataFeatureEngineering_Predict(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        return T_150_FeatureEngineering_Predict()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'linaje.transform'
+    columns = objRita.lst_Transform
+
+    def rows(self):
+        print('\n---Inicio carga de linaje transform---\n')
+        for data_file in Path('Linaje/Transform').glob('*.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        os.system('rm Linaje/Transform/*.csv')
+        print('\n---Fin carga de linaje transform---\n')
+
+
+class T_170_UT_TransformPredict(luigi.Task):
+
+    def requires(self):
+        return T_160_MetadataFeatureEngineering_Predict()
+
+    def run(self):
+        ut.UT_Transform_Predict()
+        os.system('echo OK > T_170_UT_TransformPredict')
+
+    def output(self):
+        return luigi.LocalTarget('T_170_UT_TransformPredict')
+
+
+
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
 
@@ -303,6 +368,10 @@ class T_Manejador(luigi.Task):
                    '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   '140': {'Clase': T_140_PrepararScheduleVuelos()},
+                   '150': {'Clase': T_150_FeatureEngineering_Predict()},
+                   '160': {'Clase': T_160_MetadataFeatureEngineering_Predict()},
+                   '170': {'Clase': T_170_UT_TransformPredict()},
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')

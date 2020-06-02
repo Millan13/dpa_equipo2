@@ -73,7 +73,8 @@ class Rita:
                      ("filas_afectadas", "VARCHAR "),
                      ("fecha_hora_ejec", "TIMESTAMP"),
                      ("usuario_ejec", "VARCHAR"),
-                     ("instancia_ejec", "VARCHAR")]
+                     ("instancia_ejec", "VARCHAR"),
+                     ("tipo_ejec", "VARCHAR")]
 
     lst_Modeling = [("id_set_modelado", "NUMERIC"),
                     ("nombre_modelo", "VARCHAR"),

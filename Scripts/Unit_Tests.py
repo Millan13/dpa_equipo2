@@ -34,6 +34,18 @@ def UT_Transform():
 
     print('\n---Fin UT_Transform ---\n')
 
+def UT_Transform_Predict():
+
+    print('\n---Inicio UT_Transform_Predict ---\n')
+    from testing import test_transform_predict as tst
+
+    obj_UT = tst.TestTransformPredict()
+
+    obj_UT.test_transform_predict_delay_positive()
+    procesar_metadata_unit_test(obj_UT, 'testing/Transform/')
+
+    print('\n---Fin UT_Transform_Predict ---\n')
+
 
 def procesar_metadata_unit_test(par_UI, par_Ruta):
 
