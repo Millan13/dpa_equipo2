@@ -237,6 +237,19 @@ class T_115_UT_Transform(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_115_UT_Transform')
 
+class T_200_UT_Predict(luigi.Task):
+
+    def requires(self):
+        return T_115_UT_Transform()
+
+    def run(self):
+        ut.UT_Predict()
+        os.system('echo OK > T_200_UT_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_200_UT_Predict')
+
+
 
 # on_succes permite hacer override
 class T_120_Modelar(luigi.Task):
@@ -383,6 +396,31 @@ class T_170_UT_TransformPredict(luigi.Task):
         return luigi.LocalTarget('T_170_UT_TransformPredict')
 
 
+
+class Tarea_10_WebScrapingScheduleVuelos(luigi.Task):
+
+    def run(self):
+        if lt.WebScrapingScheduleVuelos() == 0:
+            os.system('echo OK > Tarea_10_WebScrapingScheduleVuelos')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_10_WebScrapingScheduleVuelos')
+
+if __name__ == '__main__':
+    luigi.run()
+
+
+class Tarea_20_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
+
+    def requires(self):
+        return Tarea_10_WebScrapingScheduleVuelos()
+
+    def run(self):
+        if lt.EnviarMetadataLinajeCargaRDS() == 0:
+            os.system('echo OK > Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
 
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):

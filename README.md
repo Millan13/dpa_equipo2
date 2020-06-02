@@ -6,13 +6,13 @@ El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwe
 
 ## Contenidos
 
-1. Introducción
-2. Resumen General
-3. Requerimientos e Infraestructura
-4. Instalación y configuración
-5. Corrida del Pipeline
-6. Organización del código
-7. Colaboradores
+1. [Introducción](https://github.com/Millan13/dpa_equipo2#1-introducci%C3%B3n)
+2. [Resumen General](https://github.com/Millan13/dpa_equipo2#2-resumen-general)
+3. [Requerimientos e Infraestructura](https://github.com/Millan13/dpa_equipo2#3-requerimientos-e-infraestructura)
+4. [Instalación y configuración](https://github.com/Millan13/dpa_equipo2#4-instalaci%C3%B3n-y-configuraci%C3%B3n)
+5. [Corrida del Pipeline](https://github.com/Millan13/dpa_equipo2#5-corrida-de-pipeline)
+6. [Organización del código](https://github.com/Millan13/dpa_equipo2#6-organizaci%C3%B3n-del-c%C3%B3digo)
+7. [Colaboradores](https://github.com/Millan13/dpa_equipo2#7-colaboradores)
 
 
 ## 1. Introducción
@@ -143,14 +143,24 @@ Infraestructura: AWS
 
 **4.1 Requerimientos**
 
-En complemento a la infraestructura descrita en le punto 3, será necesario el siguiente software:
+*A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.*
+
+En complemento a la infraestructura descrita en el punto 3, será necesario contar con lo siguiente:
++ Python 3
+Lo primero que requeriremos, será contar con Python3. Podemos verificar si está instalado con el siguiente comando:
+```
+yum list installed | grep -i python3
+```
+Si se nos muestra un texto similar a `Failed to set locale, defaulting to C` procedemos a su instalación con la siguiente instrucción:
+```
+sudo yum install python36 -y
+```
 
 + git
 
-A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.
-
+Instalamos git mediante la instrucción:
 ```
-sudo yum install git-all
+sudo yum install git-all -y
 ```
 **4.2 Clonar el repositorio**
 
@@ -159,7 +169,7 @@ Después de instalar git, es necesario clonar este repositorio. Posteriormente, 
 ```
 git clone https://github.com/Millan13/dpa_equipo2.git
 cd dpa_equipo2/Scripts
-sh 00_install_packages.sh
+#sh 00_install_packages.sh
 ```
 
 **4.3 Crear archivos de credenciales**
@@ -174,8 +184,8 @@ nano ~/.aws credentials
 
 # Pegar en este archivo *access id* y *key*
 
-aws_access_key_id=your_key_id
-aws_secret_access_key=your_secret_key
+aws_access_key_id=<your_key_id>
+aws_secret_access_key=<your_secret_key>
 region_name=us-west-2
 use_ssl=False
 
@@ -199,6 +209,21 @@ password = 'your_databse_password'
 # S3
 bucket_name = 'your_bucket_name'
 ```
+**4.3 Creación de *pyenv* e instalación de paquetes**
+
+Por último, sugerimos la creación de un *pyenv* en donde se instalarán las paqueterías necesarias. Una vez completados los puntos anteriores, crearemos nuestro *pyenv* mediante:
+```
+python3 -m venv rita2/env
+```
+Y procedemos a su activación:
+```
+source ~/rita2/env/bin/activate
+```
+Con esto, se mostrará un `(env)` al inicio del cursor. Realizamos la instalación de los paquetes incluidos en el `requirements.txt`:
+```
+pip3 install -r requirements.txt
+```
+
 
 ## 5. Corrida de Pipeline
 

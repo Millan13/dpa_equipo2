@@ -44,6 +44,30 @@ class Rita:
                    'Distance': {'Id': 64, 'Flag': 'A'}
                    }
 
+    dict_Campos_Schedule = {'Year': {'Id': 3, 'Flag': 'A'},
+                   'Month': {'Id': 5, 'Flag': 'A'},
+                   'DayofMonth': {'Id': 6, 'Flag': 'A'},
+                   'DayofWeek': {'Id': 7, 'Flag': 'A'},
+                   'Reporting_Airline': {'Id': 10, 'Flag': 'A'},
+                   'Tail_Number': {'Id': 13, 'Flag': 'A'},
+                   'Flight_Number_Reporting_Airline': {'Id': 14, 'Flag': 'A'},
+                   'OriginAirportID': {'Id': 16, 'Flag': 'I'},
+                   'OriginAirportSeqID': {'Id': 17, 'Flag': 'I'},
+                   'OriginCityMarketID': {'Id': 18, 'Flag': 'I'},
+                   'Origin': {'Id': 19, 'Flag': 'A'},
+                   'DestAirportID': {'Id': 26, 'Flag': 'I'},
+                   'DestAirportSeqID': {'Id': 27, 'Flag': 'I'},
+                   'DestCityMarketID': {'Id': 28, 'Flag': 'I'},
+                   'Dest': {'Id': 29, 'Flag': 'A'},
+                   'CRSDepTime': {'Id': 36, 'Flag': 'A'},
+                   'DepTime': {'Id': 37, 'Flag': 'A'},
+                   'DepDelayMinutes': {'Id': 38, 'Flag': 'A'},
+                   'CRSArrTime': {'Id': 48, 'Flag': 'A'},
+                   'CRSElapsedTime': {'Id': 60, 'Flag': 'A'},
+                   'Distance': {'Id': 64, 'Flag': 'A'}
+                   }
+
+
     # Listas con las estructuras de tablas para el linaje
     lst_Ejecuciones = [("id_ejec", "NUMERIC"),
                        ("usuario_ejec", "VARCHAR"),
@@ -458,3 +482,68 @@ class Rita:
         driver.quit()
 
         return self.str_MasReciente
+
+
+    def DescargarAnioMesSchedules(self, nbr_Anio, str_Mes):
+
+        # Creacion del driver y conexion a la Url
+        driver = self.CrearDriverChrome(self.str_DirDriver, self.str_DirDescargas)
+
+        driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd': 'Page.setDownloadBehavior',
+                  'params': {'behavior': 'allow',
+                             'downloadPath': self.str_DirDescargas
+                             }
+                  }
+        command_result = driver.execute("send_command", params)
+
+        print('Esperando a la pagina...', self.str_Url)
+        driver.get(self.str_Url)
+
+        # Bajamos el anio y mes indicados
+        driver.find_element_by_xpath("//select[@name='XYEAR']/option[text()="+str(nbr_Anio)+"]").click()
+        driver.find_element_by_xpath("//select[@name='FREQUENCY']/option[text()='"+str(str_Mes)+"']").click()
+
+        # Seleccionamos los campos deseados para crear la base de datos
+        print('Seleccionando campos para descarga...')
+        for campo in self.dict_Campos_Schedule.items():
+            xpath_finales = "/html/body/div[3]/div[3]/table[1]/tbody/tr/td[2]/table[4]/tbody/tr[%d]/td[1]/input[@type=\'checkbox\']"% campo[1]['Id']
+
+            element = driver.find_element_by_xpath(xpath_finales)
+            driver.execute_script("arguments[0].click();", element)
+
+            # Método 1
+            # driver.find_element_by_xpath(xpath_finales).click()
+
+            # Método 2
+            # wait = WebDriverWait(driver, 30)
+            # element = wait.until(EC.element_to_be_clickable((By.XPATH, xpath_finales)))
+            # element.click()
+
+            nbr_Aleat = np.random.uniform(1,2,1)
+            time.sleep(nbr_Aleat)
+
+        # Bajamos el archivo
+        print('Generando archivo...')
+        driver.execute_script('tryDownload()')
+        str_ext = ''
+
+        # Este while es para esperar a que termine la descarga completa del archivo en turno
+        print('Bajando el archivo...')
+        while str_ext != '.zip':
+            print(datetime.datetime.now())
+            list_file = glob.glob(self.str_DirDescargas+'/*.zip')  # * means all if need specific format then *.csv
+            if len(list_file) != 0:
+                str_file = list_file[0]
+                arr_aux = os.path.splitext(str_file)
+                str_name = arr_aux[0]
+                str_ext = arr_aux[1]
+            time.sleep(1)
+
+        # Guardamos en la clase el nombre del archivo
+        self.str_ArchivoDescargado = str_name
+
+        # Cerramos el driver junto con el browser
+        driver.quit()
+
+        return 0
