@@ -6,7 +6,7 @@ import os
 import Luigi_Tasks as lt
 
 
-class Tarea_10_WebScrapingRecurrente(luigi.Task):
+class Tarea_10_WebScrapingScheduleVuelos(luigi.Task):
 
     def run(self):
         if lt.WebScrapingScheduleVuelos() == 0:
