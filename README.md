@@ -88,7 +88,7 @@ c) La definición de la variable target no es subjetiva. Ocurre o no ocurre un r
 
 El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
 
-![pipeline](Imagenes/pipeline.png)
+![pipeline](Imagenes/Pipeline-Rita_2.png)
 
 **2.6 Proceso ELT**
 
@@ -106,14 +106,14 @@ La primera parte del pipeline anterior requiere de un proceso ELT que permita te
 4. Uso de one hot encoding para variables categóricas previo al proceso de selección de variables para entrenamiento del modelo.
 
 
-![Proceso ELT]()
+![Proceso ELT](Imagenes/ELT.png)
 
 
 **2.7 Linaje**
 
 Puesto que los datos sufren transformaciones a lo largo de todo el pipeline, es importante tener la trazabilidad de todas estas modificaciones. La metadata que se generará durante el pipeline será almacenada en una base de datos conforme a lo siguiente:
 
-![linaje](Imagenes/tablas_metadata.png)
+![linaje](Imagenes/Esquema_Linaje.png)
 
 El detalle de cada uno de los campos de la metadata se ubica en [diccionario linaje](https://github.com/Millan13/dpa_equipo2/blob/dpa-laura/docs/diccionario_linaje.md).
 
