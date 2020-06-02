@@ -934,5 +934,5 @@ def WebScrapingScheduleVuelos():
                                            + str(voEjecucion.nbr_id_ejec) + '.csv'
         voEjecucion.crearCSV()
 
-    print('---Fin web scraping recurrente---\n')
+    print('---Fin web scraping Schedule vuelos---\n')
     return 0
