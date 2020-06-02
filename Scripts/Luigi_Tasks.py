@@ -888,19 +888,19 @@ def WebScrapingScheduleVuelos():
             # Se elimina la información descargada
             os.system('rm Descargas/*.csv')
 
-            # CSV Linaje.Archivos
+            # CSV Linaje.Schedules
             voArchivo.nbr_id_ejec = nbr_Id_Ejec_Actual
             voArchivo.str_id_archivo = os.path.basename(objRita.str_ArchivoDescargado + '.csv')
             voArchivo.nbr_tamanio_archivo = nbr_Tamanio
             voArchivo.nbr_num_registros = nbr_Filas
 
             # Se filtra el diccionario para traer solo campos de activacion
-            dict_Filtrado = {k: v for k, v in objRita.dict_Campos.items() if v['Flag'] == 'A'}
+            dict_Filtrado = {k: v for k, v in objRita.dict_Campos_Schedule.items() if v['Flag'] == 'A'}
             voArchivo.nbr_num_columnas = len(dict_Filtrado)
 
             voArchivo.str_anio = str(anio)
             voArchivo.str_mes = str(mes)
-            voArchivo.str_NombreDataFrame = 'Linaje/Archivos/' + str(anio) + str(mes) + '.csv'
+            voArchivo.str_NombreDataFrame = 'Linaje/Schedules/' + str(anio) + str(mes) + '.csv'
             voArchivo.str_ruta_almac_s3 = str_RutaS3
             voArchivo.crearCSV()
 
@@ -909,14 +909,14 @@ def WebScrapingScheduleVuelos():
             # y los ponemos en un arreglo
             voArchivo_Det = voArchivos_Det()
             np_Campos = np.empty([0, 2])
-            for key, value in objRita.dict_Campos.items():
+            for key, value in objRita.dict_Campos_Schedule.items():
 
                 # Se pregunta si el campo esta marcado para activarse
                 if value['Flag'] == 'A':
                     np_Campos = np.append(np_Campos, [[voArchivo.str_id_archivo, key]], axis=0)
 
             voArchivo_Det.np_Campos = np_Campos
-            voArchivo_Det.str_NombreDataFrame = 'Linaje/ArchivosDet/' + str(anio) + str(mes) + '.csv'
+            voArchivo_Det.str_NombreDataFrame = 'Linaje/SchedulesDet/' + str(anio) + str(mes) + '.csv'
             voArchivo_Det.crearCSV()
 
         # CSV Linaje.Ejecuciones
@@ -924,7 +924,7 @@ def WebScrapingScheduleVuelos():
         voEjecucion.str_bucket_s3 = objUtileria.str_NombreBucket
         voEjecucion.str_usuario_ejec = objUtileria.ObtenerUsuario()
         voEjecucion.str_instancia_ejec = objUtileria.ObtenerIp()
-        voEjecucion.str_tipo_ejec = 'R'
+        voEjecucion.str_tipo_ejec = 'P'
         voEjecucion.str_url_webscrapping = objRita.str_Url
         voEjecucion.str_status_ejec = 'Ok'
         voEjecucion.dttm_fecha_hora_ejec = datetime.now()

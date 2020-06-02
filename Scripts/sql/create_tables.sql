@@ -115,4 +115,13 @@ create table linaje.schedules (
   mes VARCHAR(10),
   ruta_almac_s3 VARCHAR(100)
 );
-comment on table linaje.archivos is 'describe caracteristicas especificas de schedules para predicciones';
+comment on table linaje.schedules is 'describe caracteristicas especificas de schedules para predicciones';
+
+
+/**************************** Linaje schedules_det ****************************/
+drop table if exists linaje.schedules_det;
+create table linaje.schedules_det (
+  id_archivo VARCHAR(40),
+  nombre_col VARCHAR(35)
+);
+comment on table linaje.schedules_det is 'describe detalles del archivo de schedules';
