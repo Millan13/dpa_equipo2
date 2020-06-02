@@ -36,6 +36,9 @@ pip3 install psycopg2-binary
 pip3 install click
 pip3 install dynaconf
 pip3 install pandas
+pip3 install flask
+pip3 install flask-restplus
+
 
 export LC_ALL=en_US.UTF-8
 
@@ -43,5 +46,5 @@ export LC_ALL=en_US.UTF-8
 # Actualizar permisos del script
 chmod 700 Descarga_Recurrente.sh
 # sudo cp Descarga_Recurrente.sh /etc/cron.weekly
-#Programar dÃia y hora de ejeucion
+#Programar dï¿½ia y hora de ejeucion
 echo "30 22 * * 4 root /home/ec2-user/dpa_equipo2/Scripts/DescargaRecurrente.sh" | sudo tee -a /etc/crontab

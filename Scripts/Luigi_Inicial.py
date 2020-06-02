@@ -238,6 +238,7 @@ class T_115_UT_Transform(luigi.Task):
         return luigi.LocalTarget('T_115_UT_Transform')
 
 
+# on_succes permite hacer override
 class T_120_Modelar(luigi.Task):
 
     def requires(self):
@@ -277,6 +278,45 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         print('\n---Fin carga de linaje modeling---\n')
         # self.objRita.objUtileria.DibujarLuigi()
         # time.sleep(4)
+
+class T_180_Predict(luigi.Task):
+
+    def requires(self):
+        return T_130_EnviarMetadataModelado_RDS()
+
+    def run(self):
+        if lt.Predict() == 0:
+            os.system('echo OK > T_180_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_180_Predict')
+
+
+class T_190_Enviar_Predict_RDS(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        return T_180_Predict()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'trabajo.predicciones'
+    columns = objRita.lst_Predicciones
+
+    def rows(self):
+        print('\n---Inicio carga de Predicciones---\n')
+
+        for data_file in Path('.').glob('Predicciones.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        # os.system('rm Predicciones.csv')
+        print('\n---Fin carga de Predicciones---\n')
 
 
 class T_140_PrepararScheduleVuelos(luigi.Task):
@@ -372,6 +412,8 @@ class T_Manejador(luigi.Task):
                    '150': {'Clase': T_150_FeatureEngineering_Predict()},
                    '160': {'Clase': T_160_MetadataFeatureEngineering_Predict()},
                    '170': {'Clase': T_170_UT_TransformPredict()},
+                   '180': {'Clase': T_180_Predict()},
+                   '190': {'Clase': T_190_Enviar_Predict_RDS()}
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
