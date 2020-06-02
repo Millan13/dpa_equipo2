@@ -53,6 +53,7 @@ def CrearDirectoriosEC2():
                        'Linaje/ArchivosDet',
                        'Linaje/Transform',
                        'Linaje/Modeling',
+                       'Linaje/Predict',
                        'testing/Extract',
                        'testing/Load',
                        'testing/Transform',
@@ -735,7 +736,6 @@ def Modelar():
     # Se hace el envío a S3
     EnviarPickleAS3()
 
-    # Aquí se deberá poner la función que envía el pickle a S3
     print('---Fin de Modelar---\n')
 
     return 0
@@ -805,5 +805,99 @@ def EnviarPickleAS3():
         print('Excepcion en EnviarPickleAS3')
         raise
         return 1
+
+    return 0
+
+
+def Predict():
+
+    import boto3
+    import io
+    import pickle as pickle
+
+    objUtileria = Utileria()
+
+    str_Dir = 'modelo_seleccionado/'
+
+    s3 = boto3.client('s3')
+    obj = s3.get_object(Bucket=objUtileria.str_NombreBucket, Key=str_Dir+'parametros.pickle')
+
+    file_pickle = io.BytesIO(obj['Body'].read())
+
+    with open("ParametrosModelo.p", "wb") as outfile:
+        # Copy the BytesIO stream to the output file
+        outfile.write(file_pickle.getbuffer())
+
+    # Carga de parámetros
+    pickleFile = open('ParametrosModelo.p', 'rb')
+    modelo = pickle.load(pickleFile)
+    pickleFile.close()
+
+    import pandas as pd
+
+    from Class_Eda import Eda
+    from Class_ValueObjects import voModeling
+    from datetime import datetime
+
+    # objUtileria = Utileria()
+    voModeling = voModeling()
+
+    # Instanciamos el objeto Eda
+    objEda = Eda()
+
+    # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
+    objEda.strRutaDataSource = 'DatasetPrueba.csv'  # PREDICT
+
+    df_Input = pd.read_csv('DatasetPrueba.csv')
+
+    # Especificamos nuestro separador de columnas y cargamos el dataset
+    objEda.strSeparadorColumnas = ','
+    objEda.Cargar_Datos()
+
+    # Proceso de limpieza
+    objEda.Limpiar_Datos()
+
+    # Eliminamos las columnas
+    objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['bandera_delay'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso3'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['sum_efectos_domino'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tot_sum_domino'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['delay2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['year'], axis=1)
+
+    # Variables a incluir que se eliminan en esta prueba:
+    objEda.pdDataSet = objEda.pdDataSet.drop(['horasalidaf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['hora_llegada_progf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['num_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_avion'], axis=1)
+
+    # Hacemos el label encoder para cada columna por separado
+    # Esto es para que no se incremente tanto el número de columnas
+    # del dataset de golpe y así evitar problemas de memoria
+    objEda.npLabelEncoderFeat = np.array([])
+    objEda.Agregar_Features_LabelEnc('day_sem')
+    objEda.Agregar_Features_LabelEnc('origen')
+    objEda.Agregar_Features_LabelEnc('destino')
+
+    objEda.LabelEncoder_OneHotEncoder()
+    objEda.Borrar_Cols_Base_LabelEnc()
+    objEda.Borrar_Cols_Inter_LabelEnc()
+
+    X = objEda.pdDataSet.to_numpy()
+    X = np.nan_to_num(X)
+
+    np_y = modelo.predict(X)
+    df_Input['y_hat'] = np_y
+    df_Input.to_csv('Predicciones.csv', index=False, header=False)
 
     return 0

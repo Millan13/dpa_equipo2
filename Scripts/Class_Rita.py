@@ -83,6 +83,33 @@ class Rita:
                     ("usuario_ejec", "VARCHAR"),
                     ("instancia_ejec", "VARCHAR")]
 
+    lst_Predicciones = [("fecha", "VARCHAR"),
+                        ("day_sem", "VARCHAR"),
+                        ("id_operador", "VARCHAR"),
+                        ("id_avion", "VARCHAR"),
+                        ("num_vuelo", "VARCHAR"),
+                        ("origen", "VARCHAR"),
+                        ("destino", "VARCHAR"),
+                        ("horasalidaf", "VARCHAR"),
+                        ("salida_realf", "VARCHAR"),
+                        ("tiempo_trans_vuelo", "VARCHAR"),
+                        ("distancia_millas", "VARCHAR"),
+                        ("hora_llegada_progf", "VARCHAR"),
+                        ("delay2", "VARCHAR"),
+                        ("bandera_delay", "VARCHAR"),
+                        ("count", "VARCHAR"),
+                        ("max", "VARCHAR"),
+                        ("nvue_falt", "VARCHAR"),
+                        ("ind_retraso1", "VARCHAR"),
+                        ("ind_retraso2", "VARCHAR"),
+                        ("ind_retraso3", "VARCHAR"),
+                        ("efecto", "VARCHAR"),
+                        ("sum_efectos_domino", "VARCHAR"),
+                        ("tot_sum_domino", "VARCHAR"),
+                        ("vuelos_afectados", "VARCHAR"),
+                        ("year", "VARCHAR"),
+                        ("y_hat", "VARCHAR")]
+
     # Directorios
     str_DirDriver = ''
     str_DirDescargas = ''
@@ -367,7 +394,8 @@ class Rita:
         # print("Parametros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
 
         # Se instancia el modelo ganador
-        self.ModeloGanadorMagicLoop=objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
+        self.ModeloGanadorMagicLoop = objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
+        self.ModeloGanadorMagicLoop = objEda.best_model
 
         conn = self.objUtileria.CrearConexionRDS()
         nbr_id_set_modelado = self.objUtileria.ObtenerMaxId(conn,

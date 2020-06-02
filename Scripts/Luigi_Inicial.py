@@ -238,6 +238,7 @@ class T_115_UT_Transform(luigi.Task):
         return luigi.LocalTarget('T_115_UT_Transform')
 
 
+# on_succes permite hacer override
 class T_120_Modelar(luigi.Task):
 
     def requires(self):
@@ -278,6 +279,45 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         # self.objRita.objUtileria.DibujarLuigi()
         # time.sleep(4)
 
+class T_180_Predict(luigi.Task):
+
+    def requires(self):
+        return T_130_EnviarMetadataModelado_RDS()
+
+    def run(self):
+        if lt.Predict() == 0:
+            os.system('echo OK > T_180_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_180_Predict')
+
+
+class T_190_Enviar_Predict_RDS(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        return T_180_Predict()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'trabajo.predicciones'
+    columns = objRita.lst_Predicciones
+
+    def rows(self):
+        print('\n---Inicio carga de Predicciones---\n')
+
+        for data_file in Path('.').glob('Predicciones.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        # os.system('rm Predicciones.csv')
+        print('\n---Fin carga de Predicciones---\n')
+
 
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
@@ -303,6 +343,8 @@ class T_Manejador(luigi.Task):
                    '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   '180': {'Clase': T_180_Predict()},
+                   '190': {'Clase': T_190_Enviar_Predict_RDS()}
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
