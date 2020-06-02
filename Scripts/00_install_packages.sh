@@ -9,35 +9,35 @@ curl https://intoli.com/install-google-chrome.sh | bash
 sudo mv /usr/bin/google-chrome-stable /usr/bin/google-chrome
 google-chrome --version && which google-chrome
 
-cd /usr/bin/
-ls
+#cd /usr/bin/
+#ls
 
-sudo yum install python36
+#sudo yum install python36
 
-sudo alternatives --set python /usr/bin/python3.6
-python --version
+#sudo alternatives --set python /usr/bin/python3.6
+#python --version
 
-cd /tmp
-curl -O https://bootstrap.pypa.io/get-pip.py
-python3 get-pip.py --user
-pip3 --version
+#cd /tmp
+#curl -O https://bootstrap.pypa.io/get-pip.py
+#python3 get-pip.py --user
+#pip3 --version
 
-pip3 install selenium --user
-pip3 install luigi
-pip3 install boto3
-pip3 install numpy
-pip3 install -U scikit-learn
-pip3 install marbles
+#pip3 install selenium --user
+#pip3 install luigi
+#pip3 install boto3
+#pip3 install numpy
+#pip3 install -U scikit-learn
+#pip3 install marbles
 
-sudo yum update
-sudo yum install postgresql postgresql-contrib
+#sudo yum update
+#sudo yum install postgresql postgresql-contrib
 
-pip3 install psycopg2-binary
-pip3 install click
-pip3 install dynaconf
-pip3 install pandas
-pip3 install flask
-pip3 install flask-restplus
+#pip3 install psycopg2-binary
+#pip3 install click
+#pip3 install dynaconf
+#pip3 install pandas
+#pip3 install flask
+#pip3 install flask-restplus
 
 
 export LC_ALL=en_US.UTF-8
