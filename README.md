@@ -178,7 +178,7 @@ La corrida del pipeline involucra la lectura de una serie de credenciales relaci
 
 Crearemos un archivo `credentials` con  las credenciales de AWS:
 ```
-mkdir /.aws
+mkdir .aws
 cd .aws
 nano credentials
 ```
@@ -194,7 +194,7 @@ aws_session_token=<your_session_token_for_aws_educate_only>
 + **credenciales postgres y bucket**
 
 ```
-cd dpa_equipo2/Scripts
+cd ../dpa_equipo2/Scripts
 nano settings.toml
 ```
 
@@ -227,7 +227,7 @@ pip3 install -r requirements.txt
 ```
 Finalmente, realizamos las últimas configuraciones necesarias ejecutando:
 ```
-#sh 00_install_packages.sh
+sh 00_install_packages.sh
 ```
 Una vez terminemos, podemos desactivar el *pyenv* con :
 ```
