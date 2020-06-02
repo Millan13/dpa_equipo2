@@ -821,3 +821,38 @@ def EnviarPickleAS3():
         return 1
 
     return 0
+
+
+
+def PrepararScheduleVuelos():
+    print('\n---Inicio preparación schedule vuelos---\n')
+
+    import boto3
+    import os
+    import platform
+    from Class_Utileria import Utileria
+
+    objUtileria = Utileria()
+
+    path_s3 = 'schedule_vuelos/1016151238_T_ONTIME_REPORTING.csv'
+    s3_resource = boto3.resource('s3')
+    nombre_bucket = objUtileria.str_NombreBucket
+
+    # Descarga del archivo de s3 en carpeta Descargas
+    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
+    
+    file_vuelos = 'Descargas/vuelos.csv'
+
+    # elimnando comas al final de cada línea del csv
+    if platform.system()=='Darwin':
+        os.system("sed -i '' 's/.$//' Descargas/*.csv")
+    else:
+        os.system("sed -i 's/.$//' Descargas/*.csv")
+    
+    # envío de la información data_file_vuelos a la RDS
+    data_file_vuelos = open(file_vuelos,'r')
+    cnn = objUtileria.CrearConexionRDS()
+    objUtileria.InsertarEnRDSDesdeArchivo2(cnn,data_file_vuelos,'raw.vuelos')
+
+    print('---Fin preparación schedule vuelos---\n')
+    return 0
