@@ -292,6 +292,17 @@ class T_140_PrepararScheduleVuelos(luigi.Task):
         return luigi.LocalTarget('T_140_PrepararScheduleVuelos')
 
 
+class T_150_FeatureEngineering_Predict(luigi.Task):
+    def requires(self):
+        return T_140_PrepararScheduleVuelos()
+
+    def run(self):
+        if lt.HacerFeatureEngineering('test') == 0:
+            os.system('echo OK > T_150_FeatureEngineering_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_150_FeatureEngineering_Predict')
+
 
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
@@ -318,6 +329,7 @@ class T_Manejador(luigi.Task):
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
                    '140': {'Clase': T_140_PrepararScheduleVuelos()},
+                   '150': {'Clase': T_150_FeatureEngineering_Predict()},
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
