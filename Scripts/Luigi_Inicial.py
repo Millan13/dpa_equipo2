@@ -370,6 +370,8 @@ class T_Manejador(luigi.Task):
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
                    '140': {'Clase': T_140_PrepararScheduleVuelos()},
                    '150': {'Clase': T_150_FeatureEngineering_Predict()},
+                   '160': {'Clase': T_160_MetadataFeatureEngineering_Predict()},
+                   '170': {'Clase': T_170_UT_TransformPredict()},
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
