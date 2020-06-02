@@ -61,7 +61,7 @@ class Rita:
                    'Dest': {'Id': 29, 'Flag': 'A'},
                    'CRSDepTime': {'Id': 36, 'Flag': 'A'},
                    'DepTime': {'Id': 37, 'Flag': 'A'},
-                   # 'DepDelayMinutes': {'Id': 38, 'Flag': 'A'},
+                   'DepDelayMinutes': {'Id': 38, 'Flag': 'A'},
                    'CRSArrTime': {'Id': 48, 'Flag': 'A'},
                    'CRSElapsedTime': {'Id': 60, 'Flag': 'A'},
                    'Distance': {'Id': 64, 'Flag': 'A'}
