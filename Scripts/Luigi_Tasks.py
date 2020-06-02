@@ -55,6 +55,7 @@ def CrearDirectoriosEC2():
                        'Linaje/Modeling',
                        'Linaje/Schedules',
                        'Linaje/SchedulesDet',
+                       'Linaje/BiasFairness',
                        'Linaje/Predict',
                        'testing/Extract',
                        'testing/Load',
@@ -558,10 +559,10 @@ def HacerFeatureEngineering(str_tipo_ejecucion):
         CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 1
-    str_NombreQuery = 'Paso0_copytable'
-    query = queries.get(str_NombreQuery)
-    nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
+    #str_NombreQuery = 'Paso0_copytable'
+    #query = queries.get(str_NombreQuery)
+    #nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+    #CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 2
     str_NombreQuery = 'Paso1_filtroWN'
@@ -766,6 +767,26 @@ def HacerFeatureEngineering(str_tipo_ejecucion):
     with open(str_NombreArch, 'w') as file:
         db_cursor.copy_expert(str_Query2, file)
 
+    import pandas as pd
+
+    if str_tipo_ejecucion == 'predict':
+        #df_DataSetModelado = pd.read_csv('DatasetModelado.csv',
+        #                                sep = ',',
+        #                                nrows = 5000
+        #                                )
+        #df_DataSetModelado.to_csv('DatasetModelado.csv',
+        #                          sep = ','
+        #
+        #                   )
+        print('--1')
+        df = pd.read_csv('DatasetModelado.csv', sep = ',')
+        filas = df.shape[0]
+        porcion = int(filas/10)
+        df2 = df.drop(df.index[porcion:filas])
+        df2 = df2.drop(['etiqueta1'], axis=1)
+
+        df2.to_csv('DatasetModeladoPredict.csv', sep=',', index=False)
+        print('--2')
     print('---Fin de feature engineering---\n')
 
     return 0
@@ -781,6 +802,17 @@ def Modelar():
 
     # objRita.Modelar('Transit_modeling.csv')
     objRita.Modelar('DatasetModelado.csv')
+
+    # Se guarda el pickle para usarse en aequitas
+    pickleFile = open('X_testRita.pickle', 'wb')
+    pickle.dump(objRita.ObjEda.X_test, pickleFile)
+    pickleFile.close()
+
+    # Se guarda el pickle para usarse en aequitas
+    pickleFile = open('Y_testRita.pickle', 'wb')
+    pickle.dump(objRita.ObjEda.Y_test, pickleFile)
+    pickleFile.close()
+
 
     # Se guarda el pickle del modelo ganador
     pickleFile = open('parametros.pickle', 'wb')
@@ -818,6 +850,228 @@ def EnviarMetadataModelingRDS():
     return 0
 
 
+def BiasAndFairness():
+    print('\n---Inicio de BiasAndFairness---\n')
+
+    ### Carga modelo y preparación de tabla aequitas
+    import sys
+    # sys.path.append('/Users/Marco/miniconda3/envs/dpa-rita/lib/python3.8/site-packages')
+    # sys.path.append('/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages')
+
+    import numpy as np
+    import pickle as pickle
+    import pandas as pd
+    from Class_Eda import Eda
+    from sklearn.base import BaseEstimator, ClassifierMixin
+    import aequitas
+    import seaborn as sns
+    from aequitas.group import Group
+    from aequitas.bias import Bias
+    from aequitas.fairness import Fairness
+    from aequitas.plotting import Plot
+    from aequitas.preprocessing import preprocess_input_df
+    from aequitas.group import Group
+
+    #Instanciamos el objeto Eda
+    objEda = Eda()
+    #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
+    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
+    #Proceso de carga
+    objEda.strSeparadorColumnas = ','
+    objEda.Cargar_Datos()
+    #Proceso de limpieza
+    objEda.Limpiar_Datos()
+    #Guardamos el arreglo en la nueva columna
+    objEda.pdDataSet['y'] = objEda.pdDataSet.apply(lambda x: (x.etiqueta1), axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['etiqueta1'], axis=1)
+
+    ################## Eliminamos las columnas
+    objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['bandera_delay'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso3'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['sum_efectos_domino'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tot_sum_domino'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['delay2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['year'], axis=1)
+
+    #Variables a incluir que se eliminan en esta prueba:
+    objEda.pdDataSet = objEda.pdDataSet.drop(['horasalidaf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['hora_llegada_progf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['num_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_avion'], axis=1)
+
+    objEda.npLabelEncoderFeat=np.array([])
+    objEda.Agregar_Features_LabelEnc('day_sem')
+    objEda.Agregar_Features_LabelEnc('origen')
+    objEda.Agregar_Features_LabelEnc('destino')
+    #objEda.Agregar_Features_LabelEnc('anticonceptivo_config')
+    #objEda.Agregar_Features_LabelEnc('ocupacion_config')
+    #objEda.Agregar_Features_LabelEnc('desc_servicio')
+    #objEda.Agregar_Features_LabelEnc('procile')
+
+    #Mostramos el dataSet Auxiliar para ver que aún no ocurre ningún cambio
+    objEda.LabelEncoder_OneHotEncoder()
+
+    objEda.Borrar_Cols_Base_LabelEnc()
+    objEda.Borrar_Cols_Inter_LabelEnc()
+
+    ################## Separamos las features de lo que vamos a predecir
+    pdX, pdY = objEda.SepararFeaturesYPred('y')
+    objEda.Generar_Train_Test(pdX, pdY, 0.2)
+    ################## Preparamos las variables que imputaremos
+    objEda.listTransform=[''] #Limpiamos la propiedad de lista de features a imputar
+    objEda.Agregar_Features_Transform('median', 'vuelos_afectados') #no hizo nada porque están como NaN
+
+    ################## Imputamos sobre el conjunto de entrenamiento y prueba
+    objEda.X_train = objEda.Imputar_Features(objEda.X_train)
+    objEda.X_test = objEda.Imputar_Features(objEda.X_test)
+
+    ## Feature Selection
+    ################## Random Forest
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.feature_selection import SelectFromModel
+
+    # Se crea el clasificador Random Forest
+    clf = RandomForestClassifier(n_estimators=10, random_state=0, n_jobs=-1)
+
+    # Se entrea al clasificador
+    clf.fit(objEda.X_train, objEda.Y_train)
+
+    # Se imprimen los nombres y "gini importance" para cada variable
+    #for feature in zip(objEda.pdDataSet.columns, clf.feature_importances_):
+    #    print(feature)
+
+    # Se crea un objecto selector que utilizará el clasificador random forest para
+    # identificar variables que tienen una importancia mayor a cierto valor
+
+    sfm = SelectFromModel(clf, threshold=0.01)
+
+    # Se entrena al selector
+    sfm.fit(objEda.X_train, objEda.Y_train)
+
+    arrIndiceFeaturesAdec = sfm.get_support(indices=True)
+    pdX.iloc[:5,arrIndiceFeaturesAdec]
+    pdX=pdX.iloc[:,arrIndiceFeaturesAdec]
+    #Se eligen las variables para el feature Selection
+    ################## Separamos nuestros datos en entrenamiento y pruebas utilizando la proporción 80-20
+    objEda.Generar_Train_Test(pdX, pdY, 0.2)
+    objEda.X_train = objEda.Imputar_Features(objEda.X_train)
+    objEda.X_test = objEda.Imputar_Features(objEda.X_test)
+    ################## Imputamos sobre el conjunto de entrenamiento y prueba
+    #Importamos modelo
+    import pickle as pickle
+    # pickleName = 'ModeloFinalRita.p'
+    pickleName = 'parametros.pickle'
+    pickleFile = open(pickleName, 'rb')
+    model = pickle.load(pickleFile)
+    pickleFile.close()
+
+    #Hacemos el fit
+    # model.fit(X_train, Y_train)
+    model.fit(objEda.X_train, objEda.Y_train)
+
+    #Función que realiza las predicciones
+    predict_model=lambda x: model.predict_proba(x).astype(float)
+
+    #predict_fn_model = lambda x: model.predict_proba(x).astype(float)
+    predict_model
+
+    #Cambiar el nombre de la columnas para Aquitas
+    labels_train = ['count','max','nvue_falt','vuelos_afectados','lunes','martes','miercoles','jueves','viernes','sabado','domingo']
+    labels_test = labels_train
+
+    X_test = pd.DataFrame(objEda.X_test) #Se convierte en numpy array en Pandas
+    X_test.columns=labels_train
+    X_test.head()
+
+    #Renombramos las variables según la estructura el input data
+    predicciones=pd.DataFrame(model.predict(X_test))
+    predicciones=predicciones.rename(columns={0: "score"})
+
+    #Modificaciones a Y_test
+    #y_test=pd.DataFrame(Y_test)
+    y_test=objEda.Y_test.rename(columns={"y": "label_value"})
+    y_test.reset_index(drop=True, inplace=True)
+
+    #Ahora traer la columna de Day_sem (volvemos a cargar datos)
+    #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
+    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
+    #Proceso de carga
+    objEda.strSeparadorColumnas = ','
+    objEda.Cargar_Datos()
+    #Proceso de limpieza
+    objEda.Limpiar_Datos()
+
+    #Guardamos el arreglo en la nueva columna
+    objEda.pdDataSet['y'] = objEda.pdDataSet.apply(lambda x: (x.etiqueta1), axis=1)
+    pdX_df, pdY_df = objEda.SepararFeaturesYPred('y')
+    ################## Separamos las features de lo que vamos a predecir
+    objEda.Generar_Train_Test(pdX_df, pdY_df, 0.2)
+    ################## Preparamos las variables que imputaremos
+    objEda.listTransform=[''] #Limpiamos la propiedad de lista de features a imputar
+    objEda.Agregar_Features_Transform('median', 'vuelos_afectados') #no hizo nada porque están como NaN
+
+    ################## Imputamos sobre el conjunto de entrenamiento y prueba
+    objEda.X_train = objEda.Imputar_Features(objEda.X_train)
+    objEda.X_test = objEda.Imputar_Features(objEda.X_test)
+
+    X_test_df = pd.DataFrame(objEda.X_test)
+    #Dejar el día de la semana
+    X_test_df = X_test_df[2]
+    #Cambiar el nombre de la columnas para Aquitas
+    labels_train_df = ['day_sem']
+    labels_test_df = labels_train_df
+
+    X_test_df = pd.DataFrame(X_test_df) #Se convierte en numpy array en Pandas
+    X_test_df.columns=labels_train_df
+
+    #Unimos los dataframe para generar el input data
+    datos_aequitas=pd.concat([predicciones,y_test,X_test,X_test_df], axis=1)
+    #Hasta aquí es la preparación de datos para aequitas ------------------------------------------------------------
+
+    #Filtrar los datos de aequitas para calculo de FNR
+    datos_aequitas = datos_aequitas[['score','label_value','day_sem']]
+    datos_aequitas.head()
+
+    #Instalación de Aequitas
+    #pip install aequitas
+
+    g = Group()
+    xtab, _ = g.get_crosstabs(datos_aequitas)
+    #xtab contiene calculos de todas la métricas de FP, FN, TP, TN
+
+    #Calculo de Bias
+    b = Bias()
+    bdf = b.get_disparity_predefined_groups(xtab,
+                        original_df=datos_aequitas,
+                        ref_groups_dict={'day_sem':'e:viernes'},
+                        alpha=0.05,
+                        check_significance=False)
+
+
+    #Calculo de Fairness
+    f = Fairness()
+    fdf = f.get_group_value_fairness(bdf) #Mismo grupo de referencia
+
+    #Exportar archivos
+    ruta = "bdf.csv"
+    bdf.to_csv(ruta)
+
+    ruta = "fdf.csv"
+    fdf.to_csv(ruta)
+
+    print('\n---Fin de BiasAndFairness---\n')
+    return 0
+
 
 def PrepararScheduleVuelos():
     print('\n---Inicio preparación schedule vuelos---\n')
@@ -832,12 +1086,13 @@ def PrepararScheduleVuelos():
     path_s3 = 'schedule_vuelos/1016151238_T_ONTIME_REPORTING.csv'
     s3_resource = boto3.resource('s3')
     nombre_bucket = objUtileria.str_NombreBucket
-
+    print('--1')
     # Descarga del archivo de s3 en carpeta Descargas
-    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
-
+    #s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
+    s3_resource.meta.client.download_file(nombre_bucket, path_s3, 'Descargas/vuelos.csv')
+    print('--2')
     file_vuelos = 'Descargas/vuelos.csv'
-
+    print('--3')
     # elimnando comas al final de cada línea del csv
     if platform.system()=='Darwin':
         os.system("sed -i '' 's/.$//' Descargas/*.csv")
@@ -1060,9 +1315,9 @@ def Predict():
     objEda = Eda()
 
     # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource = 'DatasetPrueba.csv'  # PREDICT
+    objEda.strRutaDataSource = 'DatasetModeladoPredict.csv'  # PREDICT
 
-    df_Input = pd.read_csv('DatasetPrueba.csv')
+    df_Input = pd.read_csv('DatasetModeladoPredict.csv')
 
     # Especificamos nuestro separador de columnas y cargamos el dataset
     objEda.strSeparadorColumnas = ','
@@ -1072,6 +1327,8 @@ def Predict():
     objEda.Limpiar_Datos()
 
     # Eliminamos las columnas
+    #objEda.pdDataSet = objEda.pdDataSet.drop(['etiqueta1'], axis=1)
+
     objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
     objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
     objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)

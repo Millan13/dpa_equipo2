@@ -237,19 +237,6 @@ class T_115_UT_Transform(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_115_UT_Transform')
 
-class T_200_UT_Predict(luigi.Task):
-
-    def requires(self):
-        return T_115_UT_Transform()
-
-    def run(self):
-        ut.UT_Predict()
-        os.system('echo OK > T_200_UT_Predict')
-
-    def output(self):
-        return luigi.LocalTarget('T_200_UT_Predict')
-
-
 
 # on_succes permite hacer override
 class T_120_Modelar(luigi.Task):
@@ -292,23 +279,25 @@ class T_130_EnviarMetadataModelado_RDS(luigi.contrib.postgres.CopyToTable):
         # self.objRita.objUtileria.DibujarLuigi()
         # time.sleep(4)
 
-class T_180_Predict(luigi.Task):
+
+class T_135_BiasAndFairness(luigi.Task):
 
     def requires(self):
         return T_130_EnviarMetadataModelado_RDS()
 
     def run(self):
-        if lt.Predict() == 0:
-            os.system('echo OK > T_180_Predict')
+        if lt.BiasAndFairness() == 0:
+            os.system('echo OK > T_135_BiasAndFairness')
 
     def output(self):
-        return luigi.LocalTarget('T_180_Predict')
+        return luigi.LocalTarget('T_135_BiasAndFairness')
 
 
-class T_190_Enviar_Predict_RDS(luigi.contrib.postgres.CopyToTable):
+class T_136_EnviarMetadataBiasFairnes_RDS(luigi.contrib.postgres.CopyToTable):
 
     def requires(self):
-        return T_180_Predict()
+        # Modificar T_BiasFairness por la task correspondiente
+        return T_135_BiasAndFairness()
 
     # Instanciamos la clase Rita
     objRita = Rita()
@@ -317,25 +306,48 @@ class T_190_Enviar_Predict_RDS(luigi.contrib.postgres.CopyToTable):
     user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
 
     # Tabla y columnas que se actualizarán
-    table = 'trabajo.predicciones'
-    columns = objRita.lst_Predicciones
+    table = 'linaje.biasfairness'
+    columns = objRita.lst_BiasFairness
 
     def rows(self):
-        print('\n---Inicio carga de Predicciones---\n')
-
-        for data_file in Path('.').glob('Predicciones.csv'):
+        print('\n---Inicio carga de linaje biass fairness---\n')
+        for data_file in Path('Linaje/BiasFairness').glob('*.csv'):
             with open(data_file, 'r') as csv_file:
                 reader = pd.read_csv(csv_file, header=None)
                 for fila in reader.itertuples(index=False):
                     yield fila
-        # os.system('rm Predicciones.csv')
-        print('\n---Fin carga de Predicciones---\n')
+        os.system('rm Linaje/BiasFairness/*.csv')
+        print('\n---Fin carga de linaje bias fairness---\n')
+
+
+class T_137_WebScrapingScheduleVuelos(luigi.Task):
+
+    def run(self):
+        if lt.WebScrapingScheduleVuelos() == 0:
+            os.system('echo OK > Tarea_10_WebScrapingScheduleVuelos')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_10_WebScrapingScheduleVuelos')
+
+
+class T_138_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
+
+    def requires(self):
+        return T_137_WebScrapingScheduleVuelos()
+
+    def run(self):
+        if lt.EnviarMetadataLinajeCargaRDS() == 0:
+            os.system('echo OK > Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+
 
 
 class T_140_PrepararScheduleVuelos(luigi.Task):
 
-    def requires(self):
-        return T_130_EnviarMetadataModelado_RDS()
+    #def requires(self):
+    #    return T_138_EnviarMetadataLinajeScheduleCargaRDS()
 
     def run(self):
         if lt.PrepararScheduleVuelos() == 0:
@@ -396,36 +408,91 @@ class T_170_UT_TransformPredict(luigi.Task):
         return luigi.LocalTarget('T_170_UT_TransformPredict')
 
 
-
-class Tarea_10_WebScrapingScheduleVuelos(luigi.Task):
-
-    def run(self):
-        if lt.WebScrapingScheduleVuelos() == 0:
-            os.system('echo OK > Tarea_10_WebScrapingScheduleVuelos')
-
-    def output(self):
-        return luigi.LocalTarget('Tarea_10_WebScrapingScheduleVuelos')
-
-if __name__ == '__main__':
-    luigi.run()
-
-
-class Tarea_20_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
+class T_180_Predict(luigi.Task):
 
     def requires(self):
-        return Tarea_10_WebScrapingScheduleVuelos()
+        return T_170_UT_TransformPredict()
 
     def run(self):
-        if lt.EnviarMetadataLinajeCargaRDS() == 0:
-            os.system('echo OK > Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+        if lt.Predict() == 0:
+            os.system('echo OK > T_180_Predict')
 
     def output(self):
-        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+        return luigi.LocalTarget('T_180_Predict')
+
+
+class T_190_Enviar_Predict_RDS(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        return T_180_Predict()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'trabajo.predicciones'
+    columns = objRita.lst_Predicciones
+
+    def rows(self):
+        print('\n---Inicio carga de Predicciones---\n')
+
+        for data_file in Path('.').glob('Predicciones.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        # os.system('rm Predicciones.csv')
+        print('\n---Fin carga de Predicciones---\n')
+
+
+class T_195_EnviarMetadataPredicciones_RDS(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        # Modificar T_Penultima por la task correspondiente
+        return T_190_Enviar_Predict_RDS()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'linaje.predicciones'
+    columns = objRita.lst_Predicciones
+
+    def rows(self):
+        print('\n---Inicio carga de linaje predicciones---\n')
+        for data_file in Path('Linaje/Predict').glob('*.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        os.system('rm Linaje/Predict/*.csv')
+        print('\n---Fin carga de linaje predicciones---\n')
+
+
+class T_200_UT_Predict(luigi.Task):
+
+    def requires(self):
+        return T_195_EnviarMetadataPredicciones_RDS()
+
+    def run(self):
+        ut.UT_Predict()
+        os.system('echo OK > T_200_UT_Predict')
+
+    def output(self):
+        return luigi.LocalTarget('T_200_UT_Predict')
+
 
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
 
-    str_Tarea = luigi.Parameter()
+    # str_Tarea = luigi.Parameter()
+    str_Tipo = luigi.Parameter()
 
     def requires(self):
 
@@ -446,20 +513,51 @@ class T_Manejador(luigi.Task):
                    '115': {'Clase': T_115_UT_Transform()},  # Unit Test
                    '120': {'Clase': T_120_Modelar()},
                    '130': {'Clase': T_130_EnviarMetadataModelado_RDS()},
+                   '135': {'Clase': T_135_BiasAndFairness()},
                    '140': {'Clase': T_140_PrepararScheduleVuelos()},
                    '150': {'Clase': T_150_FeatureEngineering_Predict()},
                    '160': {'Clase': T_160_MetadataFeatureEngineering_Predict()},
                    '170': {'Clase': T_170_UT_TransformPredict()},
                    '180': {'Clase': T_180_Predict()},
-                   '190': {'Clase': T_190_Enviar_Predict_RDS()}
+                   '190': {'Clase': T_190_Enviar_Predict_RDS()},
+                   '195': {'Clase': T_195_EnviarMetadataPredicciones_RDS()},
+                   '200': {'Clase': T_200_UT_Predict()}
                    }
 
         # Ejemplo: return dict_LT.get('010').get('Clase')
-        return dict_LT.get(self.str_Tarea).get('Clase')
+        # return dict_LT.get(self.str_Tarea).get('Clase')
+
+        if self.str_Tipo == 'train':
+            return dict_LT.get('135').get('Clase')
+        elif self.str_Tipo == 'predict':
+            return dict_LT.get('150').get('Clase')
 
     def run(self):
         Utileria().DibujarLuigi()
         time.sleep(4)
+
+
+class Tarea_10_WebScrapingScheduleVuelos(luigi.Task):
+
+    def run(self):
+        if lt.WebScrapingScheduleVuelos() == 0:
+            os.system('echo OK > Tarea_10_WebScrapingScheduleVuelos')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_10_WebScrapingScheduleVuelos')
+
+
+class Tarea_20_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
+
+    def requires(self):
+        return Tarea_10_WebScrapingScheduleVuelos()
+
+    def run(self):
+        if lt.EnviarMetadataLinajeCargaRDS() == 0:
+            os.system('echo OK > Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
+
+    def output(self):
+        return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
 
 
 if __name__ == '__main__':

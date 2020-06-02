@@ -108,6 +108,12 @@ class Rita:
                     ("usuario_ejec", "VARCHAR"),
                     ("instancia_ejec", "VARCHAR")]
 
+    lst_BiasFairness = [("atributo_protegido", "VARCHAR"),
+                        ("grupo_referencia", "VARCHAR"),
+                        ("fecha_hora_ejec","TIMESTAMP"),
+                        ("usuario_ejec","VARCHAR"),
+                        ("instancia_ejec","VARCHAR")]
+
     lst_Predicciones = [("fecha", "VARCHAR"),
                         ("day_sem", "VARCHAR"),
                         ("id_operador", "VARCHAR"),
@@ -134,6 +140,12 @@ class Rita:
                         ("vuelos_afectados", "VARCHAR"),
                         ("year", "VARCHAR"),
                         ("y_hat", "VARCHAR")]
+
+
+    st_Predicciones = [("id_ejec", "VARCHAR"),
+                       ("id_archivo", "VARCHAR"),
+                       ("num_registros", "VARCHAR"),
+                       ("num_columnas", "VARCHAR")]
 
     # Directorios
     str_DirDriver = ''
@@ -419,7 +431,7 @@ class Rita:
         # print("Parametros del modelo ganador: \n", npArrBestParams[nbrIndiceGanador])
 
         # Se instancia el modelo ganador
-        self.ModeloGanadorMagicLoop = objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
+        # self.ModeloGanadorMagicLoop = objEda.InstanciarModeloDinamico(npNombreModelos, nbrIndiceGanador, npArrBestParams[nbrIndiceGanador])
         self.ModeloGanadorMagicLoop = objEda.best_model
 
         conn = self.objUtileria.CrearConexionRDS()
@@ -440,6 +452,9 @@ class Rita:
 
             # Creamos el CSV que contiene el linaje de esta información
             voModeling.crearCSV()
+
+        # Almacenamos el objeto Eda en la clase para usarlo afuera
+        self.ObjEda = objEda
 
     def ObtenerDirectorios(self):
 
