@@ -17,8 +17,8 @@ from aequitas.group import Group
 #Instanciamos el objeto Eda
 objEda = Eda()
 #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-objEda.strRutaDataSource='Transit_modeling.csv'
-#Proceso de carga 
+objEda.strRutaDataSource='Transit_modeling.csv' #El archivo que sale del feature engineering
+#Proceso de carga
 objEda.Cargar_Datos()
 #Proceso de limpieza
 objEda.Limpiar_Datos()
@@ -41,7 +41,6 @@ objEda.X_test = objEda.Imputar_Features(objEda.X_test)
 
 #Convertir el numpy a dataframe
 X_test_df = pd.DataFrame(objEda.X_test)
-X_test_df.shape
 
 #Dejar el día de la semana
 X_test_df = X_test_df[2]
@@ -52,8 +51,6 @@ labels_test_df = labels_train_df
 
 X_test_df = pd.DataFrame(X_test_df) #Se convierte en numpy array en Pandas
 X_test_df.columns=labels_train_df
-X_test_df.head()
-
 
 #Importamos modelo
 pickleName = 'ModeloFinalRita.p'
@@ -61,7 +58,6 @@ pickleFile = open(pickleName, 'rb')
 model = pickle.load(pickleFile)
 pickleFile.close()
 model
-
 
 # También importamos los conjuntos de prueba utilizados para Rita
 
@@ -112,17 +108,17 @@ datos_aequitas.head()
 
 #Instalación de Aequitas
 #pip install aequitas
-   
+
 g = Group()
 xtab, _ = g.get_crosstabs(datos_aequitas)
 #xtab contiene calculos de todas la métricas de FP, FN, TP, TN
 
 #Calculo de Bias
 b = Bias()
-bdf = b.get_disparity_predefined_groups(xtab, 
-                    original_df=datos_aequitas, 
-                    ref_groups_dict={'day_sem':'e:viernes'}, 
-                    alpha=0.05, 
+bdf = b.get_disparity_predefined_groups(xtab,
+                    original_df=datos_aequitas,
+                    ref_groups_dict={'day_sem':'e:viernes'},
+                    alpha=0.05,
                     check_significance=False)
 
 
