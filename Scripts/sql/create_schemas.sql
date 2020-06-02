@@ -9,3 +9,6 @@ create schema raw;
 
 drop schema if exists transform cascade;
 create schema transform;
+
+drop schema if exists trabajo cascade;
+create schema trabajo;

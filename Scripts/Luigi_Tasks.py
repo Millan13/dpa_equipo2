@@ -55,10 +55,12 @@ def CrearDirectoriosEC2():
                        'Linaje/Modeling',
                        'Linaje/Schedules',
                        'Linaje/SchedulesDet',
+                       'Linaje/Predict',
                        'testing/Extract',
                        'testing/Load',
                        'testing/Transform',
-                       'testing/Modeling']
+                       'testing/Modeling',
+                       'testing/Predict']
 
     try:
         # Barremos para eliminar los directorios
@@ -244,7 +246,7 @@ def WebScrapingInicial():
                 # Mandamos la información raw del archivo al RDS
                 # print('Se omite el envio a RDS')
                 data_file = open(str_ArchivoLocal, "r")
-                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.vuelos')
+                objUtileria.InsertarEnRDSDesdeArchivo2(cnn, data_file, 'raw.historico')
 
                 # Antes de eliminar los archivos que ya fueron enviados a S3,
                 # obtenemos información de ellos
@@ -524,7 +526,7 @@ def WebScrapingRecurrente():
     return 0
 
 
-def HacerFeatureEngineering():
+def HacerFeatureEngineering(str_tipo_ejecucion):
     print('---Inicio de feature engineering---\n')
 
     objUtileria = Utileria()
@@ -541,203 +543,217 @@ def HacerFeatureEngineering():
                                          'id_set_transform') + 1
     str_Ruta = 'Linaje/Transform/'
 
+
+    if str_tipo_ejecucion == 'train':
+        # Query 1 train
+        str_NombreQuery = 'Paso0_copytable'
+        query = queries.get(str_NombreQuery)
+        nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
+    elif str_tipo_ejecucion == 'predict':
+        # Query 1 predict
+        str_NombreQuery = 'Paso0_copytable_recurrente'
+        query = queries.get(str_NombreQuery)
+        nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
+        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
+
     # Query 1
     str_NombreQuery = 'Paso0_copytable'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 2
     str_NombreQuery = 'Paso1_filtroWN'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 2, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 2, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 3
     str_NombreQuery = 'Paso2_rename'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 3, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 3, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 4
     str_NombreQuery = 'Paso3_delaynumeric'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 4, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 4, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 4_5
     str_NombreQuery = 'Paso3_5_delaypositive'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 5, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 5, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 5
     str_NombreQuery = 'Paso4_banderadelay'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 6, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 6, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 6
     str_NombreQuery = 'Paso5_crearfecha1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 7, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 7, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 7
     str_NombreQuery = 'Paso6_crearfecha2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 8, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 8, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 8
     str_NombreQuery = 'Paso7_crearfecha2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 9, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 9
     str_NombreQuery = 'Paso8_tantitalimpieza'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 10, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 10
     str_NombreQuery = 'Paso9_ordenar'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 11, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 11
     str_NombreQuery = 'Paso10_conteo'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 12, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 12
     str_NombreQuery = 'Paso11_ranking_max'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 13, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 13
     str_NombreQuery = 'Paso12_innerjoin'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 14, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 14
     str_NombreQuery = 'Paso13_vuelosfaltantes'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 15, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 15
     str_NombreQuery = 'Paso14_efectodomino1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 16, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 16
     str_NombreQuery = 'Paso15_efectodomino2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 17, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 17
     str_NombreQuery = 'Paso16_distraccion'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 18, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 18
     str_NombreQuery = 'Paso17_banderadomino'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 19, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 19
     str_NombreQuery = 'Paso18_filtroretrasos'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 20, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 20
     str_NombreQuery = 'Paso19_lagbandera'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 21, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 21
     str_NombreQuery = 'Paso20_vueloculpable'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 22, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 22
     str_NombreQuery = 'Paso21_efectodomino3'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 23, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 23
     str_NombreQuery = 'Paso22_regresoretrasos'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 24, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 24
     str_NombreQuery = 'Paso23_efectosmultiples'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 25, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 25
     str_NombreQuery = 'Paso24_totaldomino'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 26, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 26
     str_NombreQuery = 'Paso25_regresoretrasos2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 27, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 27
     str_NombreQuery = 'Paso26_negativos1'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 28, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 28
     str_NombreQuery = 'Paso27_contadorinverso'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 29, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 29
     str_NombreQuery = 'Paso28_contadorinverso2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 30, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 30
     str_NombreQuery = 'Paso29_negativos2'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 31, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 31
     str_NombreQuery = 'Paso30_regresoretrasos3'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 32, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 32
     str_NombreQuery = 'Paso31_etiqueta'
     query = queries.get(str_NombreQuery)
     nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-    CrearMetadataTrans(nbr_IdSet, 33, str_NombreQuery, nbr_FilasAfec, str_Ruta)
+    CrearMetadataTrans(nbr_IdSet, 33, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
     # Aquí se deben de poner el resto de queries del feature engineering
 
     # Se genera el CSV que servirá para el modelado:
@@ -774,7 +790,6 @@ def Modelar():
     # Se hace el envío a S3
     EnviarPickleAS3()
 
-    # Aquí se deberá poner la función que envía el pickle a S3
     print('---Fin de Modelar---\n')
 
     return 0
@@ -802,12 +817,54 @@ def EnviarMetadataModelingRDS():
     print('\n---Fin envío metadata modeling---\n')
     return 0
 
+
+
+def PrepararScheduleVuelos():
+    print('\n---Inicio preparación schedule vuelos---\n')
+
+    import boto3
+    import os
+    import platform
+    from Class_Utileria import Utileria
+
+    objUtileria = Utileria()
+
+    path_s3 = 'schedule_vuelos/1016151238_T_ONTIME_REPORTING.csv'
+    s3_resource = boto3.resource('s3')
+    nombre_bucket = objUtileria.str_NombreBucket
+
+    # Descarga del archivo de s3 en carpeta Descargas
+    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
+
+    file_vuelos = 'Descargas/vuelos.csv'
+
+    # elimnando comas al final de cada línea del csv
+    if platform.system()=='Darwin':
+        os.system("sed -i '' 's/.$//' Descargas/*.csv")
+    else:
+        os.system("sed -i 's/.$//' Descargas/*.csv")
+
+    # envío de la información data_file_vuelos a la RDS
+    data_file_vuelos = open(file_vuelos,'r')
+    cnn = objUtileria.CrearConexionRDS()
+    objUtileria.InsertarEnRDSDesdeArchivo2(cnn,data_file_vuelos,'raw.vuelos')
+
+    # Eliminamos el arhivo de vuelos de Descargas
+    os.system('rm Descargas/*.csv')
+
+    print('---Fin preparación schedule vuelos---\n')
+    return 0
+
+
+
+
+
 # ###############################################################
 # #################### Funciones de apoyo #######################
 # ###############################################################
 
 
-def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta):
+def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, str_Ruta, str_tipo_ejecucion):
 
     from Class_ValueObjects import voTransform
     objUtileria = Utileria()
@@ -820,10 +877,12 @@ def CrearMetadataTrans(nbr_IdSet, nbr_seq, str_NombreQuery, nbr_FilasAfectadas, 
     objTransform.dttm_fecha_hora_ejec = datetime.now()
     objTransform.str_usuario_ejec = objUtileria.ObtenerUsuario()
     objTransform.str_instancia_ejec = objUtileria.ObtenerIp()
+    objTransform.str_tipo_ejec = str_tipo_ejecucion
     objTransform.str_NombreDataFrame = str_Ruta \
                                      + str(objTransform.nbr_id_set_transform) \
                                      + '_' \
                                      + str(objTransform.nbr_num_seq) + '.csv'
+
 
     # print(objTransform.nbr_id_set_transform)
     objTransform.crearCSV()
@@ -846,7 +905,6 @@ def EnviarPickleAS3():
         return 1
 
     return 0
-
 
 def WebScrapingScheduleVuelos():
 
@@ -964,4 +1022,96 @@ def WebScrapingScheduleVuelos():
         voEjecucion.crearCSV()
 
     print('---Fin web scraping Schedule vuelos---\n')
+
+def Predict():
+
+    import boto3
+    import io
+    import pickle as pickle
+
+    objUtileria = Utileria()
+
+    str_Dir = 'modelo_seleccionado/'
+
+    s3 = boto3.client('s3')
+    obj = s3.get_object(Bucket=objUtileria.str_NombreBucket, Key=str_Dir+'parametros.pickle')
+
+    file_pickle = io.BytesIO(obj['Body'].read())
+
+    with open("ParametrosModelo.p", "wb") as outfile:
+        # Copy the BytesIO stream to the output file
+        outfile.write(file_pickle.getbuffer())
+
+    # Carga de parámetros
+    pickleFile = open('ParametrosModelo.p', 'rb')
+    modelo = pickle.load(pickleFile)
+    pickleFile.close()
+
+    import pandas as pd
+
+    from Class_Eda import Eda
+    from Class_ValueObjects import voModeling
+    from datetime import datetime
+
+    # objUtileria = Utileria()
+    voModeling = voModeling()
+
+    # Instanciamos el objeto Eda
+    objEda = Eda()
+
+    # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
+    objEda.strRutaDataSource = 'DatasetPrueba.csv'  # PREDICT
+
+    df_Input = pd.read_csv('DatasetPrueba.csv')
+
+    # Especificamos nuestro separador de columnas y cargamos el dataset
+    objEda.strSeparadorColumnas = ','
+    objEda.Cargar_Datos()
+
+    # Proceso de limpieza
+    objEda.Limpiar_Datos()
+
+    # Eliminamos las columnas
+    objEda.pdDataSet = objEda.pdDataSet.drop(['fecha'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_operador'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['salida_realf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['bandera_delay'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso3'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['sum_efectos_domino'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tot_sum_domino'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['tiempo_trans_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['distancia_millas'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['delay2'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['ind_retraso1'], axis=1)
+
+    objEda.pdDataSet = objEda.pdDataSet.drop(['efecto'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['year'], axis=1)
+
+    # Variables a incluir que se eliminan en esta prueba:
+    objEda.pdDataSet = objEda.pdDataSet.drop(['horasalidaf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['hora_llegada_progf'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['num_vuelo'], axis=1)
+    objEda.pdDataSet = objEda.pdDataSet.drop(['id_avion'], axis=1)
+
+    # Hacemos el label encoder para cada columna por separado
+    # Esto es para que no se incremente tanto el número de columnas
+    # del dataset de golpe y así evitar problemas de memoria
+    objEda.npLabelEncoderFeat = np.array([])
+    objEda.Agregar_Features_LabelEnc('day_sem')
+    objEda.Agregar_Features_LabelEnc('origen')
+    objEda.Agregar_Features_LabelEnc('destino')
+
+    objEda.LabelEncoder_OneHotEncoder()
+    objEda.Borrar_Cols_Base_LabelEnc()
+    objEda.Borrar_Cols_Inter_LabelEnc()
+
+    X = objEda.pdDataSet.to_numpy()
+    X = np.nan_to_num(X)
+
+    np_y = modelo.predict(X)
+    df_Input['y_hat'] = np_y
+    df_Input.to_csv('Predicciones.csv', index=False, header=False)
+
     return 0
