@@ -514,7 +514,7 @@ def HacerFeatureEngineering(str_tipo_ejecucion):
         str_NombreQuery = 'Paso0_copytable_recurrente'
         query = queries.get(str_NombreQuery)
         nbr_FilasAfec = objUtileria.EjecutarQuery(conn, query)
-        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, , str_tipo_ejecucion)
+        CrearMetadataTrans(nbr_IdSet, 1, str_NombreQuery, nbr_FilasAfec, str_Ruta, str_tipo_ejecucion)
 
     # Query 1
     str_NombreQuery = 'Paso0_copytable'
@@ -802,7 +802,7 @@ def PrepararScheduleVuelos():
     if platform.system()=='Darwin':
         os.system("sed -i '' 's/.$//' Descargas/*.csv")
     else:
-	os.system("sed -i 's/.$//' Descargas/*.csv")
+        os.system("sed -i 's/.$//' Descargas/*.csv")
 
     # envío de la información data_file_vuelos a la RDS
     data_file_vuelos = open(file_vuelos,'r')
