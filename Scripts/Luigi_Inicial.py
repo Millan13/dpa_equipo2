@@ -303,6 +303,35 @@ class T_150_FeatureEngineering_Predict(luigi.Task):
     def output(self):
         return luigi.LocalTarget('T_150_FeatureEngineering_Predict')
 
+class T_160_MetadataFeatureEngineering_Predict(luigi.contrib.postgres.CopyToTable):
+
+    def requires(self):
+        return T_150_FeatureEngineering_Predict()
+
+    # Instanciamos la clase Rita
+    objRita = Rita()
+
+    # Parámetros de conexión a la RDS
+    user, password, database, host = objRita.objUtileria.ObtenerParametrosRDS()
+
+    # Tabla y columnas que se actualizarán
+    table = 'linaje.transform'
+    columns = objRita.lst_Transform
+
+    def rows(self):
+        print('\n---Inicio carga de linaje transform---\n')
+        for data_file in Path('Linaje/Transform').glob('*.csv'):
+            with open(data_file, 'r') as csv_file:
+                reader = pd.read_csv(csv_file, header=None)
+                for fila in reader.itertuples(index=False):
+                    yield fila
+        os.system('rm Linaje/Transform/*.csv')
+        print('\n---Fin carga de linaje transform---\n')
+
+
+
+
+
 
 # ##################### Task principal de todo el flujo #####################
 class T_Manejador(luigi.Task):
