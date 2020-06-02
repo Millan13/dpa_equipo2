@@ -7,12 +7,12 @@ El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwe
 ## Contenidos
 
 1. [Introducción](https://github.com/Millan13/dpa_equipo2#1-introducci%C3%B3n)
-2. Resumen General
-3. Requerimientos e Infraestructura
-4. Instalación y configuración
-5. Corrida del Pipeline
-6. Organización del código
-7. Colaboradores
+2. [Resumen General](https://github.com/Millan13/dpa_equipo2#2-resumen-general)
+3. [Requerimientos e Infraestructura](https://github.com/Millan13/dpa_equipo2#3-requerimientos-e-infraestructura)
+4. [Instalación y configuración](https://github.com/Millan13/dpa_equipo2#4-instalaci%C3%B3n-y-configuraci%C3%B3n)
+5. [Corrida del Pipeline](https://github.com/Millan13/dpa_equipo2#5-corrida-de-pipeline)
+6. [Organización del código](https://github.com/Millan13/dpa_equipo2#6-organizaci%C3%B3n-del-c%C3%B3digo)
+7. [Colaboradores](https://github.com/Millan13/dpa_equipo2#7-colaboradores)
 
 
 ## 1. Introducción
