@@ -86,7 +86,16 @@ c) La definición de la variable target no es subjetiva. Ocurre o no ocurre un r
 
 **2.5 Pipeline**
 
-El pipeline diseñado para analizar el retraso de los vuelos implica descarga y almacenamiento de los datos, limpieza, transformación y *feature engineering*, modelado, evaluación, puesta en producción y monitoreo.
+El pipeline diseñado para analizar el retraso de los vuelos incluye las siguientes etapas:
+* **Extract**: Mediante Webscrapping, descargamos los datos del sitio de [RITA](https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236). Se obtienen inicialmente en formato ZIP.
+* **Load**: Una vez descomprimidos, los datos se cargan a S3 y al las tablas del esquema `raw` del RDS.
+* **Transform**: Se aplica Feature Engineering para obtener las columnas que el modelo requerirá, así como la columna target necesaria para el entrenamiento (si es el caso). 
+
+* **Modelado**: Mediante un magic loop, se obtiene el mejor modelo, mismo que será almacenado en S3.
+
+* **Evaluación de Bias & Fairness**: Con la ayuda del paquete `aequitas` evaluamos el modelo elegido.
+
+* **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en el punto anterior, se obtienen las predicciones.
 
 ![pipeline](Imagenes/Pipeline-Rita_2.png)
 
