@@ -213,7 +213,7 @@ bucket_name = 'your_bucket_name'
 
 Por último, sugerimos la creación de un *pyenv* en donde se instalarán las paqueterías necesarias. Una vez completados los puntos anteriores, crearemos nuestro *pyenv* mediante:
 ```
-python3 -m venv rita2/env
+python3 -m venv ~/rita2/env
 ```
 Y procedemos a su activación:
 ```
