@@ -59,13 +59,12 @@ A través de la estadística, intentamos discriminar datos y apoyar en la toma d
 
 Para este modelo, definiremos a nuestro grupo de referencia o atributo protegido considerando lo siguiente:
 
-1) Grupo 1: Personal que trabaja entre semana (lunes a jueves).
-2) Grupo 2: Personal que trabaja fines de semana. (viernes a domingo).
+1) Día de la semana que se encuentra lobarando el personal.
 
 Lo que buscamos es no realizar alguna afectación únicamente por el hecho de estar contratado bajo cierta jornada laboral a la semana.
-Por tanto, basados en la referencia del grupo más pequeño, seleccionamos como atributo protegido a:
+Por tanto, basados en la referencia del grupo más grande, seleccionamos como atributo protegido a:
 
-* Grupo 2: Grupo del personal que trabaja fin de semana. 
+* Grupo 2: Grupo del personal que trabaja el día viernes. 
 
 Por otro lado y con apoyo del personal de aerolíneas, sabemos que sus jornadas laborales estan basados en el número de horas de vuelo. Dichas horas de vuelo comienzan a partir del cierre de puertas de la aeronave hasta la apertura en el lugar de destino. Por tanto, el tiempo en tierra, llamado "tiempo entre calzos" que no es más que el tiempo desde la detención del avión hasta su puesta en marcha de nuevo no está considerado en la jornada del personal.
 
@@ -93,7 +92,7 @@ El pipeline diseñado para analizar el retraso de los vuelos incluye las siguien
 
 * **Modelado**: Mediante un magic loop, se obtiene el mejor modelo, mismo que será almacenado en S3.
 
-* **Evaluación de Bias & Fairness**: Con la ayuda del paquete `aequitas` evaluamos el modelo elegido.
+* **Evaluación de Bias & Fairness**: Con la ayuda del paquete `aequitas` evaluamos el nivel de sesgo y justicia del modelo seleccionado.
 
 * **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en el punto anterior, se obtienen las predicciones.
 
