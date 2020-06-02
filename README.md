@@ -1,6 +1,6 @@
 # Retraso y afectación de vuelos operados por Southwest Airlines Co.
 
-El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwest Airlines Co.* con el fin de detectar retrasos de vuelos de más de 20 minutos en su despegue ocasinando un efecto dominó de 2 o más vuelos consecutivos. Los vuelos operados por la aerolínea *Soutwesth Airlines Co.* representan el 20.6% del total de vuelos nacionales en Estados Unidos, en el periodo comprendido de enero 2016 a diciembre 2019. Durante este periodo, el 25% de los vuelos de la aerolínea sufrieron un retraso en su despegue mayor a 20 minutos. Alertar a la aerolínea anticipadamente sobre posibles retrasos le permitiría conocer anticipadamente pérdidas monetarias asociadas a dichos retrasos, activar de planes de contingencia; y tomar acciones encaminadas a la disminución de costos operativos, contribuyendo en la mejora de la eficiencia de sus operaciones.
+El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwest Airlines Co.* con el fin de detectar retrasos de vuelos de más de 20 minutos en su despegue ocasinando un efecto dominó de 2 o más vuelos consecutivos. Los vuelos operados por la aerolínea *Soutwesth Airlines Co.* representan el 20.6% del total de vuelos nacionales en Estados Unidos, en el periodo comprendido de enero 2016 a diciembre 2019. Durante este periodo, el 25% de los vuelos de la aerolínea sufrieron un retraso en su despegue mayor a 20 minutos. Alertar a la aerolínea con premura sobre posibles retrasos le permitiría conocer anticipadamente pérdidas monetarias asociadas a dichos retrasos, activar planes de contingencia; y tomar acciones encaminadas a la disminución de costos operativos, contribuyendo en la mejora de la eficiencia de sus operaciones.
 
 
 
@@ -32,13 +32,13 @@ Considerando la cantidad de variables disponibles y tomando como base la informa
 
 **2.2 Mockup**
 
-Con respecto al producto final de datos, se pretende desarrollar una API que permita filtrar por fecha y enliste los vuelos junto con el Origen, Destino, Hora de Salida y una etiqueta más indicando si el despegue del éste se retrasará más de 20 minutos creando un efecto dominó en al menos 2 vuelos consecutivos, o no.
+Con respecto al producto final de datos, se pretende desarrollar una API que permita filtrar por fecha y enliste los vuelos junto con el Origen, Destino, Hora de Salida y una etiqueta binaria adicional, indicando si el despegue de éste se retrasará más de 20 minutos creando un efecto dominó en al menos 2 vuelos consecutivos, o no.
 
 ![Mockup](Imagenes/Mockup_AirConnect.png)
 
 **2.3 Implicaciones éticas**
 
-Sin excepción alguna, cualquier producto de datos trae consigo una serie de implicaciones que deben considerarse en el alcance del modelo.
+Sin excepción alguna, cualquier producto de datos trae consigo una serie de implicaciones éticas que deben considerarse en el alcance del modelo.
 
 Particularmente dividimos las implicaciones éticas en falsos positivos y falsos negativos:
 
@@ -57,7 +57,7 @@ Particularmente dividimos las implicaciones éticas en falsos positivos y falsos
 
 A través de la estadística, intentamos discriminar datos y apoyar en la toma de decisiones; en ese sentido, podemos afectar a algún grupo sin la intención de querer hacerlo, ofreciendo ventajas/desventajas de manera sistemática a un grupo de referencia en particular.
 
-Para este modelo, definiremos a nuestro grupo de referencia o atributo protegido considerando lo siguiente:
+En particular para este modelo, definiremos nuestro grupo de referencia o atributo protegido considerando lo siguiente:
 
 1) Día de la semana que se encuentra laborando el personal.
 
@@ -78,7 +78,7 @@ Considerando las siguientes razones:
 
 a) El modelo necesita ser muy bueno en detectar la etiqueta positiva.
 
-b) No hay -mucho- costo en introducir falsos positivos al sistema, pues al operador le resultará no le impactará saber que existirá una afectación de retraso y efecto dominó cuando no ocurrirá (pues estará preparado).
+b) No hay -mucho- costo en introducir falsos positivos al sistema, pues al operador no le impactará saber que existirá una afectación de retraso y efecto dominó cuando no ocurrirá (pues estará preparado).
 
 c) La definición de la variable target no es subjetiva. Ocurre o no ocurre un retraso de más de 20 min con afectación de retraso los siguientes 2 vuelos. 
 
@@ -96,7 +96,7 @@ El pipeline diseñado para analizar el retraso de los vuelos incluye las siguien
 
 * **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en S3, se obtienen las predicciones.
 
-* **Unit testing** : a lo largo de todos los pasos del pipeline se corren diversas pruebas unitarias para garantizar que el pipeline se corra de manera adecuada o bien, que se detenga su ejecución si se detectan irregularidades.
+* **Unit testing** : A lo largo de todos los pasos del pipeline se corren diversas pruebas unitarias para garantizar que el pipeline se corre de manera adecuada o bien, que se detenga su ejecución si se detectan irregularidades.
 
 ![pipeline](Imagenes/Pipeline-Rita_2.png)
 
@@ -130,7 +130,7 @@ El detalle de cada uno de los campos de la metadata se ubica en [diccionario lin
 
 ## 3. Requerimientos e Infraestructura
 
-Los datos que se utilizan son almacenados en un bucket S3 de AWS, una instancia EC2 de AWS es utilizada para correr todo el código; y los resultados de cada etapa son almacenados en un servicio RDS de AWS.
+Los datos que se utilizan son almacenados en un bucket S3 de AWS. Una instancia EC2 de AWS es utilizada para correr todo el código; y los resultados de cada etapa son almacenados en un servicio RDS de AWS.
 
 ```
 Infraestructura: AWS
@@ -265,7 +265,7 @@ El código dentro de la carpeta `Scripts` está organizado como sigue:
 + `sql` - Carpeta que contiene los esquemas necesarios para la creación de las tablas de la base de datos.
   + `FeatureEngineering` - subcarpeta que contiene las *queries* utilizadas en el *feature engineering*
   
-+ `testing` - Contiene los modulos de Luigi a ejecutar para correr el pipeline, así comolas funciones que éstos requieren. Destacamos además los sigueintes archivos:
++ `testing` - Contiene los modulos de Luigi a ejecutar para correr las pruebas unitarias del pipeline, así como las funciones que éstos requieren. Destacamos además los sigueintes archivos:
   + `requirements.txt` - Lista los paquetes necesarios para la ejecución del pipeline
   + `settings.toml` - Contiene las credenciales de acceso al RDS, así como el nombre del bucket S3 a utilizar.
   + `Luigi_Inicial` - módulo de Luigi con la estructura del pipeline.
