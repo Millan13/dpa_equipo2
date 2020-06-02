@@ -42,7 +42,7 @@ def UT_Transform_Predict():
     obj_UT = tst.TestTransformPredict()
 
     obj_UT.test_transform_predict_delay_positive()
-    procesar_metadata_unit_test(obj_UT, 'testing/Transform')
+    procesar_metadata_unit_test(obj_UT, 'testing/Transform/')
 
     print('\n---Fin UT_Transform_Predict ---\n')
 
