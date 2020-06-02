@@ -6,20 +6,20 @@ El presente proyecto analiza los vuelos de la aerolínea estadounidense *Southwe
 
 ## Contenidos
 
-1. Introducción
-2. Resumen General
-3. Requerimientos e Infraestructura
-4. Instalación y configuración
-5. Corrida del Pipeline
-6. Organización del código
-7. Colaboradores
+1. [Introducción](https://github.com/Millan13/dpa_equipo2#1-introducci%C3%B3n)
+2. [Resumen General](https://github.com/Millan13/dpa_equipo2#2-resumen-general)
+3. [Requerimientos e Infraestructura](https://github.com/Millan13/dpa_equipo2#3-requerimientos-e-infraestructura)
+4. [Instalación y configuración](https://github.com/Millan13/dpa_equipo2#4-instalaci%C3%B3n-y-configuraci%C3%B3n)
+5. [Corrida del Pipeline](https://github.com/Millan13/dpa_equipo2#5-corrida-de-pipeline)
+6. [Organización del código](https://github.com/Millan13/dpa_equipo2#6-organizaci%C3%B3n-del-c%C3%B3digo)
+7. [Colaboradores](https://github.com/Millan13/dpa_equipo2#7-colaboradores)
 
 
 ## 1. Introducción
 
 **Maestría en Ciencia de Datos ITAM**
 
-La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México (ITAM) es un programa que busca desarrollar en los estudiantes habilidades computacionales en el diseño y uso de bases de datos en varias escalas de magnitud, dominio de técnicas estadísticas modernas aplicadas al análisis y uso productivo de datos, así como habilidades en el uso de lenguajes de programación y sus aplicaciones para desarrollar software. Como parte del programa de maestría, en segundo semestre se imparte la materia de *Arquitectura y Producto de Datos* la cual busca desarrollar un producto de datos de inicio a fin. Este proyecto corresponde al producto desarrollado a lo largo del semestre primavera 2020.
+La maestría en Ciencia de Datos del Instituto Tecnológico Autónomo de México (ITAM) es un programa que busca desarrollar en los estudiantes habilidades computacionales en el diseño y uso de bases de datos en varias escalas de magnitud, dominio de técnicas estadísticas modernas aplicadas al análisis y uso productivo de datos, así como habilidades en el uso de lenguajes de programación y sus aplicaciones para desarrollar software. Como parte del programa de maestría, en segundo semestre se imparte la materia de *Arquitectura y Producto de Datos* la cual tiene como objetivo principal el desarrollo de un producto de datos de inicio a fin. Este proyecto corresponde al producto desarrollado a lo largo del semestre primavera 2020.
 
 ## 2. Resumen General
 
@@ -59,7 +59,7 @@ A través de la estadística, intentamos discriminar datos y apoyar en la toma d
 
 Para este modelo, definiremos a nuestro grupo de referencia o atributo protegido considerando lo siguiente:
 
-1) Día de la semana que se encuentra lobarando el personal.
+1) Día de la semana que se encuentra laborando el personal.
 
 Lo que buscamos es no realizar alguna afectación únicamente por el hecho de estar contratado bajo cierta jornada laboral a la semana.
 Por tanto, basados en la referencia del grupo más grande, seleccionamos como atributo protegido a:
@@ -90,11 +90,13 @@ El pipeline diseñado para analizar el retraso de los vuelos incluye las siguien
 * **Load**: Una vez descomprimidos, los datos se cargan a S3 y al las tablas del esquema `raw` del RDS.
 * **Transform**: Se aplica Feature Engineering para obtener las columnas que el modelo requerirá, así como la columna target necesaria para el entrenamiento (si es el caso). 
 
-* **Modelado**: Mediante un magic loop, se obtiene el mejor modelo, mismo que será almacenado en S3.
+* **Modelado**: Mediante un magic loop, se obtiene el mejor modelo, mismo que será almacenado en un *pickle* en S3.
 
 * **Evaluación de Bias & Fairness**: Con la ayuda del paquete `aequitas` evaluamos el nivel de sesgo y justicia del modelo seleccionado.
 
-* **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en el punto anterior, se obtienen las predicciones.
+* **Predicción** : Al recibir datos para predicción, se les aplican las transformaciones necesarias para aplicarles la estructura que el modelo requiere como input. Al pasarlos por el modelo almacenado en S3, se obtienen las predicciones.
+
+* **Unit testing** : a lo largo de todos los pasos del pipeline se corren diversas pruebas unitarias para garantizar que el pipeline se corra de manera adecuada o bien, que se detenga su ejecución si se detectan irregularidades.
 
 ![pipeline](Imagenes/Pipeline-Rita_2.png)
 
@@ -157,14 +159,24 @@ Infraestructura: AWS
 
 **4.1 Requerimientos**
 
-En complemento a la infraestructura descrita en le punto 3, será necesario el siguiente software:
+*A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.*
+
+En complemento a la infraestructura descrita en el punto 3, será necesario contar con lo siguiente:
++ Python 3
+Lo primero que requeriremos, será contar con Python3. Podemos verificar si está instalado con el siguiente comando:
+```
+yum list installed | grep -i python3
+```
+Si se nos muestra un texto similar a `Failed to set locale, defaulting to C` procedemos a su instalación con la siguiente instrucción:
+```
+sudo yum install python36 -y
+```
 
 + git
 
-A partir de ahora, todas las instrucciones deben ejecutarse en la terminal de la instancia ec2.
-
+Instalamos git mediante la instrucción:
 ```
-sudo yum install git-all
+sudo yum install git-all -y
 ```
 **4.2 Clonar el repositorio**
 
@@ -172,36 +184,38 @@ Después de instalar git, es necesario clonar este repositorio. Posteriormente, 
 
 ```
 git clone https://github.com/Millan13/dpa_equipo2.git
-cd dpa_equipo2/Scripts
-sh 00_install_packages.sh
 ```
 
 **4.3 Crear archivos de credenciales**
 
 La corrida del pipeline involucra la lectura de una serie de credenciales relacionadas con los servicios S3 y RDS de aws, las cuales deben especificarse en los siguientes dos archivos:
 
-**credenciales s3**
++ **credenciales s3**
 
+Crearemos un archivo `credentials` con  las credenciales de AWS:
 ```
-mkdir ~/.aws
-nano ~/.aws credentials
-
-# Pegar en este archivo *access id* y *key*
-
-aws_access_key_id=your_key_id
-aws_secret_access_key=your_secret_key
-region_name=us-west-2
-use_ssl=False
-
+mkdir .aws
+cd .aws
+nano credentials
 ```
 
-**credenciales postgres y bucket**
+Pegar en este archivo *access id* y *key*
+```
+[default]
+aws_access_key_id=<your_key_id>
+aws_secret_access_key=<your_secret_key>
+aws_session_token=<your_session_token_for_aws_educate_only>
+```
+
++ **credenciales postgres y bucket**
 
 ```
+cd ../dpa_equipo2/Scripts
 nano settings.toml
+```
 
-# Modificar las siguientes credenciales de postgres
-
+Modificar las siguientes credenciales de postgres y el nombre del bucket a utilizar:
+```
 # Conexiones RDS
 user = 'your_user'
 dbname = 'bd_rita'
@@ -213,6 +227,29 @@ password = 'your_databse_password'
 # S3
 bucket_name = 'your_bucket_name'
 ```
+**4.3 Creación de *pyenv* e instalación de paquetes**
+
+Por último, sugerimos la creación de un *pyenv* en donde se instalarán las paqueterías necesarias. Una vez completados los puntos anteriores, crearemos nuestro *pyenv* mediante:
+```
+python3 -m venv ~/rita2/env
+```
+Y procedemos a su activación:
+```
+source ~/rita2/env/bin/activate
+```
+Con esto, se mostrará un `(env)` al inicio del cursor. Realizamos la instalación de los paquetes incluidos en el `requirements.txt`:
+```
+pip3 install -r requirements.txt
+```
+Finalmente, realizamos las últimas configuraciones necesarias ejecutando:
+```
+sh 00_install_packages.sh
+```
+Una vez terminemos, podemos desactivar el *pyenv* con :
+```
+deactivate
+```
+
 
 ## 5. Corrida de Pipeline
 
@@ -223,6 +260,16 @@ python3 -m luigi --module Luigi_Inicial T_130_EnviarMetadataModelado_RDS --local
 ```
 
 ## 6. Organización del código
+
+El código dentro de la carpeta `Scripts` está organizado como sigue:
++ `sql` - Carpeta que contiene los esquemas necesarios para la creación de las tablas de la base de datos.
+  + `FeatureEngineering` - subcarpeta que contiene las *queries* utilizadas en el *feature engineering*
+  
++ `testing` - Contiene los modulos de Luigi a ejecutar para correr el pipeline, así comolas funciones que éstos requieren. Destacamos además los sigueintes archivos:
+  + `requirements.txt` - Lista los paquetes necesarios para la ejecución del pipeline
+  + `settings.toml` - Contiene las credenciales de acceso al RDS, así como el nombre del bucket S3 a utilizar.
+  + `Luigi_Inicial` - módulo de Luigi con la estructura del pipeline.
+  
 
 ## 7. Colaboradores
 
