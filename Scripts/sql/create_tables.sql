@@ -51,7 +51,8 @@ create table linaje.transform (
   filas_afectadas NUMERIC,
   fecha_hora_ejec TIMESTAMP,
   usuario_ejec VARCHAR(20),
-  instancia_ejec VARCHAR(20)
+  instancia_ejec VARCHAR(20),
+  tipo_ejec VARCHAR(20)
 );
 comment on table linaje.transform is 'describe detalles del transform';
 
