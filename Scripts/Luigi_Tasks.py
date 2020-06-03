@@ -1277,6 +1277,7 @@ def WebScrapingScheduleVuelos():
         voEjecucion.crearCSV()
 
     print('---Fin web scraping Schedule vuelos---\n')
+    return 0
 
 def Predict():
 
