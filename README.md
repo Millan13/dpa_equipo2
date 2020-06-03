@@ -259,6 +259,21 @@ Desde el directorio `Scripts` ubicado en `dpa_equipo2` deberá ejecutarse el arc
 python3 -m luigi --module Luigi_Inicial T_130_EnviarMetadataModelado_RDS --local-scheduler
 ```
 
+O bien, si queremos correr el pipeline entero, lanzaremos:
++ para train
+```
+python3 -m luigi --module Luigi_Inicial T_Manejador --str-Tipo train 
+```
++ para predict 
+```
+python3 -m luigi --module Luigi_Inicial T_Manejador --str-Tipo predict
+```
+
+
+
+Notemos que si estamos usando el *centrtal scheduler* omitiremos `--local-scheduler` en los comandos anteriores.
+
+
 ## 6. Organización del código
 
 El código dentro de la carpeta `Scripts` está organizado como sigue:
