@@ -875,7 +875,7 @@ def BiasAndFairness():
     #Instanciamos el objeto Eda
     objEda = Eda()
     #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
+    objEda.strRutaDataSource='DatasetModelado2.csv' #El archivo que sale del feature engineering
     #Proceso de carga
     objEda.strSeparadorColumnas = ','
     objEda.Cargar_Datos()
@@ -1004,7 +1004,7 @@ def BiasAndFairness():
 
     #Ahora traer la columna de Day_sem (volvemos a cargar datos)
     #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
+    objEda.strRutaDataSource='DatasetModelado2.csv' #El archivo que sale del feature engineering
     #Proceso de carga
     objEda.strSeparadorColumnas = ','
     objEda.Cargar_Datos()
