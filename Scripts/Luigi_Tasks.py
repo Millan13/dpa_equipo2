@@ -875,7 +875,7 @@ def BiasAndFairness():
     #Instanciamos el objeto Eda
     objEda = Eda()
     #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource='DatasetModelado2.csv' #El archivo que sale del feature engineering
+    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
     #Proceso de carga
     objEda.strSeparadorColumnas = ','
     objEda.Cargar_Datos()
@@ -1004,7 +1004,7 @@ def BiasAndFairness():
 
     #Ahora traer la columna de Day_sem (volvemos a cargar datos)
     #Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource='DatasetModelado2.csv' #El archivo que sale del feature engineering
+    objEda.strRutaDataSource='DatasetModelado.csv' #El archivo que sale del feature engineering
     #Proceso de carga
     objEda.strSeparadorColumnas = ','
     objEda.Cargar_Datos()
@@ -1074,7 +1074,7 @@ def BiasAndFairness():
 
 
 def PrepararScheduleVuelos():
-    print('\n---Inicio preparación schedule vuelos---\n')
+    print('\n---Inicio preparacion schedule vuelos---\n')
 
     import boto3
     import os
@@ -1107,7 +1107,7 @@ def PrepararScheduleVuelos():
     # Eliminamos el arhivo de vuelos de Descargas
     os.system('rm Descargas/*.csv')
 
-    print('---Fin preparación schedule vuelos---\n')
+    print('---Fin preparacion schedule vuelos---\n')
     return 0
 
 
