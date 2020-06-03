@@ -39,7 +39,7 @@ class TestPredict(marbles.core.TestCase):
 
         __str_RutaScripts = os.path.abspath(os.path.curdir)
 
-        __df = pd.read_csv('Predict.csv')
+        __df = pd.read_csv('/home/ec2-user/dpa_equipo2/Scripts/Predict.csv')
         __m = __df['y_hat'].isin([0,1]).all()
         __str_note = 'existen valores distintos de 0 y 1'
 
