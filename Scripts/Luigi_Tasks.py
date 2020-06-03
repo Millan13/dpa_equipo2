@@ -1315,9 +1315,9 @@ def Predict():
     objEda = Eda()
 
     # Inicializamos los parámetros principales (por el momento, sólo es uno: la ruta de la fuente de datos)
-    objEda.strRutaDataSource = 'DatasetModeladoPredict.csv'  # PREDICT
+    objEda.strRutaDataSource = 'DatasetModelado2.csv'  # PREDICT
 
-    df_Input = pd.read_csv('DatasetModeladoPredict.csv')
+    df_Input = pd.read_csv('DatasetModelado2.csv')
 
     # Especificamos nuestro separador de columnas y cargamos el dataset
     objEda.strSeparadorColumnas = ','
