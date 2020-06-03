@@ -184,7 +184,6 @@ Después de instalar git, es necesario clonar este repositorio. Posteriormente, 
 
 ```
 git clone https://github.com/Millan13/dpa_equipo2.git
-```
 
 **4.3 Crear archivos de credenciales**
 

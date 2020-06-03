@@ -114,6 +114,7 @@ class voTransform:
     dttm_fecha_hora_ejec = ''
     str_usuario_ejec = ''
     str_instancia_ejec = ''
+    str_tipo_ejec = ''
 
     str_NombreDataFrame = ''
 
@@ -126,7 +127,8 @@ class voTransform:
                           'filas_afectadas': [self.nbr_filas_afectadas],
                           'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
                           'usuario_ejec': [self.str_usuario_ejec],
-                          'instancia_ejec': [self.str_instancia_ejec]
+                          'instancia_ejec': [self.str_instancia_ejec],
+                          'tipo_ejec': [self.str_tipo_ejec]
                           }
 
         df = pd.DataFrame(dict_Transform, columns=['id_set_transform',
@@ -135,7 +137,8 @@ class voTransform:
                                                    'filas_afectadas',
                                                    'fecha_hora_ejec',
                                                    'usuario_ejec',
-                                                   'instancia_ejec'
+                                                   'instancia_ejec',
+                                                   'tipo_ejec'
                                                    ]
                           )
 
@@ -308,6 +311,72 @@ class voUTModeling:
                                                    'col2',
                                                    ]
                           )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voPredicciones:
+
+    nbr_id_ejec = 0
+    str_id_archivo = ''
+    nbr_num_registros = 0
+    nbr_num_columnas = 0
+
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'id_ejec': [self.nbr_id_ejec],
+                          'id_archivo': [self.str_id_archivo],
+                          'num_registros': [self.nbr_num_registros],
+                          'num_columnas': [self.nbr_num_columnas],
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['id_ejec',
+                                                   'id_archivo',
+                                                   'num_registros',
+                                                   'num_columnas',
+                                                   ]
+                          )
+
+        df.to_csv(self.str_NombreDataFrame, index=False, header=False)
+
+        return
+
+
+class voBiasFairness:
+
+    str_atrib_protegido = ''
+    str_grupo_ref = ''
+    dttm_fecha_hora_ejec = ''
+    str_usuario_ejec = ''
+    str_instancia_ejec = ''
+
+
+    str_NombreDataFrame = ''
+
+    def crearCSV(self):
+        import pandas as pd
+
+        dict_Ejecucion = {'atributo_protegido': [self.str_atrib_protegido],
+                          'grupo_referencia': [self.str_grupo_ref],
+                          'fecha_hora_ejec': [self.dttm_fecha_hora_ejec],
+                          'usuario_ejec': [self.str_usuario_ejec],
+                          'instancia_ejec': [self.str_instancia_ejec],
+
+                          }
+
+        df = pd.DataFrame(dict_Ejecucion, columns=['atributo_protegido',
+                                                   'grupo_referencia',
+                                                   'fecha_hora_ejec',
+                                                   'usuario_ejec',
+                                                   'instancia_ejec',
+                                                   ]
+                         )
 
         df.to_csv(self.str_NombreDataFrame, index=False, header=False)
 

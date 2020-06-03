@@ -583,6 +583,8 @@ class Eda:
             # corresponde al promedio de los scores generados con los cv
             print('grid_search.best_score_: ', grid_search.best_score_)
 
+            self.best_model = grid_search.best_estimator_
+
 
         return npResultados
 

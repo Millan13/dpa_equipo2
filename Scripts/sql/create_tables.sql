@@ -51,7 +51,8 @@ create table linaje.transform (
   filas_afectadas NUMERIC,
   fecha_hora_ejec TIMESTAMP,
   usuario_ejec VARCHAR(20),
-  instancia_ejec VARCHAR(20)
+  instancia_ejec VARCHAR(20),
+  tipo_ejec VARCHAR(20)
 );
 comment on table linaje.transform is 'describe detalles del transform';
 
@@ -67,6 +68,28 @@ create table linaje.modeling (
   instancia_ejec VARCHAR(20)
 );
 comment on table linaje.modeling is 'describe detalles del modeling';
+
+
+/**************************** Raw historico ****************************/
+drop table if exists raw.historico;
+create table raw.historico(
+  YEAR VARCHAR(50),
+  MONTH VARCHAR(50),
+  DAY_OF_MONTH VARCHAR(50),
+  DAY_OF_WEEK VARCHAR(50),
+  OP_UNIQUE_CARRIER VARCHAR(50),
+  TAIL_NUM VARCHAR(50),
+  OP_CARRIER_FL_NUM VARCHAR(50),
+  ORIGIN VARCHAR(50),
+  DEST VARCHAR(50),
+  CRS_DEP_TIME VARCHAR(50),
+  DEP_TIME VARCHAR(50),
+  DEP_DELAY VARCHAR(50),
+  CRS_ARR_TIME VARCHAR(50),
+  CRS_ELAPSED_TIME VARCHAR(50),
+  DISTANCE VARCHAR(50)
+);
+comment on table raw.historico is 'detalles por vuelo historico';
 
 
 /**************************** Raw vuelos ****************************/
@@ -101,3 +124,27 @@ create table linaje.unit_tests (
   fecha_hora_ejec TIMESTAMP
 );
 comment on table linaje.unit_tests is 'resultados de unit tests';
+
+
+/**************************** Linaje schedules ****************************/
+drop table if exists linaje.schedules;
+create table linaje.schedules (
+  id_ejec NUMERIC,
+  id_archivo VARCHAR(40),
+  num_registros VARCHAR(20),
+  num_columnas VARCHAR(10),
+  tamanio_archivo FLOAT,
+  anio VARCHAR(5),
+  mes VARCHAR(10),
+  ruta_almac_s3 VARCHAR(100)
+);
+comment on table linaje.schedules is 'describe caracteristicas especificas de schedules para predicciones';
+
+
+/**************************** Linaje schedules_det ****************************/
+drop table if exists linaje.schedules_det;
+create table linaje.schedules_det (
+  id_archivo VARCHAR(40),
+  nombre_col VARCHAR(35)
+);
+comment on table linaje.schedules_det is 'describe detalles del archivo de schedules';

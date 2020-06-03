@@ -1,6 +1,6 @@
-/*Paso 0: Copiar la tabla vuelos a vuelos2*/
+/*Paso 0: Copiar la tabla historico a vuelos2*/
 DROP TABLE IF EXISTS TRANSFORM.VUELOS2;
 CREATE TABLE TRANSFORM.VUELOS2 AS
 SELECT *
-FROM RAW.VUELOS
+FROM RAW.HISTORICO
 ;
