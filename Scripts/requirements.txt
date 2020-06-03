@@ -6,7 +6,7 @@ cycler==0.10.0
 docutils==0.15.2
 dominate==2.5.1
 dynaconf==2.2.3
-Flask==0.12.2
+Flask==1.0
 Flask-Bootstrap==3.3.7.1
 gitdb==4.0.4
 GitPython==3.1.1
