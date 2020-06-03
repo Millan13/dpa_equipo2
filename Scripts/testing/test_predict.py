@@ -32,8 +32,8 @@ class TestPredict(marbles.core.TestCase):
         SQL_for_file_output = "COPY ({0}) TO STDOUT WITH CSV HEADER;".format(s)
 
         # Set up a variable to store our file path and name.
-        # t_path_n_file = "/home/ec2-user/dpa_equipo2/Scripts/Predict.csv"
-        t_path_n_file = "Predict.csv"
+        t_path_n_file = "/home/ec2-user/dpa_equipo2/Scripts/Predict.csv"
+        #t_path_n_file = "Predict.csv"
         with open(t_path_n_file, 'w') as f_output:
           __cur.copy_expert(SQL_for_file_output, f_output)
 
