@@ -343,11 +343,10 @@ class T_138_EnviarMetadataLinajeScheduleCargaRDS(luigi.Task):
         return luigi.LocalTarget('Tarea_20_EnviarMetadataLinajeScheduleCargaRDS')
 
 
-
 class T_140_PrepararScheduleVuelos(luigi.Task):
 
-    #def requires(self):
-    #    return T_138_EnviarMetadataLinajeScheduleCargaRDS()
+    def requires(self):
+        return T_138_EnviarMetadataLinajeScheduleCargaRDS()
 
     def run(self):
         if lt.PrepararScheduleVuelos() == 0:
@@ -530,7 +529,7 @@ class T_Manejador(luigi.Task):
         if self.str_Tipo == 'train':
             return dict_LT.get('135').get('Clase')
         elif self.str_Tipo == 'predict':
-            return dict_LT.get('150').get('Clase')
+            return dict_LT.get('200').get('Clase')
 
     def run(self):
         Utileria().DibujarLuigi()
