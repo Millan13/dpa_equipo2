@@ -1088,8 +1088,8 @@ def PrepararScheduleVuelos():
     nombre_bucket = objUtileria.str_NombreBucket
     print('--1')
     # Descarga del archivo de s3 en carpeta Descargas
-    #s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
-    s3_resource.meta.client.download_file(nombre_bucket, path_s3, 'Descargas/vuelos.csv')
+    s3_resource.meta.client.download_file(nombre_bucket, path_s3, '/home/ec2-user/dpa_equipo2/Scripts/Descargas/vuelos.csv')
+    #s3_resource.meta.client.download_file(nombre_bucket, path_s3, 'Descargas/vuelos.csv')
     print('--2')
     file_vuelos = 'Descargas/vuelos.csv'
     print('--3')
