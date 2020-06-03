@@ -33,13 +33,12 @@ class TestPredict(marbles.core.TestCase):
 
         # Set up a variable to store our file path and name.
         t_path_n_file = "/home/ec2-user/dpa_equipo2/Scripts/Predict.csv"
-        #t_path_n_file = "Predict.csv"
         with open(t_path_n_file, 'w') as f_output:
           __cur.copy_expert(SQL_for_file_output, f_output)
 
         __str_RutaScripts = os.path.abspath(os.path.curdir)
 
-        __df = pd.read_csv('/home/ec2-user/dpa_equipo2/Scripts/Predict.csv')
+        __df = pd.read_csv(__str_RutaScripts + '/Predict.csv')
         __m = __df['y_hat'].isin([0,1]).all()
         __str_note = 'existen valores distintos de 0 y 1'
 
@@ -57,8 +56,8 @@ class TestPredict(marbles.core.TestCase):
 
         __str_RutaScripts = os.path.abspath(os.path.curdir)
 
-        __df1 = pd.read_csv('Predict.csv')
-        __df2 = pd.read_csv('DatasetModeladoPredict.csv')
+        __df1 = pd.read_csv(__str_RutaScripts + '/Predict.csv')
+        __df2 = pd.read_csv(__str_RutaScripts + '/DatasetModelado.csv')
         __m = __df1.shape[0]==__df2.shape[0]
         __str_note = 'los df no tiene el mismo numero de renglones'
 
