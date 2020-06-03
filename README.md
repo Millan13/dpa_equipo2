@@ -267,7 +267,7 @@ El código dentro de la carpeta `Scripts` está organizado como sigue:
   
 + `testing` - Contiene las funciones a utilizar al correr las pruebas unitarias.
 
-Destacamos además los sigueintes archivos:
+Destacamos además los siguientes archivos:
 + `requirements.txt` - Lista los paquetes necesarios para la ejecución del pipeline
 + `settings.toml` - Contiene las credenciales de acceso al RDS, así como el nombre del bucket S3 a utilizar.
 + `Luigi_Inicial.py` - Módulo de Luigi con la estructura del pipeline.
