@@ -263,15 +263,17 @@ python3 -m luigi --module Luigi_Inicial T_130_EnviarMetadataModelado_RDS --local
 
 El código dentro de la carpeta `Scripts` está organizado como sigue:
 + `sql` - Carpeta que contiene los esquemas necesarios para la creación de las tablas de la base de datos.
-  + `FeatureEngineering` - subcarpeta que contiene las *queries* utilizadas en el *feature engineering*
+  + `FeatureEngineering` - subcarpeta que contiene las *queries* utilizadas en el *feature engineering*.
   
-+ `testing` - Contiene los modulos de Luigi a ejecutar para correr el pipeline, así como las funciones que éstos requieren. Destacamos además los sigueintes archivos:
-  + `requirements.txt` - Lista los paquetes necesarios para la ejecución del pipeline
-  + `settings.toml` - Contiene las credenciales de acceso al RDS, así como el nombre del bucket S3 a utilizar.
-  + `Luigi_Inicial.py` - módulo de Luigi con la estructura del pipeline.
-  + `Unit_Test.py` - Funciones usadas en las pruebas unitarias.
-  + `Luigi_Tasks.py` - Funciones usadas en el pipeline de Luigi_Inicial.
-  
++ `testing` - Contiene las funciones a utilizar al correr las pruebas unitarias.
+
+Destacamos además los sigueintes archivos:
++ `requirements.txt` - Lista los paquetes necesarios para la ejecución del pipeline
++ `settings.toml` - Contiene las credenciales de acceso al RDS, así como el nombre del bucket S3 a utilizar.
++ `Luigi_Inicial.py` - Módulo de Luigi con la estructura del pipeline.
++ `Unit_Test.py` - Funciones usadas en las pruebas unitarias.
++ `Luigi_Tasks.py` - Funciones usadas en el pipeline de Luigi_Inicial.
+
   
 
 ## 7. Colaboradores
