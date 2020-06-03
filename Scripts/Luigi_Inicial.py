@@ -529,10 +529,10 @@ class T_Manejador(luigi.Task):
         if self.str_Tipo == 'train':
             return dict_LT.get('135').get('Clase')
         elif self.str_Tipo == 'predict':
-            return dict_LT.get('200').get('Clase')
+            return dict_LT.get('195').get('Clase')
 
     def run(self):
-        Utileria().DibujarLuigi()
+        # Utileria().DibujarLuigi()
         time.sleep(4)
 
 

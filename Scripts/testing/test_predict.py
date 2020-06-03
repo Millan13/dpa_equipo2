@@ -30,18 +30,18 @@ class TestPredict(marbles.core.TestCase):
 
         # Use the COPY function on the SQL we created above.
         SQL_for_file_output = "COPY ({0}) TO STDOUT WITH CSV HEADER;".format(s)
-        print('--ut: 1')
+
         # Set up a variable to store our file path and name.
         t_path_n_file = "/home/ec2-user/dpa_equipo2/Scripts/Predict.csv"
         with open(t_path_n_file, 'w') as f_output:
             __cur.copy_expert(SQL_for_file_output, f_output)
-            print('--ut: 1')
+
             __str_RutaScripts = os.path.abspath(os.path.curdir)
-            print('--ut: 2')
+
             __df = pd.read_csv(__str_RutaScripts + '/Predict.csv')
             __m = __df['y_hat'].isin([0,1]).all()
             __str_note = 'existen valores distintos de 0 y 1'
-            print('--ut: 3')
+
         self.str_NombreMetodo = 'test_predict_delay_binary'
         self.dt_HoraEjec = datetime.now()
 
