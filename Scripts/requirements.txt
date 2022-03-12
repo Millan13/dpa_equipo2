@@ -28,7 +28,7 @@ matplotlib==3.2.1
 numpy==1.18.2
 ohio==0.5.0
 pandas==1.0.4
-Pillow==7.1.2
+Pillow==9.0.1
 psycopg2-binary==2.8.5
 pyparsing==2.4.7
 PyPDF2==1.26.0
