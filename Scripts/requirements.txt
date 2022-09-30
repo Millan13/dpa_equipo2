@@ -15,7 +15,7 @@ httplib2==0.18.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
 jmespath==0.9.5
-joblib==0.14.1
+joblib==1.2.0
 kiwisolver==1.2.0
 lockfile==0.12.2
 luigi==2.8.12
